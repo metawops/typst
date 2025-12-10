@@ -1,0 +1,38 @@
+name: Build Typst Document
+
+# Trigger: Bei jedem Push auf 'main' (oder 'master')
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Erlaubt manuelles Starten via GitHub UI
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Repository auschecken
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Typst CLI Umgebung aufsetzen
+      # Dies ist die offizielle Community-Action, die die CLI installiert
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
+        with:
+          typst-version: latest
+
+      # 3. Kompilieren
+      # Passen Sie 'main.typ' an den Namen Ihrer Hauptdatei an
+      - name: Compile Document
+        run: typst compile typst-demo-stefan-1.typ output.pdf
+
+      # 4. PDF als Artefakt hochladen
+      # Damit steht das PDF nach dem Run zum Download bereit
+      - name: Upload PDF Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PDF-Document
+          path: output.pdf
+          retention-days: 7
