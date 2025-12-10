@@ -61,7 +61,7 @@
 #show title: set align(center)
 // Globale Regel für alle Zitate im Dokument
 #show quote.where(block: true): it => block(
-  fill: gray.lighten(90%), // Leichter grauer Hintergrund
+  fill: gray.lighten(80%), // Leichter grauer Hintergrund
   stroke: (left: 2pt + gray), // Der klassische Balken links
   inset: (x: 1em, y: 0.5em),  // Innenabstand
   outset: (y: 0.5em),         // Außenabstand
