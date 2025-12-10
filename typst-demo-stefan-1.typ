@@ -4,7 +4,7 @@
 // November/Dezember 2025
 // ------------------------------
 
-#let version = "0.1.251201a"
+#let version = "0.1.251211"
 
 // set rules
 #set text(lang: "de")
