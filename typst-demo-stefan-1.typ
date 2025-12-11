@@ -4,7 +4,7 @@
 // November/Dezember 2025
 // ------------------------------
 
-#import "_lib.typ": project
+#import "_lib.typ": *
 
 
 /* #let version = "0.1.251211"
