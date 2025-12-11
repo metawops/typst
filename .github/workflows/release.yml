@@ -1,34 +1,65 @@
 name: Publish Release
-run-name: "Release ${{ github.ref_name }}"
+run-name: "Release ${{ github.ref_name }} (Build #${{ github.run_number }})"
 
 permissions:
-  contents: write
+   contents: write
 
 on:
-  push:
-    tags:
-      - "v*"
+   push:
+      tags:
+         - "v*"
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Typst
         uses: typst-community/setup-typst@v4
         with:
           typst-version: latest
 
-      # 1. Kompilieren (Generischer Loop)
+      # SCHRITT 1: Prüft, ob CHANGELOG.md seit dem letzten Tag geändert wurde
+      # Stellt sicher, dass das Release nur bei inhaltlicher Änderung startet
+      - name: Check Changelog Status
+        id: check_changelog
+        run: |
+          # Finde den letzten Tag (vor dem aktuellen HEAD)
+          # '2>/dev/null' fängt Fehler ab, falls es der allererste Tag ist
+          PREV_TAG=$(git describe --tags --abbrev=0 @^ 2>/dev/null)
+          CURRENT_TAG=${{ github.ref_name }}
+          
+          echo "Comparing changes between $PREV_TAG and $CURRENT_TAG"
+
+          # Bedingung 1: Wenn es der allererste Tag ist, wird das Release ausgelöst
+          if [ -z "$PREV_TAG" ]; then
+            echo "::notice::First tag. Release will proceed."
+            echo "changelog_updated=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Bedingung 2: Prüfe, ob CHANGELOG.md sich zwischen den Tags geändert hat
+          # 'grep -q' sucht leise (quiet) und gibt nur einen Exit-Code zurück
+          if git diff --name-only $PREV_TAG $CURRENT_TAG | grep -q CHANGELOG.md; then
+            echo "::notice::CHANGELOG.md was updated. Proceeding with release."
+            echo "changelog_updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "::warning::CHANGELOG.md was NOT updated. Skipping release assets upload."
+            echo "changelog_updated=false" >> $GITHUB_OUTPUT
+          fi
+
+      # 2. Kompilieren (Generischer Loop)
       # Findet automatisch 'typst-demo-stefan-1.typ', ignoriert '_lib.typ'
       - name: Compile Document
         run: |
           set -e
           shopt -s nullglob # Verhindert Fehler, falls keine Datei matcht
-          
+
           for file in *.typ; do
             # Ignoriere Dateien, die mit '_' beginnen (z.B. _lib.typ)
             if [[ "$file" == _* ]]; then
@@ -36,24 +67,26 @@ jobs:
               continue
             fi
             
-            echo "Compiling $file..."
+            echo "Compiling $file ..."
             # Erzeugt automatisch ein PDF mit gleichem Namen (z.B. typst-demo-stefan-1.pdf)
             typst compile --font-path ./fonts "$file"
           done
 
-      # 2. Source Code zippen
+      # 3. Source Code zippen
       # Wir exkludieren .git Ordner und ALLE generierten PDFs, damit die nicht doppelt im Zip landen
       - name: Archive Source Code
         run: |
           zip -r typst-project-files.zip . -x "*.git*" "*.github*" "*.pdf"
 
-      # 3. Release erstellen
+      # 4. Release erstellen
       # Lädt das generierte PDF und das Source-Zip hoch
       - name: Create Release
+        if: steps.check_changelog.outputs.changelog_updated == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          prerelease: false 
-          generate_release_notes: true
+          prerelease: false
+          #generate_release_notes: true
+          body_path: CHANGELOG.md
           files: |
-            *.pdf
-            typst-project-files.zip
+              *.pdf
+              typst-project-files.zip
