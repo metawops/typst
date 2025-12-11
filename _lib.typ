@@ -50,7 +50,7 @@
 
 
 #let project(
-   title: "",
+   theTitle: "",
    authors: (),
    description: "",
    location: "",
@@ -68,7 +68,7 @@
 
    // Metadata for PDF
    set document(
-      title: title,
+      title: theTitle,
       author: authors,
       description: description,
       keywords: keywords,
@@ -154,7 +154,7 @@
       number-format: (n) => text(fill: luma(120), size: 8pt, str(n)), // Nummer-Style
    )
 
-   title[#title]
+   title[#theTitle]
    align(center)[
       #authors \
       #location
