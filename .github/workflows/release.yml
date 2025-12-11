@@ -45,7 +45,7 @@ jobs:
       # Wir exkludieren .git Ordner und ALLE generierten PDFs, damit die nicht doppelt im Zip landen
       - name: Archive Source Code
         run: |
-          zip -r source-code.zip . -x "*.git*" "*.github*" "*.pdf"
+          zip -r typst-project-files.zip . -x "*.git*" "*.github*" "*.pdf"
 
       # 3. Release erstellen
       # Lädt das generierte PDF und das Source-Zip hoch
