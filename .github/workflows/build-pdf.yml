@@ -6,6 +6,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      # Nur auslösen, wenn sich eine .typ Datei im Root ändert
+      - "*.typ"
+      # Oder wenn sich eine Datei im 'fonts/' Ordner ändert (z.B. Lizenzen oder neuer Font)
+      - "fonts/**" 
+      # Optional: Wenn Sie Code in einem anderen Ordner haben, diesen auch listen
+      # - "includes/**"
   workflow_dispatch: # Erlaubt manuelles Starten via GitHub UI
 
 jobs:
