@@ -6,6 +6,29 @@
 
 #let version = "0.1.251211"
 
+// 1. Import des Pakets 'codly'
+#import "@preview/codly:1.3.0": *
+
+// 2. Initialisierung (Pflicht!)
+#show: codly-init.with()
+
+// 3. Konfiguration Ihres Styles
+#codly(
+   languages: typst-icon,
+   fill: luma(240),             // Hintergrund: Hellgrau
+   zebra-fill: luma(230),       // leicht gestreiften Zeilen
+   stroke: 0.5pt + luma(160),   // Rahmen: Dünn, dunkelgrau
+   radius: 4pt,                   // Ecken: Abgerundet
+   inset: 0.32em,
+   lang-inset: 0.5em,
+   lang-outset: (x: 0.2em, y: 0.4em),
+   display-icon: true,         // Icon aus (nur Text-Label, wie gewünscht)
+   display-name: true,          // Zeigt den Namen der Sprache an
+   number-align: right,
+   number-format: (n) => text(fill: luma(120), size: 8pt, str(n)), // Nummer-Style
+)
+
+
 // set rules
 #set text(lang: "de")
 
@@ -18,20 +41,6 @@
    date: datetime(year: 2025, month: 12, day: 6)
 )
 #set text(
-// macOS Fonts:
-// ------------
-//  font: "SF Pro Text",
-//  font: "Bodoni 72",
-//  font: "Crimson Pro",
-//  font: "Charter",
-//  font: "Didot",
-//  font: "Helvetica Neue",
-//   font: "Monaspace Radon",
-
-// Windows Fonts:
-// --------------
-//   font: "Book Antiqua",
-
 // Generic Font that exists on Mac, Windows, Ubuntu (Github!)
    font: "Inter 18pt",
    size: 13pt
@@ -71,6 +80,21 @@
   radius: 2pt,                // Leicht abgerundet
   it // Der eigentliche Inhalt des Zitats
 )
+
+// Hier wählen wir den Font, der für Codeblöcke (raw) genutzt werden soll:
+#show raw: set text(font: "JetBrains Mono", size: 0.95em) 
+
+// Styling für INLINE Code (in Backticks `...`)
+// Wir nutzen 'box', damit es im Textfluss bleibt.
+#show raw.where(block: false): it => box(
+  fill: luma(240),          // Sehr helles Grau (255=Weiß, 0=Schwarz)
+  inset: (x: 3pt, y: 0pt),    // Etwas Luft links/rechts, oben/unten eng
+  outset: (y: 3pt),           // Trick: Box optisch vergrößern ohne Zeilenabstand zu sprengen
+  radius: 3pt,                // Leicht abgerundete Ecken
+  it
+)
+
+
 
 // END OF SETTINGS
 // ---------------
@@ -218,7 +242,7 @@ Mächtiger als `#image()` ist die Funktion `#figure()`. Mit ihr kann man u.a. da
 #code-box[
 Hier ist der Quellcode der Definition der eigenen `#info-box` Funktion:
 
-```
+```typ
 #let info-box(title: "INFO", body) = block(
   width: 100%,
   inset: 12pt,
