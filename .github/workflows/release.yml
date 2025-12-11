@@ -1,0 +1,49 @@
+name: Publish Release
+run-name: "Release ${{ github.ref_name }}"
+
+# WICHTIG: Erlaubnis zum Schreiben von Releases erteilen
+permissions:
+  contents: write
+
+on:
+  push:
+    # Feuert nur, wenn ein Tag gepusht wird, der mit 'v' beginnt (z.B. v1.0, v2025.1)
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
+        with:
+          typst-version: latest
+
+      # 1. PDF Kompilieren (mit Font-Pfad, wie besprochen)
+      - name: Compile Document
+        # Falls Sie Umgebungsvariablen für Fonts nutzen, hier einfügen
+        run: typst compile --font-path ./fonts main.typ output.pdf
+
+      # 2. Source Code zippen (Best Practice für Reproduzierbarkeit)
+      # Wir exkludieren den .git ordner und das gerade erzeugte PDF
+      - name: Archive Source Code
+        run: |
+          zip -r source-code.zip . -x "*.git*" "*.github*" "output.pdf"
+
+      # 3. Release erstellen und Dateien hochladen
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # Wenn true, wird es als "Pre-release" markiert (gut für Beta-Versionen)
+          prerelease: false 
+          # Automatische Release Notes generieren (aus Commit Messages)
+          generate_release_notes: true
+          files: |
+            output.pdf
+            source-code.zip
+            main.typ

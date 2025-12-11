@@ -27,7 +27,24 @@ jobs:
       # 3. Kompilieren
       # Passen Sie 'main.typ' an den Namen Ihrer Hauptdatei an
       - name: Compile Document
-        run: typst compile typst-demo-stefan-1.typ output.pdf
+        run: |
+          set -e
+          found=false
+          
+          # Loop über alle .typ Dateien im aktuellen Verzeichnis
+          for file in *.typ; do
+            # Falls keine Datei existiert, fängt der Loop "*typ" als String -> Check notwendig
+            if [ -f "$file" ]; then
+              echo "Processing $file ..."
+              typst compile --font-path ./fonts "$file"
+              found=true
+            fi
+          done
+          
+          if [ "$found" = false ]; then
+            echo "Error: No .typ files found in root directory."
+            exit 1
+          fi
 
       # 4. PDF als Artefakt hochladen
       # Damit steht das PDF nach dem Run zum Download bereit
@@ -35,5 +52,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PDF-Document
-          path: output.pdf
+          path: "*.pdf"
           retention-days: 7
