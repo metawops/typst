@@ -1,5 +1,5 @@
 name: Build Typst Document
-run-name: "Build #${{ github.run_number }}"
+run-name: "PDF Build #${{ github.run_number }} by @${{ github.actor }}"
 
 # Trigger: Bei jedem Push auf 'main' (oder 'master')
 on:
