@@ -24,6 +24,11 @@ jobs:
         with:
           typst-version: latest
 
+      # 2b. Nur zu Debug Zwecken: Alle Fonts auflisten, die typst in der Github/Ubuntu Umgebung kennt
+      - name: Debug - List Available Fonts
+        # Zeigt alle Fonts an, die Typst in dem Ordner findet inkl. interner Namen
+        run: typst fonts --font-path ./fonts
+
       # 3. Kompilieren
       # Passen Sie 'main.typ' an den Namen Ihrer Hauptdatei an
       - name: Compile Document
