@@ -4,7 +4,10 @@
 // November/Dezember 2025
 // ------------------------------
 
-#let version = "0.1.251211"
+#import "_lib.typ": project
+
+
+/* #let version = "0.1.251211"
 
 // 1. Import des Pakets 'codly'
 #import "@preview/codly:1.3.0": *
@@ -104,6 +107,17 @@
    Stefan Wolfrum \
    Bonn, Germany
 ]
+ */
+
+#show: project.with(
+   title: "Erste Schritte in Typst",
+   authors: ("Stefan Wolfrum"),
+   description: [Ein kleines Demo-Dokument, was die Nutzung von Typst demonstrieren soll.],
+   location: "Bonn, Germany",
+   keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
+   date: datetime(year: 2025, month: 12, day: 6),
+   version: "0.1.251211"
+)
 
 = Schrift & Formeln
 
@@ -181,7 +195,7 @@ Mächtiger als `#image()` ist die Funktion `#figure()`. Mit ihr kann man u.a. da
 
 = Info-Box
 
-#let infoboxtitlesize = 14pt
+/* #let infoboxtitlesize = 14pt
 #let infoboxtextsize = 12pt
 
 #let info-box(title: "INFO", body) = block(
@@ -227,6 +241,8 @@ Mächtiger als `#image()` ist die Funktion `#figure()`. Mit ihr kann man u.a. da
     size: infoboxtextsize,
   )[ #body ]
 ]
+ */
+
 
 #info-box[
    Man kann auch hübsche Info-Boxen wie diese hier gestalten. Dabei gibt es prinzipiell zwei Möglichkeiten:
@@ -288,7 +304,7 @@ Und dies hier ist einfach eine zweite Art Info-Box, die ich `#code-box` genannt 
 
 Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst erweitern. Ein Paket, mit dem man gut Diagramme zeichnen kann, heißt _Lilaq_. Die folgenden Diagramme sind mit Hilfe von _Lilaq_ entstanden.
 
-#import "@preview/lilaq:0.5.0" as lq
+//#import "@preview/lilaq:0.5.0" as lq
 
 #let xs = (0, 1, 2, 3, 4)
 
@@ -376,7 +392,7 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
 == Diagramme mit Zusatzpaketen
 Hier folgt ein sogenanntes _Sankey Diagramm_, was mit dem #link("https://github.com/solstice23/typst-ribbony")[Paket _Ribbony_] erzeugt wurde:
 
-#import "@preview/ribbony:0.1.0": *
+//#import "@preview/ribbony:0.1.0": *
 
 #sankey-diagram((
    "Clients": ("Company": 70),

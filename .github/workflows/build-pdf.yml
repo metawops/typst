@@ -36,18 +36,24 @@ jobs:
           set -e
           found=false
           
-          # Loop über alle .typ Dateien im aktuellen Verzeichnis
           for file in *.typ; do
-            # Falls keine Datei existiert, fängt der Loop "*typ" als String -> Check notwendig
-            if [ -f "$file" ]; then
-              echo "Processing $file ..."
-              typst compile --font-path ./fonts "$file"
-              found=true
+            # 1. Existenz-Check (falls Globbing fehlschlägt)
+            [ -f "$file" ] || continue
+            
+            # 2. Filter: Ignoriere Dateien, die mit '_' beginnen
+            if [[ "$file" == _* ]]; then
+              echo "Skipping partial file: $file"
+              continue
             fi
+
+            # 3. Kompilieren
+            echo "Compiling $file..."
+            typst compile --font-path ./fonts "$file"
+            found=true
           done
           
           if [ "$found" = false ]; then
-            echo "Error: No .typ files found in root directory."
+            echo "Error: No compileable .typ files found (checked for *.typ excluding _*)."
             exit 1
           fi
 
