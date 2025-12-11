@@ -6,109 +6,6 @@
 
 #import "_lib.typ": *
 
-
-/* #let version = "0.1.251211"
-
-// 1. Import des Pakets 'codly'
-#import "@preview/codly:1.3.0": *
-
-// 2. Initialisierung (Pflicht!)
-#show: codly-init.with()
-
-// 3. Konfiguration Ihres Styles
-#codly(
-   languages: typst-icon,
-   fill: luma(240),             // Hintergrund: Hellgrau
-   zebra-fill: luma(230),       // leicht gestreiften Zeilen
-   stroke: 0.5pt + luma(160),   // Rahmen: Dünn, dunkelgrau
-   radius: 4pt,                   // Ecken: Abgerundet
-   inset: 0.32em,
-   lang-inset: 0.5em,
-   lang-outset: (x: 0.2em, y: 0.4em),
-   display-icon: true,         // Icon aus (nur Text-Label, wie gewünscht)
-   display-name: true,          // Zeigt den Namen der Sprache an
-   number-align: right,
-   number-format: (n) => text(fill: luma(120), size: 8pt, str(n)), // Nummer-Style
-)
-
-
-// set rules
-#set text(lang: "de")
-
-// Metadaten fürs PDF
-#set document(
-   title: [Erste Schritte in Typst],
-   author: "Stefan Wolfrum",
-   description: [Ein kleines Demo-Dokument, was die Nutzung von Typst demonstrieren soll.],
-   keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
-   date: datetime(year: 2025, month: 12, day: 6)
-)
-#set text(
-// Generic Font that exists on Mac, Windows, Ubuntu (Github!)
-   font: "Inter 18pt",
-   size: 13pt
-)
-#set page(
-   paper: "a4",
-   margin: (x: 1.5cm, y: 1.5cm),
-   numbering: "1/1",
-   footer: context[
-      #set text(8pt)
-      Erste Schritte in Typst, Stefan Wolfrum, Dezember 2025, Version #version #h(1fr) #counter(page).display()
-   ]
-)
-#set par(
-  justify: true,
-  leading: 0.52em,
-)
-#set heading(numbering: "1.", supplement: [Kapitel])
-#set math.equation(numbering: "(1)")
-#set quote(block: true)
-
-// show rules
-#show link: underline
-#show figure.caption: set text(size: 9pt)
-#show heading: it => [
-   #v(0.2em)
-   #it
-   #v(0.8em)  // Abstand nach jeder Überschrift
-]
-#show title: set align(center)
-// Globale Regel für alle Zitate im Dokument
-#show quote.where(block: true): it => block(
-  fill: gray.lighten(80%), // Leichter grauer Hintergrund
-  stroke: (left: 2pt + gray), // Der klassische Balken links
-  inset: (x: 1em, y: 0.5em),  // Innenabstand
-  outset: (y: 0.5em),         // Außenabstand
-  radius: 2pt,                // Leicht abgerundet
-  it // Der eigentliche Inhalt des Zitats
-)
-
-// Hier wählen wir den Font, der für Codeblöcke (raw) genutzt werden soll:
-#show raw: set text(font: "JetBrains Mono", size: 0.95em) 
-
-// Styling für INLINE Code (in Backticks `...`)
-// Wir nutzen 'box', damit es im Textfluss bleibt.
-#show raw.where(block: false): it => box(
-  fill: luma(240),          // Sehr helles Grau (255=Weiß, 0=Schwarz)
-  inset: (x: 3pt, y: 0pt),    // Etwas Luft links/rechts, oben/unten eng
-  outset: (y: 3pt),           // Trick: Box optisch vergrößern ohne Zeilenabstand zu sprengen
-  radius: 3pt,                // Leicht abgerundete Ecken
-  it
-)
-
-
-
-// END OF SETTINGS
-// ---------------
-
-#title[Erste Schritte in Typst]
-#align(center)[
-   Stefan Wolfrum \
-   Bonn, Germany
-]
- */
-
 #show: project.with(
    theTitle: "Erste Schritte in Typst",
    authors: ("Stefan Wolfrum"),
@@ -144,7 +41,6 @@ Natürlich gehen auch mathematische Formeln: $E=m c^2$. $(a+b)^2 = a^2 + 2a b + 
       #box(
          inset: (left: 2em),
          text(fill: gray.darken(25%))[_#lorem(loremwords)_]
-//         text(fill: luma(10))[_#lorem(loremwords)_]
       )
    ],
    grid.vline(

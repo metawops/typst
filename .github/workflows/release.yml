@@ -1,13 +1,11 @@
 name: Publish Release
 run-name: "Release ${{ github.ref_name }}"
 
-# WICHTIG: Erlaubnis zum Schreiben von Releases erteilen
 permissions:
   contents: write
 
 on:
   push:
-    # Feuert nur, wenn ein Tag gepusht wird, der mit 'v' beginnt (z.B. v1.0, v2025.1)
     tags:
       - "v*"
 
@@ -24,26 +22,38 @@ jobs:
         with:
           typst-version: latest
 
-      # 1. PDF Kompilieren (mit Font-Pfad, wie besprochen)
+      # 1. Kompilieren (Generischer Loop)
+      # Findet automatisch 'typst-demo-stefan-1.typ', ignoriert '_lib.typ'
       - name: Compile Document
-        # Falls Sie Umgebungsvariablen für Fonts nutzen, hier einfügen
-        run: typst compile --font-path ./fonts main.typ output.pdf
+        run: |
+          set -e
+          shopt -s nullglob # Verhindert Fehler, falls keine Datei matcht
+          
+          for file in *.typ; do
+            # Ignoriere Dateien, die mit '_' beginnen (z.B. _lib.typ)
+            if [[ "$file" == _* ]]; then
+              echo "Skipping partial file: $file"
+              continue
+            fi
+            
+            echo "Compiling $file..."
+            # Erzeugt automatisch ein PDF mit gleichem Namen (z.B. typst-demo-stefan-1.pdf)
+            typst compile --font-path ./fonts "$file"
+          done
 
-      # 2. Source Code zippen (Best Practice für Reproduzierbarkeit)
-      # Wir exkludieren den .git ordner und das gerade erzeugte PDF
+      # 2. Source Code zippen
+      # Wir exkludieren .git Ordner und ALLE generierten PDFs, damit die nicht doppelt im Zip landen
       - name: Archive Source Code
         run: |
-          zip -r source-code.zip . -x "*.git*" "*.github*" "output.pdf"
+          zip -r source-code.zip . -x "*.git*" "*.github*" "*.pdf"
 
-      # 3. Release erstellen und Dateien hochladen
+      # 3. Release erstellen
+      # Lädt das generierte PDF und das Source-Zip hoch
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          # Wenn true, wird es als "Pre-release" markiert (gut für Beta-Versionen)
           prerelease: false 
-          # Automatische Release Notes generieren (aus Commit Messages)
           generate_release_notes: true
           files: |
-            output.pdf
+            *.pdf
             source-code.zip
-            main.typ
