@@ -20,7 +20,7 @@
 #set text(
 // macOS Fonts:
 // ------------
-  font: "SF Pro Text",
+//  font: "SF Pro Text",
 //  font: "Bodoni 72",
 //  font: "Crimson Pro",
 //  font: "Charter",
@@ -31,6 +31,9 @@
 // Windows Fonts:
 // --------------
 //   font: "Book Antiqua",
+
+// Generic Font that exists on Mac, Windows, Ubuntu (Github!)
+   font: "Inter",
    size: 13pt
 )
 #set page(
