@@ -33,7 +33,7 @@
 //   font: "Book Antiqua",
 
 // Generic Font that exists on Mac, Windows, Ubuntu (Github!)
-   font: "Inter",
+   font: "Inter 18pt",
    size: 13pt
 )
 #set page(
