@@ -110,7 +110,7 @@
  */
 
 #show: project.with(
-   title: "Erste Schritte in Typst",
+   theTitle: "Erste Schritte in Typst",
    authors: ("Stefan Wolfrum"),
    description: [Ein kleines Demo-Dokument, was die Nutzung von Typst demonstrieren soll.],
    location: "Bonn, Germany",
