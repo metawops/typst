@@ -2,7 +2,8 @@
 
 ### New Features
 - Einführung des _codly_ Pakets für saubere Code-Blöcke.
-- Verwendung der Inter 18pt statischen Schrift für perfekte Reproduzierbarkeit.
+- Verwendung des `Inter 18pt` Fonts für perfekte Reproduzierbarkeit.
+- Verwendung des `JetPack Mono` Fonts für Code Blöcke.
 - Saubere Auftrennung in zwei `.typ` Dateien: Hauptdokument und Setup (`_lib.typ`)
 
 ### Fixes
