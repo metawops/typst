@@ -56,4 +56,4 @@ jobs:
           generate_release_notes: true
           files: |
             *.pdf
-            source-code.zip
+            typst-project-files.zip
