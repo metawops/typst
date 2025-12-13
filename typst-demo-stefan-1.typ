@@ -32,8 +32,18 @@ Auch *viel* Text. Gerne auch _relevanten_ Text.
 
 Das Typesetting sieht wirklich wie bei LaTe#sym.chi aus!
 
-Natürlich gehen auch mathematische Formeln: $E=m c^2$. $(a+b)^2 = a^2 + 2a b + b^2$.
+Natürlich gehen auch mathematische Formeln: $E=m c^2$, $(a+b)^2 = a^2 + 2a b + b^2$ oder auch $e^(i pi) + 1 = 0$ sind _inline_ Beispiele.
 
+Hier ein Beispiel für eine eigenständig stehende Formel, die auch automatisch nummeriert wurde. Das Beispiel in @collatz zeigt die Definition der _Hailstone Numbers_ bzw. des sog. #link("https://de.wikipedia.org/wiki/Collatz-Problem")[_Collatz- oder auch 3n+1-Problems_]:
+
+$
+a_(n+1) := cases(
+   a_n / 2 ","  & "wenn" a_n "gerade",
+   3 a_n +1 "," & "wenn" a_n "ungerade"
+)
+$ <collatz>
+
+Wichtig für alleinstehende Block-Formeln wie diese ist, dass man nach dem einleitenden und vor dem abschließenden `$` Zeichen ein Leerzeichen oder einen Zeilenumbruch setzt!
 #v(2em)
 
 #let loremwords = 42
@@ -59,6 +69,7 @@ Natürlich gehen auch mathematische Formeln: $E=m c^2$. $(a+b)^2 = a^2 + 2a b + 
 
 #v(2em)
 
+#pagebreak()
 = Das Zeichen \# in Typst
 Wir müssen kurz über das Zeichen \# sprechen. Solange man im "Textschreibmodus" ist (_markup mode_), muss man Funktionsaufrufe, wie z.B. `#image()` (siehe @bilder) mit dem \# Zeichen beginnen. Das sagt Typst "Achtung, jetzt kommt ein Funktionsaufruf".
 
@@ -99,55 +110,6 @@ Mächtiger als `#image()` ist die Funktion `#figure()`. Mit ihr kann man u.a. da
 
 = Info-Box
 
-/* #let infoboxtitlesize = 14pt
-#let infoboxtextsize = 12pt
-
-#let info-box(title: "INFO", body) = block(
-  width: 100%,
-  inset: 12pt,
-  radius: 8pt,
-  stroke: rgb("#3b82f6"),        // Rahmen blau
-  fill: rgb("#e0f2ff"),          // hellblauer Hintergrund
-)[
-  // Titelzeile
-  #text(
-    weight: "bold",
-    fill: rgb("#1d4ed8"),
-    size: infoboxtitlesize,
-  )[#title]
-
-  #v(8pt)
-
-  // Fließtext
-  #text(
-    size: infoboxtextsize,
-  )[ #body ]
-]
-
-#let code-box(title: "CODE", body) = block(
-  width: 100%,
-  inset: 12pt,
-  radius: 8pt,
-  stroke: rgb("#f6953b"),        // Rahmen blau
-  fill: rgb("#fff8e0"),          // hellblauer Hintergrund
-)[
-  // Titelzeile
-  #text(
-    weight: "bold",
-    fill: rgb("#d87e1d"),
-    size: infoboxtitlesize,
-  )[#title]
-
-  #v(8pt)
-
-  // Fließtext
-  #text(
-    size: infoboxtextsize,
-  )[ #body ]
-]
- */
-
-
 #info-box[
    Man kann auch hübsche Info-Boxen wie diese hier gestalten. Dabei gibt es prinzipiell zwei Möglichkeiten:
 
@@ -155,8 +117,6 @@ Mächtiger als `#image()` ist die Funktion `#figure()`. Mit ihr kann man u.a. da
    + Man definiert sich einmal eine neue Funktion inklusive Parametern und nutzt diese immer wieder, wenn man eine Info-Box einfügen will.
 
    So wie im zweiten Punkt wurde es hier gemacht. Dadurch reduziert sich das Erzeugen dieser Info-Box auf einen Aufruf der selbst definierten Funktion `#info-box` (siehe Quellcode dieses Dokuments).
-
-   Offen ist für mich noch, wo die Definition meiner Funktion `#info-box` stehen kann im Dokument. Denn mitten im Text stört es vielleicht etwas. Ob sie auch z.B. am Ende oder am Anfang des Dokuments stehen kann, muss ich noch ausprobieren.
 ]
 
 #code-box[
@@ -196,6 +156,7 @@ Und dies hier ist einfach eine zweite Art Info-Box, die ich `#code-box` genannt 
 
 = Tabellen
 
+_Kapitel muss noch massiv ausgebaut werden!_
 #table(
    columns: (auto, auto, auto),
    [*Name*], [*Age*], [*Role*],
@@ -309,8 +270,7 @@ Hier folgt ein sogenanntes _Sankey Diagramm_, was mit dem #link("https://github.
 
 Der Input dafür im Typst Dokument ist recht übersichtlich und verständlich:
 
-#code-box(
-```
+```typ
 #import "@preview/ribbony:0.1.0": *
 
 #sankey-diagram((
@@ -322,4 +282,3 @@ Der Input dafür im Typst Dokument ist recht übersichtlich und verständlich:
    "Sales": ("Marketing": 30, "Operations": 20)
 ))
 ```
-)
