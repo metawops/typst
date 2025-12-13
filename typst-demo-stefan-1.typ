@@ -6,19 +6,27 @@
 
 #import "_lib.typ": *
 
+// Jetzt nutzen wir unsere "project" Funktion,
+// die wir in _lib.typ definiert haben und die
+// alle Setups für unser Dokument enthält:
+
 #show: project.with(
    theTitle: "Erste Schritte in Typst",
    authors: ("Stefan Wolfrum"),
    description: [Ein kleines Demo-Dokument, was die Nutzung von Typst demonstrieren soll.],
    location: "Bonn, Germany",
    keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
-   date: datetime(year: 2025, month: 12, day: 6),
-   version: "0.1.251211"
+   date: datetime(year: 2025, month: 12, day: 12),
+   version: "0.1.251213"
 )
 
 = Schrift & Formeln
 
 Hier kann man Text schreiben.
+
+/*
+Die Version des Typst Compilers, der dieses Dokument übersetzt hat, ist: #raw(str(sys.version)).
+*/
 
 Auch *viel* Text. Gerne auch _relevanten_ Text.
 

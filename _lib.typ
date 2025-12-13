@@ -4,6 +4,8 @@
 #import "@preview/lilaq:0.5.0" as lq
 #import "@preview/ribbony:0.1.0": *
 
+// Funktionen
+
 #let info-box(title: "INFO", body) = block(
   width: 100%,
   inset: 12pt,
@@ -48,6 +50,9 @@
   )[ #body ]
 ]
 
+// ---------------------------------------------
+// Unsere Haupt-Funktion "project"
+// Enthält alle Einstellungen für unser Dokument
 
 #let project(
    theTitle: "",
@@ -60,8 +65,6 @@
    doc            // das eigentliche Dokument
 ) = {
    // Ab hier alle Setups
-
-//   let version = "0.1.251211"
 
    // set rules
    set text(lang: "de")
@@ -89,7 +92,7 @@
       numbering: "1/1",
       footer: context[
          #set text(8pt)
-         Erste Schritte in Typst, Stefan Wolfrum, Dezember 2025, Version #version #h(1fr) #counter(page).display()
+         Erste Schritte in Typst, Stefan Wolfrum, Dezember 2025, Dokumentversion #version, Typst-Version #sys.version #h(1fr) #counter(page).display()
       ]
    )
 
@@ -113,12 +116,12 @@
    show title: set align(center)
    // Globale Regel für alle Zitate im Dokument
    show quote.where(block: true): it => block(
-      fill: gray.lighten(80%), // Leichter grauer Hintergrund
+      fill: gray.lighten(80%),    // Leichter grauer Hintergrund
       stroke: (left: 2pt + gray), // Der klassische Balken links
       inset: (x: 1em, y: 0.5em),  // Innenabstand
       outset: (y: 0.5em),         // Außenabstand
       radius: 2pt,                // Leicht abgerundet
-      it // Der eigentliche Inhalt des Zitats
+      it                          // Der eigentliche Inhalt des Zitats
    )
 
    // Hier wählen wir den Font, der für Codeblöcke (raw) genutzt werden soll:
@@ -134,7 +137,6 @@
       it
    )
 
-
    // Codly Initialisierung
    show: codly-init.with()
 
@@ -148,8 +150,8 @@
       inset: 0.32em,
       lang-inset: 0.5em,
       lang-outset: (x: 0.2em, y: 0.4em),
-      display-icon: true,         // Icon aus (nur Text-Label, wie gewünscht)
-      display-name: true,          // Zeigt den Namen der Sprache an
+      display-icon: true,            // Icon aus (nur Text-Label, wie gewünscht)
+      display-name: true,            // Zeigt den Namen der Sprache an
       number-align: right,
       number-format: (n) => text(fill: luma(120), size: 8pt, str(n)), // Nummer-Style
    )
