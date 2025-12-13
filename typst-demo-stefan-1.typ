@@ -71,13 +71,13 @@ Wichtig für alleinstehende Block-Formeln wie diese ist, dass man nach dem einle
 
 #pagebreak()
 = Das Zeichen \# in Typst
-Wir müssen kurz über das Zeichen \# sprechen. Solange man im "Textschreibmodus" ist (_markup mode_), muss man Funktionsaufrufe, wie z.B. `#image()` (siehe @bilder) mit dem \# Zeichen beginnen. Das sagt Typst "Achtung, jetzt kommt ein Funktionsaufruf".
+Wir müssen kurz über das Zeichen \# sprechen. 
 
-Wenn man aber bereits ein einer Funktion ist (_code mode_) und darin nochmal Funktionsaufrufe nutzt – das sehen wir bei `#figure()` in @abbildungen –, dann darf man das Zeichen \# _nicht_ vor den Funktionsnamen setzen!
+Solange man im "Textschreibmodus" ist (_markup mode_), muss man Funktionsaufrufe, wie z.B. `#image()` (siehe @bilder) mit dem \# Zeichen beginnen. Das sagt Typst "Achtung, jetzt kommt ein Funktionsaufruf".
+
+Wenn man aber bereits in einer Funktion ist (_code mode_) und darin nochmal Funktionsaufrufe nutzt – das sehen wir bei `#figure()` in @abbildungen –, dann darf man das Zeichen \# _nicht_ vor den Funktionsnamen setzen!
 
 Das gilt übrigens nicht nur für _Funktionen_, sondern auch für Keywords wie `set`, `show`, `let`, ...
-
-
 
 #quote(attribution: "Alan Turing")[
   We can only see a short distance ahead, but we can see plenty there that needs to be done.
