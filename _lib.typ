@@ -62,6 +62,7 @@
    keywords: (),
    date: none,
    version: "",
+   abstract: none,
    doc            // das eigentliche Dokument
 ) = {
    // Ab hier alle Setups
@@ -116,6 +117,32 @@
       #v(0.8em)  // Abstand nach jeder Überschrift
    ]
    show title: set align(center)
+
+   // Eine Funktion für das "echte" LaTeX-Logo-Feeling definieren
+   let latex-logo = {
+      [L]
+      h(-0.36em)
+      
+      // Das A: Großbuchstabe, verkleinert und hochgestellt
+      box(move(dy: -0.22em)[
+         #text(size: 0.7em)[A]
+      ])
+      
+      h(-0.15em)
+      [T]
+      h(-0.16em)
+      
+      // Das E: Tiefgestellt
+      box(move(dy: 0.22em)[E])
+      
+      h(-0.125em)
+      
+      // Das X: Einfach ein X (steht für das große griechische Chi)
+      [X] 
+   }
+   // Die Regel global aktivieren
+   show "LaTeX": latex-logo
+
    // Globale Regel für alle Zitate im Dokument
    show quote.where(block: true): it => block(
       fill: gray.lighten(80%),    // Leichter grauer Hintergrund
@@ -164,5 +191,16 @@
       #location
    ]
 
+   v(1em) // Vertikaler Abstand
+
+   // Abstract rendern (wenn vorhanden)
+   if abstract != none {
+      pad(x: 3em)[ // Seitliche Einrückung für den Abstract
+         #align(center)[*Zusammenfassung*]
+         #set text(style: "italic", size: 11pt)
+         #abstract
+      ]
+      v(2em) // Abstand zum Haupttext
+   }
    doc
 }

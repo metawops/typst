@@ -17,20 +17,23 @@
    location: "Bonn, Germany",
    keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
    date: datetime(year: 2025, month: 12, day: 12),
-   version: "0.1.251213"
+   version: "0.1.251213",
+   abstract: [Typst ist ein Satzsystem, mit dem man vor allem PDF Dokumente sehr ordentlich setzen kann. Man kann Typst im einfachsten Fall ähnlich wie Markdown benutzen. Es bietet aber weit mehr Möglichkeiten und man kann extrem komplexe Dokumente damit schreiben. Von der Hausarbeit über die Masterarbeit bis zum Buch. Dabei kann es analog zu LaTeX den wissenschaftlichen Satz inklusive mathematischer Formeln perfekt abbilden und ist darüber hinaus über 3rd party Pakete erweiterbar. Typst ist sogar eine Programmiersprache und so kann man zum Beispiel Grafiken algorithmisch direkt innerhalb des Dokuments erstellen.
+   
+   Typst ist Open Source und kann daher frei und kostenlos benutzt werden. Es gibt einen Browser-basierten Editor mit Live-Preview#footnote[Abrufbar unter #link("https://typst.app/app")], aber man kann Typst auch lokal auf dem eigenen Rechner installieren und als Editor mit Live-Preview zum Beispiel VSCode mit der Erweiterung "Tinymist Typst" benutzen.
+   ]
 )
+
+
 
 = Schrift & Formeln
 
-Hier kann man Text schreiben.
 
-/*
-Die Version des Typst Compilers, der dieses Dokument übersetzt hat, ist: #raw(str(sys.version)).
-*/
+Hier kann man Text schreiben.
 
 Auch *viel* Text. Gerne auch _relevanten_ Text.
 
-Das Typesetting sieht wirklich wie bei LaTe#sym.chi aus!
+Das Typesetting sieht wirklich wie bei LaTeX aus!
 
 Natürlich gehen auch mathematische Formeln: $E=m c^2$, $(a+b)^2 = a^2 + 2a b + b^2$ oder auch $e^(i pi) + 1 = 0$ sind _inline_ Beispiele.
 
@@ -164,6 +167,26 @@ _Kapitel muss noch massiv ausgebaut werden!_
    [Bob], [34], [Designer],
    [Charlie], [45], [Manager]
 )
+
+// Wir definieren eine Funktion, die Fibonacci-Zahlen errechnen kann:
+#let count = 18
+#let nums = range(1, count + 1)
+#let fib(n) = (
+  if n <= 2 { 1 }
+  else { fib(n - 1) + fib(n - 2) }
+)
+
+Ein gutes Beispiel für sowohl Tabellen, als auch dass man in Typst selbst dynamisch Inhalte erzeugen kann, ist diese Tabelle mit den ersten #count Fibonacci Zahlen.
+
+#align(center,
+   table(
+      columns: count,
+      fill: (_, row) => if row == 0 { luma(230) } else { none },
+      ..nums.map(n => $F_#n$),
+      ..nums.map(n => text(orange)[#str(fib(n))]),
+   )
+)
+
 
 = Diagramme
 
