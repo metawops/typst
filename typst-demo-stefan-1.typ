@@ -300,21 +300,25 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
 === Die Collatz Zahlenfolge
 
 // --- Konfiguration ---
-#let arrow-color = rgb(0, 110, 220) // Kräftiges Blau für Pfeile
-#let circle-fill = rgb(235, 248, 255) // Helles Blau für den Hintergrund
+#let arrow-color = rgb(0, 110, 220)
+//#let circle-fill = rgb(235, 248, 255)
+#let circle-fill = rgb(235, 248, 255)
 #let text-color = black
-#let circle-stroke = 1.5pt + black
 
-// --- Hilfsfunktion: Pfeilspitze ---
-#let arrow-head(pos, angle, col: arrow-color) = {
+// --- Hilfsfunktion: Pfeilspitze (Skalierbar) ---
+#let arrow-head(pos, angle, scale, col: arrow-color) = {
+  // Wir skalieren auch die Pfeilspitze, damit sie nicht klobig wirkt
+  let w = 3.5pt * scale
+  let h = 8pt * scale
+  
   place(top + left, dx: pos.at(0), dy: pos.at(1),
     rotate(angle, origin: left, 
       polygon(
         fill: col, 
         stroke: none, 
         (0pt, 0pt),     
-        (-3.5pt, -8pt), 
-        (3.5pt, -8pt) 
+        (-w, -h), 
+        (w, -h) 
       )
     )
   )
@@ -336,24 +340,29 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
 }
 
 // --- Visualisierung ---
-#let collatz_visualizer(start_val, max_rows) = {
+// Neuer Parameter: scale (Standard 1.0 = 100%)
+#let collatz_visualizer(start_val, max_rows, scale: 1.0) = {
   let sequence = collatz_all(start_val)
   
-  // Layout-Maße
-  let r-circle = 15pt         
-  let cell-w = 1.5cm          
-  let cell-h = 2.0cm          
-  let col-gap = 1.0cm 
-  let top-offset = 2.5cm      
+  // Alle Maße werden mit dem Faktor multipliziert
+  let r-circle = 17pt * scale        
+  let cell-w = 1.5cm * scale         
+  let cell-h = 2.0cm * scale         
+  let col-gap = 1.0cm * scale
+  let top-offset = 2.5cm * scale     
+  let text-size = 11pt * scale
+  
+  // Auch die Strichstärke sollte skalieren
+  let stroke-w = 1.5pt * scale
+  let circle-stroke = stroke-w + black
   
   // Bezier-Konstante (Kappa)
   let kappa = 0.55228 
 
   let total-cols = int(calc.ceil(sequence.len() / max_rows))
   let total-width = total-cols * (cell-w + col-gap)
-  let total-height = max_rows * cell-h + top-offset + 1.5cm
+  let total-height = max_rows * cell-h + top-offset + 1.5cm * scale
   
-  // Alles zentrieren
   align(center)[
     #block(width: total-width, height: total-height, {
       
@@ -365,12 +374,12 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
         let cx = c * (cell-w + col-gap) + cell-w/2
         let cy = r * cell-h + top-offset
         
-        // 1. Der Kreis (Jetzt mit Hellblau gefüllt)
+        // 1. Der Kreis
         place(top + left, dx: cx - cell-w/2, dy: cy - cell-h/2, 
           box(width: cell-w, height: cell-h, align(center + horizon)[
             #circle(radius: r-circle, stroke: circle-stroke, fill: circle-fill)[
               #set align(center + horizon)
-              #text(size: 11pt, weight: "bold", fill: text-color)[#num]
+              #text(size: text-size, weight: "bold", fill: text-color)[#num]
             ]
           ])
         )
@@ -379,19 +388,19 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
         if i < sequence.len() - 1 {
           
           if r < max_rows - 1 {
-              // === FALL A: Vertikaler Pfeil nach unten ===
-              let start-y = cy + r-circle + 4pt 
-              let end-y   = cy + cell-h - r-circle - 4pt
+              // === FALL A: Vertikaler Pfeil ===
+              let start-y = cy + r-circle + (4pt * scale)
+              let end-y   = cy + cell-h - r-circle - (4pt * scale)
               
               place(curve(
-                stroke: 1.5pt + arrow-color,
+                stroke: stroke-w + arrow-color,
                 curve.move((cx, start-y)),
                 curve.line((cx, end-y))
               ))
-              arrow-head((cx, end-y), 0deg, col: arrow-color)
+              arrow-head((cx, end-y), 0deg, scale, col: arrow-color)
           } 
           else {
-              // === FALL B: "Snake"-Pfeil (Spaltenwechsel) ===
+              // === FALL B: "Snake"-Pfeil ===
               let next-cx = cx + cell-w + col-gap
               let mx      = (cx + next-cx) / 2  
               
@@ -400,25 +409,22 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
               let k = radius * kappa   
 
               // Y-Koordinaten
-              let start-y = cy + r-circle + 4pt
-              let dest-y  = top-offset - r-circle - 4pt
+              let start-y = cy + r-circle + (4pt * scale)
+              let dest-y  = top-offset - r-circle - (4pt * scale)
               
-              let turn-bottom-y = start-y + 20pt 
-              let turn-top-y    = dest-y - 20pt  
+              let turn-bottom-y = start-y + (20pt * scale)
+              let turn-top-y    = dest-y - (20pt * scale)
               
               let arc-bottom = turn-bottom-y + radius
               let arc-top    = turn-top-y - radius
 
               place(curve(
-                stroke: 1.5pt + arrow-color,
+                stroke: stroke-w + arrow-color,
                 
-                // 1. Start
                 curve.move((cx, start-y)),
-                
-                // 2. Gerade runter
                 curve.line((cx, turn-bottom-y)),
                 
-                // 3. Unterer Bogen
+                // Unterer Bogen
                 curve.cubic(
                   (cx, turn-bottom-y + k),          
                   (cx + radius - k, arc-bottom),    
@@ -430,10 +436,9 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
                   (mx, turn-bottom-y)               
                 ),
                 
-                // 4. Gerade hoch (Gutter)
                 curve.line((mx, turn-top-y)),
                 
-                // 5. Oberer Bogen
+                // Oberer Bogen
                 curve.cubic(
                   (mx, turn-top-y - k),             
                   (mx + radius - k, arc-top),       
@@ -445,11 +450,10 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
                   (next-cx, turn-top-y)             
                 ),
                 
-                // 6. Finaler Drop
                 curve.line((next-cx, dest-y))
               ))
               
-              arrow-head((next-cx, dest-y), 0deg, col: arrow-color)
+              arrow-head((next-cx, dest-y), 0deg, scale, col: arrow-color)
           }
         }
       }
@@ -457,12 +461,12 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
   ]
 }
 
-#let startzahl = 15
-#let diagrammZeilen = 3
+#let startzahl = 27
+#let diagrammZeilen = 10
 #let periodenlaenge = collatz_all(startzahl).len()
 #figure(
-   collatz_visualizer(startzahl, diagrammZeilen),
-   caption: [$3n+1$ Zahlenfolge für die Startzahl #startzahl mit #periodenlaenge Zahlen]
+   collatz_visualizer(startzahl, diagrammZeilen, scale: 0.5),
+   caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
 ) <collatzdiagramm>
 
 
