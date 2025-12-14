@@ -28,7 +28,6 @@
 
 = Schrift & Formeln
 
-
 Hier kann man Text schreiben.
 
 Auch *viel* Text. Gerne auch _relevanten_ Text.
@@ -37,7 +36,7 @@ Das Typesetting sieht wirklich wie bei LaTeX aus!
 
 Natürlich gehen auch mathematische Formeln: $E=m c^2$, $(a+b)^2 = a^2 + 2a b + b^2$ oder auch $e^(i pi) + 1 = 0$ sind _inline_ Beispiele.
 
-Hier ein Beispiel für eine eigenständig stehende Formel, die auch automatisch nummeriert wurde. Das Beispiel in @collatz zeigt die Definition der _Hailstone Numbers_ bzw. des sog. #link("https://de.wikipedia.org/wiki/Collatz-Problem")[_Collatz- oder auch 3n+1-Problems_]:
+Hier ein Beispiel für eine eigenständig stehende Formel, die auch automatisch nummeriert wurde. Das Beispiel in @collatz zeigt die Definition der _Hailstone Numbers_ bzw. des sog. #link("https://de.wikipedia.org/wiki/Collatz-Problem")[_Collatz- oder auch 3n+1-Problems_], was immer noch ungelöst ist:
 
 $
 a_(n+1) := cases(
@@ -45,6 +44,8 @@ a_(n+1) := cases(
    3 a_n +1 "," & "wenn" a_n "ungerade"
 )
 $ <collatz>
+
+Wir werden in @programmierung in @collatzdiagramm noch ein dynamisch erzeugtes (also in Typst programmiertes) Diagramm dazu sehen.
 
 Wichtig für alleinstehende Block-Formeln wie diese ist, dass man nach dem einleitenden und vor dem abschließenden `$` Zeichen ein Leerzeichen oder einen Zeilenumbruch setzt!
 #v(2em)
@@ -176,6 +177,24 @@ _Kapitel muss noch massiv ausgebaut werden!_
   else { fib(n - 1) + fib(n - 2) }
 )
 
+// Die Funktion collatz(n) liefert die Folgezahl zu n zurück
+#let collatz_seq(start, count) = {
+  let seq = (start,) // Wir starten ein Array mit dem Startwert
+  let current = start
+  
+  // Solange das Array noch nicht die gewünschte Länge hat...
+  while seq.len() < count {
+    if calc.even(current) {
+      current = int(current / 2) // Division für gerade Zahlen
+    } else {
+      current = current * 3 + 1  // 3n + 1 für ungerade Zahlen
+    }
+    seq.push(current) // Den neuen Wert an das Array anhängen
+  }
+  
+  return seq
+}
+
 Ein gutes Beispiel für sowohl Tabellen, als auch dass man in Typst selbst dynamisch Inhalte erzeugen kann, ist diese Tabelle mit den ersten #count Fibonacci Zahlen.
 
 #align(center,
@@ -186,7 +205,6 @@ Ein gutes Beispiel für sowohl Tabellen, als auch dass man in Typst selbst dynam
       ..nums.map(n => text(orange)[#str(fib(n))]),
    )
 )
-
 
 = Diagramme
 
@@ -236,7 +254,9 @@ Ein bisschen anspruchsvoller geht es auch, man beachte z.B. die x-Achsen-Beschri
 )
 
 #pagebreak()
-== Programmierte Grafiken
+== Programmierte Grafiken <programmierung>
+
+=== Ein Fraktal
 Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vektorgrafik, sondern wurde im Dokument dynamisch durch Typst Code erzeugt.
 
 #let koch-snowflake(n) = {
@@ -276,6 +296,176 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
    ),
    caption: [Koch'sche Schneeflocke (ein Fraktal)]
 )
+
+=== Die Collatz Zahlenfolge
+
+// --- Konfiguration ---
+#let arrow-color = rgb(0, 110, 220) // Kräftiges Blau für Pfeile
+#let circle-fill = rgb(235, 248, 255) // Helles Blau für den Hintergrund
+#let text-color = black
+#let circle-stroke = 1.5pt + black
+
+// --- Hilfsfunktion: Pfeilspitze ---
+#let arrow-head(pos, angle, col: arrow-color) = {
+  place(top + left, dx: pos.at(0), dy: pos.at(1),
+    rotate(angle, origin: left, 
+      polygon(
+        fill: col, 
+        stroke: none, 
+        (0pt, 0pt),     
+        (-3.5pt, -8pt), 
+        (3.5pt, -8pt) 
+      )
+    )
+  )
+}
+
+// --- Collatz Logik ---
+#let collatz_all(start) = {
+  let seq = (start,)
+  let current = start
+  while current != 1 {
+    if calc.even(current) {
+      current = int(current / 2)
+    } else {
+      current = current * 3 + 1
+    }
+    seq.push(current)
+  }
+  return seq
+}
+
+// --- Visualisierung ---
+#let collatz_visualizer(start_val, max_rows) = {
+  let sequence = collatz_all(start_val)
+  
+  // Layout-Maße
+  let r-circle = 15pt         
+  let cell-w = 1.5cm          
+  let cell-h = 2.0cm          
+  let col-gap = 1.0cm 
+  let top-offset = 2.5cm      
+  
+  // Bezier-Konstante (Kappa)
+  let kappa = 0.55228 
+
+  let total-cols = int(calc.ceil(sequence.len() / max_rows))
+  let total-width = total-cols * (cell-w + col-gap)
+  let total-height = max_rows * cell-h + top-offset + 1.5cm
+  
+  // Alles zentrieren
+  align(center)[
+    #block(width: total-width, height: total-height, {
+      
+      for (i, num) in sequence.enumerate() {
+        let c = int(i / max_rows)
+        let r = calc.rem(i, max_rows)
+        
+        // Mittelpunkt des aktuellen Kreises
+        let cx = c * (cell-w + col-gap) + cell-w/2
+        let cy = r * cell-h + top-offset
+        
+        // 1. Der Kreis (Jetzt mit Hellblau gefüllt)
+        place(top + left, dx: cx - cell-w/2, dy: cy - cell-h/2, 
+          box(width: cell-w, height: cell-h, align(center + horizon)[
+            #circle(radius: r-circle, stroke: circle-stroke, fill: circle-fill)[
+              #set align(center + horizon)
+              #text(size: 11pt, weight: "bold", fill: text-color)[#num]
+            ]
+          ])
+        )
+        
+        // 2. Die Verbindungen
+        if i < sequence.len() - 1 {
+          
+          if r < max_rows - 1 {
+              // === FALL A: Vertikaler Pfeil nach unten ===
+              let start-y = cy + r-circle + 4pt 
+              let end-y   = cy + cell-h - r-circle - 4pt
+              
+              place(curve(
+                stroke: 1.5pt + arrow-color,
+                curve.move((cx, start-y)),
+                curve.line((cx, end-y))
+              ))
+              arrow-head((cx, end-y), 0deg, col: arrow-color)
+          } 
+          else {
+              // === FALL B: "Snake"-Pfeil (Spaltenwechsel) ===
+              let next-cx = cx + cell-w + col-gap
+              let mx      = (cx + next-cx) / 2  
+              
+              let width = mx - cx      
+              let radius = width / 2   
+              let k = radius * kappa   
+
+              // Y-Koordinaten
+              let start-y = cy + r-circle + 4pt
+              let dest-y  = top-offset - r-circle - 4pt
+              
+              let turn-bottom-y = start-y + 20pt 
+              let turn-top-y    = dest-y - 20pt  
+              
+              let arc-bottom = turn-bottom-y + radius
+              let arc-top    = turn-top-y - radius
+
+              place(curve(
+                stroke: 1.5pt + arrow-color,
+                
+                // 1. Start
+                curve.move((cx, start-y)),
+                
+                // 2. Gerade runter
+                curve.line((cx, turn-bottom-y)),
+                
+                // 3. Unterer Bogen
+                curve.cubic(
+                  (cx, turn-bottom-y + k),          
+                  (cx + radius - k, arc-bottom),    
+                  (cx + radius, arc-bottom)         
+                ),
+                curve.cubic(
+                  (cx + radius + k, arc-bottom),    
+                  (mx, turn-bottom-y + k),          
+                  (mx, turn-bottom-y)               
+                ),
+                
+                // 4. Gerade hoch (Gutter)
+                curve.line((mx, turn-top-y)),
+                
+                // 5. Oberer Bogen
+                curve.cubic(
+                  (mx, turn-top-y - k),             
+                  (mx + radius - k, arc-top),       
+                  (mx + radius, arc-top)            
+                ),
+                curve.cubic(
+                  (mx + radius + k, arc-top),       
+                  (next-cx, turn-top-y - k),        
+                  (next-cx, turn-top-y)             
+                ),
+                
+                // 6. Finaler Drop
+                curve.line((next-cx, dest-y))
+              ))
+              
+              arrow-head((next-cx, dest-y), 0deg, col: arrow-color)
+          }
+        }
+      }
+    })
+  ]
+}
+
+#let startzahl = 15
+#let diagrammZeilen = 3
+#let periodenlaenge = collatz_all(startzahl).len()
+#figure(
+   collatz_visualizer(startzahl, diagrammZeilen),
+   caption: [$3n+1$ Zahlenfolge für die Startzahl #startzahl mit #periodenlaenge Zahlen]
+) <collatzdiagramm>
+
+
 
 == Diagramme mit Zusatzpaketen
 Hier folgt ein sogenanntes _Sankey Diagramm_, was mit dem #link("https://github.com/solstice23/typst-ribbony")[Paket _Ribbony_] erzeugt wurde:

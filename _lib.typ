@@ -109,7 +109,7 @@
    // show rules
    //show link: underline
    show link: set text(fill: blue)
-   show figure.caption: set text(size: 9pt)
+   show figure.caption: set text(size: 11pt)
    show math.equation.where(block: true): set text(size: 1.1em)
    show heading: it => [
       #v(0.2em)
