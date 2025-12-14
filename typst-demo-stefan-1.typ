@@ -88,7 +88,7 @@ Das gilt übrigens nicht nur für _Funktionen_, sondern auch für Keywords wie `
 
 Bilder können im einfachsten Fall über die Funktion `#image()` eingebettet werden. Dabei werden viele Formate unterstützt. Neben den Bitmap-Formaten *PNG*, *JPG*, *GIF*, *WebP* auch das Vektorformat *SVG* und sogar *PDF*. Hier ein auf 50% verkleinertes, eingebettetes JPG Foto des Raspberry Pi _Compute Module 5 (CM5)_:
 
-#image("cm5.jpeg", width: 85%)
+#image("img/cm5.jpeg", width: 85%)
 
 Die Funktion `image()` eignet sich für das schnelle Einbetten eines Bildes, hat aber zunächst ein paar Nachteile, allen voran: linksbündig, keine Bildunterschrift.
 
@@ -101,7 +101,7 @@ Da hilft uns die `figure()` Funktion aus @abbildungen.
 Mächtiger als `#image()` ist die Funktion `#figure()`. Mit ihr kann man u.a. das Alignment steuern und auch Bildunterschriften realisieren, wie hier in @abb_hybrid:
 
 #figure(
-   image("output_plot-02.png", width: 100%),
+   image("img/output_plot-02.png", width: 100%),
    caption: [Gedämpfte Schwingung, errechnet auf dem Analogcomputer THAT]
 ) <abb_hybrid>
 
