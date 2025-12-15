@@ -25,7 +25,6 @@
 )
 
 
-
 = Schrift & Formeln <formeln>
 
 Hier kann man Text schreiben.
@@ -170,32 +169,16 @@ _Kapitel muss noch massiv ausgebaut werden!_
 )
 
 // Wir definieren eine Funktion, die Fibonacci-Zahlen errechnen kann:
-#let count = 18
-#let nums = range(1, count + 1)
 #let fib(n) = (
   if n <= 2 { 1 }
   else { fib(n - 1) + fib(n - 2) }
 )
 
-// Die Funktion collatz(n) liefert die Folgezahl zu n zurück
-#let collatz_seq(start, count) = {
-  let seq = (start,) // Wir starten ein Array mit dem Startwert
-  let current = start
-  
-  // Solange das Array noch nicht die gewünschte Länge hat...
-  while seq.len() < count {
-    if calc.even(current) {
-      current = int(current / 2) // Division für gerade Zahlen
-    } else {
-      current = current * 3 + 1  // 3n + 1 für ungerade Zahlen
-    }
-    seq.push(current) // Den neuen Wert an das Array anhängen
-  }
-  
-  return seq
-}
+#let count = 17
 
 Ein gutes Beispiel für sowohl Tabellen, als auch dass man in Typst selbst dynamisch Inhalte erzeugen kann, ist diese Tabelle mit den ersten #count Fibonacci Zahlen.
+
+#let nums = range(1, count + 1)
 
 #align(center,
    table(
