@@ -104,6 +104,7 @@
    )
    set heading(numbering: "1.", supplement: [Kapitel])
    set math.equation(numbering: "(1)")
+   set figure(gap: 0.3em)
    set quote(block: true)
 
    // show rules

@@ -26,7 +26,7 @@
 
 
 
-= Schrift & Formeln
+= Schrift & Formeln <formeln>
 
 Hier kann man Text schreiben.
 
@@ -45,7 +45,7 @@ a_(n+1) := cases(
 )
 $ <collatz>
 
-Wir werden in @programmierung in @collatzdiagramm noch ein dynamisch erzeugtes (also in Typst programmiertes) Diagramm dazu sehen.
+Wir werden in @programmierung noch dynamisch erzeugte (also in Typst programmierte) Diagramme dazu sehen.
 
 Wichtig für alleinstehende Block-Formeln wie diese ist, dass man nach dem einleitenden und vor dem abschließenden `$` Zeichen ein Leerzeichen oder einen Zeilenumbruch setzt!
 #v(2em)
@@ -285,14 +285,14 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
 
 #figure(
    lq.diagram(
-   width: 4cm, height: 5cm,
-   xaxis: (ticks: none),
-   yaxis: (ticks: none),
+      width: 4cm, height: 5cm,
+      xaxis: (ticks: none, stroke: none),
+      yaxis: (ticks: none, stroke: none),
 
-   lq.path(
-      ..koch-snowflake(4),
-      fill: blue, closed: true
-   )
+      lq.path(
+         ..koch-snowflake(4),
+         fill: blue, closed: true
+      )
    ),
    caption: [Koch'sche Schneeflocke (ein Fraktal)]
 )
@@ -300,16 +300,15 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
 === Die Collatz Zahlenfolge
 
 // --- Konfiguration ---
-#let arrow-color = rgb(0, 110, 220)
-//#let circle-fill = rgb(235, 248, 255)
-#let circle-fill = rgb(235, 248, 255)
+//#let arrow-color = rgb(0, 110, 220) 
+#let arrow-color = black
+#let circle-fill = rgb("#f5ebff") 
 #let text-color = black
 
-// --- Hilfsfunktion: Pfeilspitze (Skalierbar) ---
+// --- Hilfsfunktion: Pfeilspitze ---
 #let arrow-head(pos, angle, scale, col: arrow-color) = {
-  // Wir skalieren auch die Pfeilspitze, damit sie nicht klobig wirkt
   let w = 3.5pt * scale
-  let h = 8pt * scale
+  let h = 8pt * scale 
   
   place(top + left, dx: pos.at(0), dy: pos.at(1),
     rotate(angle, origin: left, 
@@ -340,41 +339,54 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
 }
 
 // --- Visualisierung ---
-// Neuer Parameter: scale (Standard 1.0 = 100%)
 #let collatz_visualizer(start_val, max_rows, scale: 1.0) = {
   let sequence = collatz_all(start_val)
   
-  // Alle Maße werden mit dem Faktor multipliziert
-  let r-circle = 17pt * scale        
+  // 1. Grundmaße definieren
+  let r-circle = 15pt * scale        
   let cell-w = 1.5cm * scale         
   let cell-h = 2.0cm * scale         
   let col-gap = 1.0cm * scale
-  let top-offset = 2.5cm * scale     
   let text-size = 11pt * scale
-  
-  // Auch die Strichstärke sollte skalieren
   let stroke-w = 1.5pt * scale
+  let arrow-h = 8pt * scale 
   let circle-stroke = stroke-w + black
   
-  // Bezier-Konstante (Kappa)
+  // 2. Geometrie des Bogens berechnen
+  // Der Bogen spannt sich über die Hälfte des Abstands zwischen Spaltenmitte und Guttermitte.
+  // Radius = (Breite Zelle + Breite Lücke) / 4
+  let arc-radius = (cell-w + col-gap) / 4
   let kappa = 0.55228 
 
+  // 3. Dynamische Ränder berechnen (statt fester Werte)
+  // Wir brauchen oben Platz für: Radius des Kreises + Radius des Bogens + Puffer
+  let top-buffer = 10pt * scale // Kleiner Sicherheitsabstand
+  let top-offset = r-circle + arc-radius + top-buffer
+  
+  // Berechnete Gesamthöhe:
+  // (Anzahl Zeilen * Zeilenhöhe) + Platz oben + Platz unten für den Bogen
   let total-cols = int(calc.ceil(sequence.len() / max_rows))
   let total-width = total-cols * (cell-w + col-gap)
-  let total-height = max_rows * cell-h + top-offset + 1.5cm * scale
+  
+  // Der letzte Kreis endet bei: (max_rows * cell-h) - (cell-h / 2) + top-offset + r-circle
+  // Wir machen es einfacher: Block-Höhe = Nutzlast + Ränder
+  // Nutzlast-Höhe ist etwa: (max_rows - 1) * cell-h
+  // Dazu oben 'top-offset' und unten Platz für den unteren Bogen (arc-radius + buffer)
+  let total-height = (max_rows - 1) * cell-h + top-offset + r-circle + arc-radius + top-buffer
   
   align(center)[
+    // Debug-Rahmen (optional, zum Testen einkommentieren):
+    // #box(stroke: 0.5pt + red, 
     #block(width: total-width, height: total-height, {
       
       for (i, num) in sequence.enumerate() {
         let c = int(i / max_rows)
         let r = calc.rem(i, max_rows)
         
-        // Mittelpunkt des aktuellen Kreises
         let cx = c * (cell-w + col-gap) + cell-w/2
         let cy = r * cell-h + top-offset
         
-        // 1. Der Kreis
+        // Kreis zeichnen
         place(top + left, dx: cx - cell-w/2, dy: cy - cell-h/2, 
           box(width: cell-w, height: cell-h, align(center + horizon)[
             #circle(radius: r-circle, stroke: circle-stroke, fill: circle-fill)[
@@ -384,82 +396,161 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
           ])
         )
         
-        // 2. Die Verbindungen
         if i < sequence.len() - 1 {
           
           if r < max_rows - 1 {
-              // === FALL A: Vertikaler Pfeil ===
+              // === FALL A: Vertikal ===
               let start-y = cy + r-circle + (4pt * scale)
               let end-y   = cy + cell-h - r-circle - (4pt * scale)
               
               place(curve(
                 stroke: stroke-w + arrow-color,
                 curve.move((cx, start-y)),
-                curve.line((cx, end-y))
+                curve.line((cx, end-y - arrow-h)) 
               ))
               arrow-head((cx, end-y), 0deg, scale, col: arrow-color)
           } 
           else {
-              // === FALL B: "Snake"-Pfeil ===
+              // === FALL B: Snake ===
               let next-cx = cx + cell-w + col-gap
               let mx      = (cx + next-cx) / 2  
               
               let width = mx - cx      
-              let radius = width / 2   
+              let radius = width / 2  // Identisch mit arc-radius von oben 
               let k = radius * kappa   
 
-              // Y-Koordinaten
               let start-y = cy + r-circle + (4pt * scale)
               let dest-y  = top-offset - r-circle - (4pt * scale)
-              
-              let turn-bottom-y = start-y + (20pt * scale)
-              let turn-top-y    = dest-y - (20pt * scale)
-              
-              let arc-bottom = turn-bottom-y + radius
-              let arc-top    = turn-top-y - radius
+              let arrow-base-y = dest-y - arrow-h
+
+              let arc-bottom = start-y + radius
+              let arc-top    = arrow-base-y - radius
 
               place(curve(
                 stroke: stroke-w + arrow-color,
                 
                 curve.move((cx, start-y)),
-                curve.line((cx, turn-bottom-y)),
                 
                 // Unterer Bogen
                 curve.cubic(
-                  (cx, turn-bottom-y + k),          
+                  (cx, start-y + k),                
                   (cx + radius - k, arc-bottom),    
                   (cx + radius, arc-bottom)         
                 ),
                 curve.cubic(
                   (cx + radius + k, arc-bottom),    
-                  (mx, turn-bottom-y + k),          
-                  (mx, turn-bottom-y)               
+                  (mx, start-y + k),                
+                  (mx, start-y) 
                 ),
                 
-                curve.line((mx, turn-top-y)),
+                curve.line((mx, arrow-base-y)),
                 
                 // Oberer Bogen
                 curve.cubic(
-                  (mx, turn-top-y - k),             
+                  (mx, arrow-base-y - k),           
                   (mx + radius - k, arc-top),       
                   (mx + radius, arc-top)            
                 ),
                 curve.cubic(
                   (mx + radius + k, arc-top),       
-                  (next-cx, turn-top-y - k),        
-                  (next-cx, turn-top-y)             
+                  (next-cx, arrow-base-y - k),      
+                  (next-cx, arrow-base-y) 
                 ),
-                
-                curve.line((next-cx, dest-y))
               ))
-              
               arrow-head((next-cx, dest-y), 0deg, scale, col: arrow-color)
           }
         }
       }
     })
+    // ) // Ende Debug-Box
   ]
 }
+
+#let collatz_visualizer_horizontal(start_val, scale: 1.0) = {
+  let sequence = collatz_all(start_val)
+  
+  // Maße
+  let r-circle = 15pt * scale        
+  let cell-w = 1.5cm * scale         
+  let cell-h = 1.5cm * scale 
+  let col-gap = 0.6cm * scale 
+  
+  // NEU: Hier stellst du den Abstand oben/unten ein
+  let v-padding = 0.8cm * scale  
+  
+  let text-size = 11pt * scale
+  let stroke-w = 1.5pt * scale
+  let circle-stroke = stroke-w + black
+  let arrow-h = 8pt * scale 
+
+  // Gesamtdimensionen berechnen
+  let total-width = sequence.len() * cell-w + (sequence.len() - 1) * col-gap
+  
+  // NEU: Höhe inklusive Puffer oben und unten
+  let total-height = cell-h + (2 * v-padding) 
+
+  align(center)[
+    #block(width: total-width, height: total-height, { // inset wäre auch möglich, aber so ist es präziser
+      
+      for (i, num) in sequence.enumerate() {
+        let cx = i * (cell-w + col-gap) + cell-w/2
+        
+        // NEU: Vertikale Mitte basiert jetzt auf der vergrößerten Box
+        let cy = total-height / 2 
+        
+        // 1. Kreis
+        place(top + left, dx: cx - cell-w/2, dy: cy - cell-h/2, 
+          box(width: cell-w, height: cell-h, align(center + horizon)[
+            #circle(radius: r-circle, stroke: circle-stroke, fill: circle-fill)[
+              #set align(center + horizon)
+              #text(size: text-size, weight: "bold", fill: text-color)[#num]
+            ]
+          ])
+        )
+        
+        // 2. Horizontaler Pfeil
+        if i < sequence.len() - 1 {
+           let next-cx = (i + 1) * (cell-w + col-gap) + cell-w/2
+           
+           let start-x = cx + r-circle + (4pt * scale)
+           let dest-x = next-cx - r-circle - (4pt * scale)
+           
+           place(curve(
+             stroke: stroke-w + arrow-color,
+             curve.move((start-x, cy)),
+             curve.line((dest-x - arrow-h, cy))
+           ))
+           
+           arrow-head((dest-x, cy), -90deg, scale, col: arrow-color)
+        }
+      }
+    })
+  ]
+}
+
+Die mathematische Definition der Collatz-Zahlenfolge haben wir schon in @formeln in @collatz gesehen. Sie sei hier noch einmal wiederholt:
+
+$
+a_(n+1) := cases(
+   a_n / 2 ","  & "wenn" a_n "gerade",
+   3 a_n +1 "," & "wenn" a_n "ungerade"
+)
+$
+
+Zu der Zahlenfolge wurde schon viel geforscht und veröffentlicht. Es gibt unzählige Visualisierungsmöglichkeiten, wir zeigen hier nur die naheliegendste, nämlich die Abfolge der Zahlen nach einer gegebenen Startzahl.
+
+Kommen wir bei der Zahl 1 an, hören wir auf, denn würden wir die Bildungsgesetze weiter anwenden, landen wir in der Endlosschleife $1 #sym.arrow 4 #sym.arrow 2 #sym.arrow 1$.
+
+Beginnen wir mit der Startzahl 5, ergibt sich diese aus 6 Zahlen bestehende Folge:
+
+#let startzahl = 5
+#let periodenlaenge = collatz_all(startzahl).len()
+#figure(
+   collatz_visualizer_horizontal(startzahl, scale: 1.1),
+   caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
+) <collatzdiagramm1>
+
+
 
 #let startzahl = 27
 #let diagrammZeilen = 10
@@ -467,7 +558,7 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
 #figure(
    collatz_visualizer(startzahl, diagrammZeilen, scale: 0.5),
    caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
-) <collatzdiagramm>
+) <collatzdiagramm3>
 
 
 
