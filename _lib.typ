@@ -92,7 +92,7 @@
       margin: (x: 1.5cm, y: 1.5cm),
       numbering: "1/1",
       footer: context[
-         #set text(8pt)
+         #set text(8pt, fill: luma(120))
          Erste Schritte in Typst, Stefan Wolfrum, Dezember 2025, Dokumentversion #version, Typst-Version #sys.version #h(1fr) #counter(page).display()
       ]
    )
