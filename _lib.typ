@@ -104,13 +104,14 @@
    )
    set heading(numbering: "1.", supplement: [Kapitel])
    set math.equation(numbering: "(1)")
-   set figure(gap: 0.3em)
+   set figure(gap: 0.1em)
    set quote(block: true)
 
    // show rules
    //show link: underline
    show link: set text(fill: blue)
    show figure.caption: set text(size: 11pt)
+   show figure: set block(above: 2em, below: 4.5em)
    show math.equation.where(block: true): set text(size: 1.1em)
    show heading: it => [
       #v(0.2em)

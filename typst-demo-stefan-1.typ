@@ -527,22 +527,24 @@ Zu der Zahlenfolge wurde schon viel geforscht und veröffentlicht. Es gibt unzä
 
 Kommen wir bei der Zahl 1 an, hören wir auf, denn würden wir die Bildungsgesetze weiter anwenden, landen wir in der Endlosschleife $1 #sym.arrow 4 #sym.arrow 2 #sym.arrow 1$.
 
-Beginnen wir mit der Startzahl 5, ergibt sich diese aus 6 Zahlen bestehende Folge:
-
 #let startzahl = 5
 #let periodenlaenge = collatz_all(startzahl).len()
+
+Beginnen wir mit der Startzahl #startzahl, ergibt sich diese aus #periodenlaenge Zahlen bestehende Folge:
+
 #figure(
    collatz_visualizer_horizontal(startzahl, scale: 1.1),
    caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
 ) <collatzdiagramm1>
 
-
-
-#let startzahl = 27
-#let diagrammZeilen = 10
+#let startzahl = 11
+#let diagrammZeilen = 3
 #let periodenlaenge = collatz_all(startzahl).len()
+
+Für die nur geringfügig höhere Startzahl #startzahl ergibt sich schon eine Folge mit #periodenlaenge Zahlen:
+
 #figure(
-   collatz_visualizer(startzahl, diagrammZeilen, scale: 0.6),
+   collatz_visualizer(startzahl, diagrammZeilen, scale: 1.1),
    caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
 ) <collatzdiagramm2>
 
