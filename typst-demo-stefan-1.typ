@@ -323,7 +323,7 @@ Kommen wir bei der Zahl 1 an, hören wir auf, denn würden wir die Bildungsgeset
 #let startzahl = 5
 #let periodenlaenge = collatz_all(startzahl).len()
 
-Beginnen wir mit der Startzahl #startzahl, ergibt sich diese aus #periodenlaenge Zahlen bestehende Folge:
+Beginnen wir mit der Startzahl #startzahl, ergibt sich diese, aus #periodenlaenge Zahlen bestehende Folge:
 
 #figure(
    collatz_visualizer_horizontal(startzahl, scale: 1),
