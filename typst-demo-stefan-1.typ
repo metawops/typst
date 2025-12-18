@@ -347,7 +347,7 @@ Für die nur geringfügig höhere Startzahl #startzahl ergibt sich schon eine Fo
 Aber so richtig krass wird's, wenn wir die kaum größere Startzahl #startzahl wählen. Denn auf einmal eskaliert alles, die Folge hat nun satte #periodenlaenge Glieder und unser Diagramm müssen wir extra verkleinern, sonst passt es hier nicht hin.
 
 #figure(
-   collatz_visualizer(startzahl, diagrammZeilen, scale: 0.52),
+   collatz_visualizer(startzahl, diagrammZeilen, scale: 0.57),
    caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
 ) <collatzdiagramm3>
 
@@ -393,7 +393,9 @@ Alle drei Funktionen sind ebenfalls im Typst Quelldokument implementiert, aber z
 Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com/metawops/typst")[liegt auf Github], so dass man jederzeit reinschauen kann, wenn man sich für die Implementierungsdetails interessiert. Die Funktionen habe ich übrigens in die Hilfs-/Library-Typst-Datei `_lib.typ` ausgelagert, damit sie das eigentliche Quelldokument nicht zu unübersichtlich werden lassen.
 
 == Diagramme mit Zusatzpaketen
-Es gibt nahezu 500 Zusatzpakete für Typst, darunter zahlreiche, die beim Erzeugen von Diagrammen helfen. Hier folgt ein sogenanntes _Sankey Diagramm_, was mit dem #link("https://github.com/solstice23/typst-ribbony")[Paket _Ribbony_] erzeugt wurde:
+Es gibt nahezu 500 #link("https://typst.app/universe/search/?kind=packages")[Zusatzpakete für Typst], darunter zahlreiche, die beim Erzeugen von Diagrammen helfen.
+
+Ich habe mal beispielhaft das Paket #link("https://github.com/solstice23/typst-ribbony")[_Ribbony_] herausgepickt. Damit kann man u.a. ein sogenanntes _Sankey Diagramm_ erzeugen:
 
 //#import "@preview/ribbony:0.1.0": *
 

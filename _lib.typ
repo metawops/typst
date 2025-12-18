@@ -134,7 +134,7 @@
 }
 
 // --- Visualisierung ---
-#let collatz_visualizer(start_val, max_rows, scale: 1.0) = {
+#let collatz_visualizer(start_val, max_rows, scale: 1.0, padding: 10pt) = {
    let sequence = collatz_all(start_val)
    
    // 1. Grundmaße definieren
@@ -146,7 +146,9 @@
    let stroke-w = 2.5pt * scale
    let arrow-h = 8pt * scale 
    let circle-stroke-style = stroke-w + circle-stroke-color
-   let v-padding = 0.5cm * scale  
+   let v-padding = 0.5cm * scale
+   let pad = padding * scale
+   let dist = 4pt * scale  // Den Abstand zum Kreis (4pt) benennen wir
 
    // 2. Geometrie des Bogens berechnen
    // Der Bogen spannt sich über die Hälfte des Abstands zwischen Spaltenmitte und Guttermitte.
@@ -158,19 +160,20 @@
    // Wir brauchen oben Platz für: Radius des Kreises + Radius des Bogens + Puffer
    let top-buffer = 10pt * scale // Kleiner Sicherheitsabstand oben und unten
    let bottom-padding = 0pt
-   let top-offset = r-circle + arc-radius + top-buffer
+   let top-offset = pad + r-circle + dist + arc-radius + arrow-h
    
    // Berechnete Gesamthöhe:
    // (Anzahl Zeilen * Zeilenhöhe) + Platz oben + Platz unten für den Bogen
    let total-cols = int(calc.ceil(sequence.len() / max_rows))
-   let total-width = total-cols * (cell-w + col-gap)
-   
+   //let total-width = total-cols * (cell-w + col-gap)
+   let total-width = total-cols * cell-w + (calc.max(0, total-cols - 1) * col-gap) + 2 * pad
+
    // Der letzte Kreis endet bei: (max_rows * cell-h) - (cell-h / 2) + top-offset + r-circle
    // Wir machen es einfacher: Block-Höhe = Nutzlast + Ränder
    // Nutzlast-Höhe ist etwa: (max_rows - 1) * cell-h
    // Dazu oben 'top-offset' und unten Platz für den unteren Bogen (arc-radius + buffer)
-   let total-height = (max_rows - 1) * cell-h + top-offset + r-circle + top-buffer + arc-radius + bottom-padding
-   
+   let total-height = (max_rows - 1) * cell-h + top-offset + r-circle + dist + arc-radius + pad
+
    align(center)[
       // Debug-Rahmen (optional, zum Testen einkommentieren):
       // #box(stroke: 0.5pt + red, 
@@ -180,7 +183,7 @@
          let c = int(i / max_rows)
          let r = calc.rem(i, max_rows)
          
-         let cx = c * (cell-w + col-gap) + cell-w/2
+         let cx = pad + c * (cell-w + col-gap) + cell-w/2
          let cy = r * cell-h + top-offset
          
          // Kreis zeichnen
@@ -263,13 +266,15 @@
   ]
 }
 
-#let collatz_visualizer_horizontal(start_val, scale: 1.0) = {
+#let collatz_visualizer_horizontal(start_val, scale: 1.0, padding: 10pt) = {
   let sequence = collatz_all(start_val)
-  
+
+  let pad = padding * scale // Skaliertes Padding
+
   // Maße
   let r-circle = 15pt * scale        
   let cell-w = 1.5cm * scale         
-  let cell-h = 1.5cm * scale 
+  let cell-h = 2 * r-circle
   let col-gap = 0.6cm * scale 
   
   // NEU: Hier stellst du den Abstand oben/unten ein
@@ -281,24 +286,25 @@
   let circle-stroke-style = stroke-w + circle-stroke-color
   let arrow-h = 8pt * scale 
 
-  // Gesamtdimensionen berechnen
-  let total-width = sequence.len() * cell-w + (sequence.len() - 1) * col-gap
-  
-  // NEU: Höhe inklusive Puffer oben und unten
-  let total-height = cell-h + padding-top + padding-bottom 
+   // Breite: Inhalt + Lücken + Padding links/rechts
+  let content-width = sequence.len() * cell-w + (sequence.len() - 1) * col-gap
+  let total-width = content-width + 2 * pad
 
+  // Höhe: Exakt der Kreisdurchmesser + Padding oben/unten (ohne extra cell-h Luft)
+  let total-height = 2 * r-circle + 2 * pad
+  
   align(center)[
     #block(width: total-width, height: total-height, { // inset wäre auch möglich, aber so ist es präziser
       
       for (i, num) in sequence.enumerate() {
-        let cx = i * (cell-w + col-gap) + cell-w/2
+        let cx = pad + i * (cell-w + col-gap) + cell-w/2
         
         // NEU: Vertikale Mitte basiert jetzt auf der vergrößerten Box
-        let cy = padding-top + cell-h / 2
+        let cy = total-height / 2
         
         // 1. Kreis
-        place(top + left, dx: cx - cell-w/2, dy: cy - cell-h/2, 
-          box(width: cell-w, height: cell-h, align(center + horizon)[
+        place(top + left, dx: cx - cell-w/2, dy: cy - r-circle, 
+          box(width: cell-w, height: 2 * r-circle, align(center + horizon)[
             #circle(radius: r-circle, stroke: circle-stroke-style, fill: circle-fill-color)[
               #set align(center + horizon)
               #text(size: text-size, weight: "bold", fill: text-color)[#num]
@@ -308,7 +314,7 @@
         
         // 2. Horizontaler Pfeil
         if i < sequence.len() - 1 {
-           let next-cx = (i + 1) * (cell-w + col-gap) + cell-w/2
+           let next-cx = pad + (i + 1) * (cell-w + col-gap) + cell-w/2
            
            let start-x = cx + r-circle + (4pt * scale)
            let dest-x = next-cx - r-circle - (4pt * scale)
@@ -368,10 +374,15 @@
       paper: "a4",
       margin: (x: 1.5cm, y: 1.5cm),
       numbering: "1/1",
-      footer: context[
-         #set text(8pt, fill: luma(120))
-         Erste Schritte in Typst, Stefan Wolfrum, Dezember 2025, Dokumentversion #version, Typst-Version #sys.version #h(1fr) #counter(page).display()
-      ]
+      footer: context {
+         set text(8pt, fill: luma(100))
+         stack(
+            dir: ttb,
+            spacing: 8pt,
+            line(length: 100%, stroke: 0.5pt + luma(100)),
+            [Erste Schritte in Typst, Stefan Wolfrum, Dezember 2025, Dokumentversion #version, Typst-Version #sys.version #h(1fr) #counter(page).display()]
+         )
+      }
    )
 
    // Paragraph Style: Blocksatz
@@ -381,14 +392,39 @@
    )
    set heading(numbering: "1.", supplement: [Kapitel])
    set math.equation(numbering: "(1)")
-   set figure(gap: 1.2em)
+   set figure(gap: 5.0em)
    set quote(block: true)
 
    // show rules
    //show link: underline
    show link: set text(fill: blue)
    show figure.caption: set text(size: 11pt)
-   show figure: set block(above: 2em, below: 2.5em)
+
+   // Show rule, um jede figure mit einem
+   // dünnen, grauen Rahmen zu umrahmen.
+   show figure: it => align(center)[
+      #stack(
+         dir: ttb,       // Top to Bottom
+         spacing: 13pt,  // Abstand zw. Rahmen und Caption
+         
+         // Der Rahmen
+         block(
+            stroke: 0.5pt + gray,
+            inset: 1em,
+            radius: 3pt,
+            it.body
+         ),
+         
+         // Die Caption
+         it.caption
+      )
+   ]
+
+   // Abstand zwischen einer figure (inkl. caption) und
+   // dem umgebenden Fließtext darüber (above) und
+   // darunter (below):
+   show figure: set block(above: 3em, below: 3.5em)
+
    show math.equation.where(block: true): set text(size: 1.0em)
    show heading: it => [
       #v(1.5em)
