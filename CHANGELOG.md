@@ -1,6 +1,6 @@
 Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ stattfinden.
 
-## v0.2.0 (2025-12-18)
+## v0.2.1 (2025-12-18)
 
 - Deutlicher Ausbei beim Text zum Collatz-Thema
 - Mehr Text beim Kapitel mit dem Sankey Diagramm
