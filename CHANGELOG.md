@@ -6,6 +6,7 @@
 - Kleinere Fixes bei `collatz_visualizer()` und `collatz_visualizer_horizontal()`
 - Neue Funktion `nameref()`
 - Korrektur von Abständen
+- weitere kleinere Fixes
 
 ## v0.1.0 (2025-12-11)
 
