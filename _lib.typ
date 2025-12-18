@@ -515,7 +515,7 @@
          #set text(style: "italic", size: 11pt)
          #abstract
       ]
-      v(2em) // Abstand zum Haupttext
+      v(1em) // Abstand zum Haupttext
    }
    doc
 }

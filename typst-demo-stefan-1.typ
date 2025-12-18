@@ -314,7 +314,7 @@ a_(n+1) := cases(
 )
 $
 
-==== Hübsche Diagramme
+==== Collatz Diagramme
 
 Zu der Zahlenfolge wurde schon viel geforscht und veröffentlicht. Es gibt unzählige Visualisierungsmöglichkeiten, wir zeigen hier nur die naheliegendste, nämlich die Abfolge der Zahlen nach einer gegebenen Startzahl.
 
