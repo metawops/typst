@@ -191,6 +191,7 @@ Ein gutes Beispiel für sowohl Tabellen, als auch dass man in Typst selbst dynam
 
 = Diagramme
 
+== Lilaq <lilaq>
 Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst erweitern. Ein Paket, mit dem man gut Diagramme zeichnen kann, heißt _Lilaq_. Die folgenden Diagramme sind mit Hilfe von _Lilaq_ entstanden.
 
 //#import "@preview/lilaq:0.5.0" as lq
@@ -242,6 +243,23 @@ Ein bisschen anspruchsvoller geht es auch, man beachte z.B. die x-Achsen-Beschri
 === Ein Fraktal
 Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vektorgrafik, sondern wurde im Dokument dynamisch durch Typst Code erzeugt.
 
+#figure(
+   lq.diagram(
+      width: 4cm, height: 5cm,
+      xaxis: (ticks: none, stroke: none),
+      yaxis: (ticks: none, stroke: none),
+
+      lq.path(
+         ..koch-snowflake(4),
+         fill: blue, closed: true
+      )
+   ),
+   caption: [Koch'sche Schneeflocke (ein Fraktal)]
+)
+
+Um diese Grafik hier im Dokument selbst erzeugen zu können (und eben _nicht_ als Grafikdatei mit fixer Auflösung einzubetten), ist die Erzeugung als Funktion realisiert. Hier – für den interessierten Leser – der Typst Quellcode dazu:
+
+```typ
 #let koch-snowflake(n) = {
   let complex-add(c1, c2) = { c1.zip(c2).map(array.sum) }
   let complex-multiply(c1, c2) = (c1.at(0) * c2.at(0) - c1.at(1) * c2.at(1), c1.at(0) * c2.at(1) + c1.at(1) * c2.at(0))
@@ -265,13 +283,15 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
   }
   return koch-snowflake-impl(n)
 }
+```
 
+Das tatsächliche Erzeugen der Grafik im Dokument erfolgt dann über diese Typst Syntax im Dokument:
+```typ
 #figure(
    lq.diagram(
       width: 4cm, height: 5cm,
       xaxis: (ticks: none, stroke: none),
       yaxis: (ticks: none, stroke: none),
-
       lq.path(
          ..koch-snowflake(4),
          fill: blue, closed: true
@@ -279,240 +299,11 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
    ),
    caption: [Koch'sche Schneeflocke (ein Fraktal)]
 )
+```
+
+Dabei wurde wieder – wie schon bei den einfachen Diagramm-Beispielen in @lilaq das Paket _Lilaq_ benutzt.
 
 === Die Collatz Zahlenfolge
-
-// --- Konfiguration ---
-//#let arrow-color = rgb(0, 110, 220) 
-#let arrow-color = luma(50)
-#let circle-fill-color = color.hsv(260deg, 20%, 100%)
-#let circle-stroke-color = color.hsv(260deg, 80%, 100%)
-#let text-color = luma(50)
-
-// --- Hilfsfunktion: Pfeilspitze ---
-#let arrow-head(pos, angle, scale, col: arrow-color) = {
-  let w = 3.5pt * scale
-  let h = 8pt * scale 
-  
-  place(top + left, dx: pos.at(0), dy: pos.at(1),
-    rotate(angle, origin: left, 
-      polygon(
-        fill: col, 
-        stroke: none, 
-        (0pt, 0pt),     
-        (-w, -h), 
-        (w, -h) 
-      )
-    )
-  )
-}
-
-// --- Collatz Logik ---
-#let collatz_all(start) = {
-  let seq = (start,)
-  let current = start
-  while current != 1 {
-    if calc.even(current) {
-      current = int(current / 2)
-    } else {
-      current = current * 3 + 1
-    }
-    seq.push(current)
-  }
-  return seq
-}
-
-// --- Visualisierung ---
-#let collatz_visualizer(start_val, max_rows, scale: 1.0) = {
-   let sequence = collatz_all(start_val)
-   
-   // 1. Grundmaße definieren
-   let r-circle = 15pt * scale        
-   let cell-w = 1.5cm * scale         
-   let cell-h = 2.0cm * scale         
-   let col-gap = 1.0cm * scale
-   let text-size = 11pt * scale
-   let stroke-w = 2.5pt * scale
-   let arrow-h = 8pt * scale 
-   let circle-stroke-style = stroke-w + circle-stroke-color
-   let v-padding = 0.5cm * scale  
-
-  
-   // 2. Geometrie des Bogens berechnen
-   // Der Bogen spannt sich über die Hälfte des Abstands zwischen Spaltenmitte und Guttermitte.
-   // Radius = (Breite Zelle + Breite Lücke) / 4
-   let arc-radius = (cell-w + col-gap) / 4
-   let kappa = 0.55228 
-
-   // 3. Dynamische Ränder berechnen (statt fester Werte)
-   // Wir brauchen oben Platz für: Radius des Kreises + Radius des Bogens + Puffer
-   let top-buffer = 10pt * scale // Kleiner Sicherheitsabstand
-   let top-offset = r-circle + arc-radius + top-buffer
-   
-   // Berechnete Gesamthöhe:
-   // (Anzahl Zeilen * Zeilenhöhe) + Platz oben + Platz unten für den Bogen
-   let total-cols = int(calc.ceil(sequence.len() / max_rows))
-   let total-width = total-cols * (cell-w + col-gap)
-   
-   // Der letzte Kreis endet bei: (max_rows * cell-h) - (cell-h / 2) + top-offset + r-circle
-   // Wir machen es einfacher: Block-Höhe = Nutzlast + Ränder
-   // Nutzlast-Höhe ist etwa: (max_rows - 1) * cell-h
-   // Dazu oben 'top-offset' und unten Platz für den unteren Bogen (arc-radius + buffer)
-   let total-height = (max_rows - 1) * cell-h + top-offset + r-circle + arc-radius + top-buffer + 2 * (v-padding)
-   
-   align(center)[
-      // Debug-Rahmen (optional, zum Testen einkommentieren):
-      // #box(stroke: 0.5pt + red, 
-      #block(width: total-width, height: total-height, {
-      
-         for (i, num) in sequence.enumerate() {
-         let c = int(i / max_rows)
-         let r = calc.rem(i, max_rows)
-         
-         let cx = c * (cell-w + col-gap) + cell-w/2
-         let cy = r * cell-h + top-offset
-         
-         // Kreis zeichnen
-         place(top + left, dx: cx - cell-w/2, dy: cy - cell-h/2, 
-            box(width: cell-w, height: cell-h, align(center + horizon)[
-               #circle(radius: r-circle, stroke: circle-stroke-style, fill: circle-fill-color)[
-               #set align(center + horizon)
-               #text(size: text-size, weight: "bold", fill: text-color)[#num]
-               ]
-            ])
-         )
-         
-         if i < sequence.len() - 1 {
-            
-            if r < max_rows - 1 {
-               // === FALL A: Vertikal ===
-               let start-y = cy + r-circle + (4pt * scale)
-               let end-y   = cy + cell-h - r-circle - (4pt * scale)
-               
-               place(curve(
-                  stroke: stroke-w + arrow-color,
-                  curve.move((cx, start-y)),
-                  curve.line((cx, end-y - arrow-h)) 
-               ))
-               arrow-head((cx, end-y), 0deg, scale, col: arrow-color)
-            } 
-            else {
-               // === FALL B: Snake ===
-               let next-cx = cx + cell-w + col-gap
-               let mx      = (cx + next-cx) / 2  
-               
-               let width = mx - cx      
-               let radius = width / 2  // Identisch mit arc-radius von oben 
-               let k = radius * kappa   
-
-               let start-y = cy + r-circle + (4pt * scale)
-               let dest-y  = top-offset - r-circle - (4pt * scale)
-               let arrow-base-y = dest-y - arrow-h
-
-               let arc-bottom = start-y + radius
-               let arc-top    = arrow-base-y - radius
-
-               place(curve(
-                  stroke: stroke-w + arrow-color,
-                  
-                  curve.move((cx, start-y)),
-                  
-                  // Unterer Bogen
-                  curve.cubic(
-                     (cx, start-y + k),                
-                     (cx + radius - k, arc-bottom),    
-                     (cx + radius, arc-bottom)         
-                  ),
-                  curve.cubic(
-                     (cx + radius + k, arc-bottom),    
-                     (mx, start-y + k),                
-                     (mx, start-y) 
-                  ),
-                  
-                  curve.line((mx, arrow-base-y)),
-                  
-                  // Oberer Bogen
-                  curve.cubic(
-                     (mx, arrow-base-y - k),           
-                     (mx + radius - k, arc-top),       
-                     (mx + radius, arc-top)            
-                  ),
-                  curve.cubic(
-                     (mx + radius + k, arc-top),       
-                     (next-cx, arrow-base-y - k),      
-                     (next-cx, arrow-base-y) 
-                  ),
-               ))
-               arrow-head((next-cx, dest-y), 0deg, scale, col: arrow-color)
-            }
-           }
-         }
-      })
-    // ) // Ende Debug-Box
-  ]
-}
-
-#let collatz_visualizer_horizontal(start_val, scale: 1.0) = {
-  let sequence = collatz_all(start_val)
-  
-  // Maße
-  let r-circle = 15pt * scale        
-  let cell-w = 1.5cm * scale         
-  let cell-h = 1.5cm * scale 
-  let col-gap = 0.6cm * scale 
-  
-  // NEU: Hier stellst du den Abstand oben/unten ein
-  let v-padding = 0.8cm * scale  
-  
-  let text-size = 11pt * scale
-  let stroke-w = 2.5pt * scale
-  let circle-stroke-style = stroke-w + circle-stroke-color
-  let arrow-h = 8pt * scale 
-
-  // Gesamtdimensionen berechnen
-  let total-width = sequence.len() * cell-w + (sequence.len() - 1) * col-gap
-  
-  // NEU: Höhe inklusive Puffer oben und unten
-  let total-height = cell-h + (2 * v-padding) 
-
-  align(center)[
-    #block(width: total-width, height: total-height, { // inset wäre auch möglich, aber so ist es präziser
-      
-      for (i, num) in sequence.enumerate() {
-        let cx = i * (cell-w + col-gap) + cell-w/2
-        
-        // NEU: Vertikale Mitte basiert jetzt auf der vergrößerten Box
-        let cy = total-height / 2 
-        
-        // 1. Kreis
-        place(top + left, dx: cx - cell-w/2, dy: cy - cell-h/2, 
-          box(width: cell-w, height: cell-h, align(center + horizon)[
-            #circle(radius: r-circle, stroke: circle-stroke-style, fill: circle-fill-color)[
-              #set align(center + horizon)
-              #text(size: text-size, weight: "bold", fill: text-color)[#num]
-            ]
-          ])
-        )
-        
-        // 2. Horizontaler Pfeil
-        if i < sequence.len() - 1 {
-           let next-cx = (i + 1) * (cell-w + col-gap) + cell-w/2
-           
-           let start-x = cx + r-circle + (4pt * scale)
-           let dest-x = next-cx - r-circle - (4pt * scale)
-           
-           place(curve(
-             stroke: stroke-w + arrow-color,
-             curve.move((start-x, cy)),
-             curve.line((dest-x - arrow-h, cy))
-           ))
-           
-           arrow-head((dest-x, cy), -90deg, scale, col: arrow-color)
-        }
-      }
-    })
-  ]
-}
 
 Die mathematische Definition der Collatz-Zahlenfolge haben wir schon in @formeln in @collatz gesehen. Sie sei hier noch einmal wiederholt:
 
@@ -522,6 +313,8 @@ a_(n+1) := cases(
    3 a_n +1 "," & "wenn" a_n "ungerade"
 )
 $
+
+==== Hübsche Diagramme
 
 Zu der Zahlenfolge wurde schon viel geforscht und veröffentlicht. Es gibt unzählige Visualisierungsmöglichkeiten, wir zeigen hier nur die naheliegendste, nämlich die Abfolge der Zahlen nach einer gegebenen Startzahl.
 
@@ -533,12 +326,12 @@ Kommen wir bei der Zahl 1 an, hören wir auf, denn würden wir die Bildungsgeset
 Beginnen wir mit der Startzahl #startzahl, ergibt sich diese aus #periodenlaenge Zahlen bestehende Folge:
 
 #figure(
-   collatz_visualizer_horizontal(startzahl, scale: 1.1),
+   collatz_visualizer_horizontal(startzahl, scale: 1),
    caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
 ) <collatzdiagramm1>
 
-#let startzahl = 11
-#let diagrammZeilen = 3
+#let startzahl = 14
+#let diagrammZeilen = 5
 #let periodenlaenge = collatz_all(startzahl).len()
 
 Für die nur geringfügig höhere Startzahl #startzahl ergibt sich schon eine Folge mit #periodenlaenge Zahlen:
@@ -548,21 +341,73 @@ Für die nur geringfügig höhere Startzahl #startzahl ergibt sich schon eine Fo
    caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
 ) <collatzdiagramm2>
 
+#let startzahl = 27
+#let diagrammZeilen = 10
+#let periodenlaenge = collatz_all(startzahl).len()
+Aber so richtig krass wird's, wenn wir die kaum größere Startzahl #startzahl wählen. Denn auf einmal eskaliert alles, die Folge hat nun satte #periodenlaenge Glieder und unser Diagramm müssen wir extra verkleinern, sonst passt es hier nicht hin.
 
+#figure(
+   collatz_visualizer(startzahl, diagrammZeilen, scale: 0.52),
+   caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
+) <collatzdiagramm3>
+
+==== Collatz in Typst
+
+Und wie erzeugt man nun solche Diagramme in/mit Typst? Nun, das Kapitel heißt ja "#nameref(<programmierung>)" und natürlich gibt es in Typst keine fertige Funktion, die so einen Spezialfall wie diese Collatz-Diagramme zeichnet. Diese Funktionen habe ich – übrigens mit Hilfe von K.I. – programmiert.
+
+Will man das Diagramm der @collatzdiagramm1 erzeugen, muss man im Typst Quelldokument schreiben:
+
+```typ
+#let startzahl = 5
+#let periodenlaenge = collatz_all(startzahl).len()
+#figure(
+   collatz_visualizer_horizontal(startzahl, scale: 0.9),
+   caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
+)
+```
+
+Es gibt also eine Funktion `collatz_visualizer_horizontal()` und eine Funktion `collatz_all()`. Letztere erzeugt zur übergebenen Startzahl alle Glieder der Zahlenfolge als Array. Somit weiß man mit dem Anhängsel `.len()`, wieviele Folgeglieder es gibt.
+
+Die Visualisierungsfunktion `collatz_visualizer_horizontal()` erzeugt dann tatsächlich die Grafik und benutzt intern auch nochmal die Funktion `collatz_all()`. Sie hat als zweiten Parameter einen Skalierungsfaktor, so kann man auch nochmal nachjustieren, damit die eine horizontale Zahlenkette gut von der Breite her passt.
+
+Unsere horizontale Visualizer Funktion kann auch nur das: _eine_ Reihe horizontal.
+
+Sollten es mehr Folgeglieder werden – wie in den Beispielen der @collatzdiagramm2 und @collatzdiagramm3 – brauchen wir eine andere Strategie. Und da fiel mir diese vertikale Kette ein, die aber eine begrenzte Anzahl von Zeilen haben soll und dann soll ein Pfeil von unten wieder hoch führen auf die Höhe der ersten Zeile und es soll vertikal wieder weiter nach unten gehen und so weiter.
+
+Das erledigt die Funktion `collatz_visualizer()` und das Beispiel aus @collatzdiagramm3 sieht im Typst Quelldokument so aus:
+
+```typ
+#let startzahl = 27
+#let diagrammZeilen = 10
+#let periodenlaenge = collatz_all(startzahl).len()
+#figure(
+   collatz_visualizer(startzahl, diagrammZeilen, scale: 0.5),
+   caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
+)
+```
+
+Da hier sehr viele Folgeglieder zusammenkommen, musste ich den Skalierungsfaktor auf $0.5$ setzen.
+
+Alle drei Funktionen sind ebenfalls im Typst Quelldokument implementiert, aber zu umfangreich, um sie hier aufzulisten. 
+
+Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com/metawops/typst")[liegt auf Github], so dass man jederzeit reinschauen kann, wenn man sich für die Implementierungsdetails interessiert. Die Funktionen habe ich übrigens in die Hilfs-/Library-Typst-Datei `_lib.typ` ausgelagert, damit sie das eigentliche Quelldokument nicht zu unübersichtlich werden lassen.
 
 == Diagramme mit Zusatzpaketen
-Hier folgt ein sogenanntes _Sankey Diagramm_, was mit dem #link("https://github.com/solstice23/typst-ribbony")[Paket _Ribbony_] erzeugt wurde:
+Es gibt nahezu 500 Zusatzpakete für Typst, darunter zahlreiche, die beim Erzeugen von Diagrammen helfen. Hier folgt ein sogenanntes _Sankey Diagramm_, was mit dem #link("https://github.com/solstice23/typst-ribbony")[Paket _Ribbony_] erzeugt wurde:
 
 //#import "@preview/ribbony:0.1.0": *
 
-#sankey-diagram((
-   "Clients": ("Company": 70),
-   "Investors": ("Company": 20),
-   "Partners": ("Company": 10),
-   "Company": ("HR": 20, "IT": 30, "Sales": 50),
-   "IT": ("Infra": 20, "Support": 10),
-   "Sales": ("Marketing": 30, "Operations": 20)
-))
+#figure(
+   sankey-diagram((
+      "Clients": ("Company": 70),
+      "Investors": ("Company": 20),
+      "Partners": ("Company": 10),
+      "Company": ("HR": 20, "IT": 30, "Sales": 50),
+      "IT": ("Infra": 20, "Support": 10),
+      "Sales": ("Marketing": 30, "Operations": 20)
+   )),
+   caption: [Ein beispielhaftes Sankey Diagramm, erzeugt mit Hilfe des Pakets "Ribbony"]
+)
 
 Der Input dafür im Typst Dokument ist recht übersichtlich und verständlich:
 
