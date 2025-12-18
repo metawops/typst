@@ -1,3 +1,12 @@
+## v0.2.0 (2025-12-18)
+
+- Deutlicher Ausbei beim Text zum Collatz-Thema
+- Mehr Text beim Kapitel mit dem Sankey Diagramm
+- Auslagerung der Collatz-Funktionen und der Koch'schen Schneeflocke Funktion in die `_lib.typ`
+- Kleinere Fixes bei `collatz_visualizer()` und `collatz_visualizer_horizontal()`
+- Neue Funktion `nameref()`
+- Korrektur von Abständen
+
 ## v0.1.0 (2025-12-11)
 
 ### New Features
