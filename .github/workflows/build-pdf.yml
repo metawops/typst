@@ -71,4 +71,4 @@ jobs:
         with:
           name: PDF-Documents
           path: "*.pdf"
-          retention-days: 7
+          retention-days: 90
