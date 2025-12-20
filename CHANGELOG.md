@@ -1,3 +1,5 @@
+# Changelog
+
 Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ stattfinden.
 
 ## v0.2.1 (2025-12-18)
@@ -9,3 +11,16 @@ Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ s
 - Neue Funktion `nameref()`
 - Korrektur von Abständen
 - weitere kleinere Fixes
+
+## v0.1.0 (2025-12-11)
+
+### New Features
+- Einführung des _codly_ Pakets für saubere Code-Blöcke.
+- Verwendung des `Inter 18pt` Fonts für perfekte Reproduzierbarkeit.
+- Verwendung des `JetPack Mono` Fonts für Code Blöcke.
+- Saubere Auftrennung in zwei `.typ` Dateien: Hauptdokument und Setup (`_lib.typ`)
+
+### Fixes
+- Die Zeilennummerierung ist nun rechtsbündig ausgerichtet.
+- Korrigierte Build-Pipeline, ignoriert nun `_*` Dateien, also auch `_lib.typ` und bezieht `CHANGELOG.md` als Release Notes ein.
+- Release Workflow startet nur, wenn es Änderungen in der `CHANGELOG.md` gab.
