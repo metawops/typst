@@ -4,41 +4,44 @@
 #import "@preview/lilaq:0.5.0" as lq
 #import "@preview/ribbony:0.1.0": *
 
+// Eigene Definitionen importieren
+#import "_config.typ": *
+
 // Funktionen
 
 #let info-box(title: "INFO", body) = block(
-  width: 100%,
-  inset: 12pt,
-  radius: 8pt,
-  stroke: rgb("#3b82f6"),        // Rahmen blau
-  fill: rgb("#e0f2ff"),          // hellblauer Hintergrund
+   width: 100%,
+   inset: 12pt,
+   radius: 8pt,
+   stroke: config.colors.boxes.info.frame,
+   fill: config.colors.boxes.info.fill,
 )[
-  // Titelzeile
-  #text(
-    weight: "bold",
-    fill: rgb("#1d4ed8"),
-    size: 14pt,
-  )[#title]
+   // Titelzeile
+   #text(
+      weight: "bold",
+      fill: config.colors.boxes.info.title,
+      size: 14pt,
+   )[#title]
 
-  #v(8pt)
+   #v(8pt)
 
-  // Fließtext
-  #text(
-    size: 12pt,
-  )[ #body ]
+   // Fließtext
+   #text(
+      size: 12pt,
+   )[ #body ]
 ]
 
 #let code-box(title: "CODE", body) = block(
-  width: 100%,
-  inset: 12pt,
-  radius: 8pt,
-  stroke: rgb("#f6953b"),        // Rahmen blau
-  fill: rgb("#fff8e0"),          // hellblauer Hintergrund
+   width: 100%,
+   inset: 12pt,
+   radius: 8pt,
+   stroke: config.colors.boxes.code.frame,
+   fill: config.colors.boxes.code.fill,
 )[
   // Titelzeile
   #text(
     weight: "bold",
-    fill: rgb("#d87e1d"),
+    fill: config.colors.boxes.code.title,
     size: 14pt,
   )[#title]
 
@@ -62,7 +65,6 @@
     [**Referenz nicht gefunden**]
   }
 }
-
 
 // Koch'sche Schneeflockenkurve
 #let koch-snowflake(n) = {
@@ -89,19 +91,11 @@
   return koch-snowflake-impl(n)
 }
 
-
 // Collatz Diagramme/Funktionen
 // 
-
-// --- Konfiguration ---
-//#let arrow-color = rgb(0, 110, 220) 
-#let arrow-color = luma(50)
-#let circle-fill-color = color.hsv(270deg, 25%, 100%)
-#let circle-stroke-color = color.hsv(270deg, 50%, 65%)
-#let text-color = luma(60)
-
 // --- Hilfsfunktion: Pfeilspitze ---
-#let arrow-head(pos, angle, scale, col: arrow-color) = {
+//#let arrow-head(pos, angle, scale, col: arrow-color) = {
+#let arrow-head(pos, angle, scale, col: config.colors.collatz.arrow) = {
   let w = 3.5pt * scale
   let h = 8pt * scale 
   
@@ -145,7 +139,7 @@
    let text-size = 11pt * scale
    let stroke-w = 2.5pt * scale
    let arrow-h = 8pt * scale 
-   let circle-stroke-style = stroke-w + circle-stroke-color
+   let circle-stroke-style = stroke-w + config.colors.collatz.circle-stroke
    let v-padding = 0.5cm * scale
    let pad = padding * scale
    let dist = 4pt * scale  // Den Abstand zum Kreis (4pt) benennen wir
@@ -165,7 +159,6 @@
    // Berechnete Gesamthöhe:
    // (Anzahl Zeilen * Zeilenhöhe) + Platz oben + Platz unten für den Bogen
    let total-cols = int(calc.ceil(sequence.len() / max_rows))
-   //let total-width = total-cols * (cell-w + col-gap)
    let total-width = total-cols * cell-w + (calc.max(0, total-cols - 1) * col-gap) + 2 * pad
 
    // Der letzte Kreis endet bei: (max_rows * cell-h) - (cell-h / 2) + top-offset + r-circle
@@ -189,9 +182,9 @@
          // Kreis zeichnen
          place(top + left, dx: cx - cell-w/2, dy: cy - cell-h/2, 
             box(width: cell-w, height: cell-h, align(center + horizon)[
-               #circle(radius: r-circle, stroke: circle-stroke-style, fill: circle-fill-color)[
+               #circle(radius: r-circle, stroke: circle-stroke-style, fill: config.colors.collatz.circle-fill)[
                #set align(center + horizon)
-               #text(size: text-size, weight: "bold", fill: text-color)[#num]
+               #text(size: text-size, weight: "bold", fill: config.colors.collatz.text)[#num]
                ]
             ])
          )
@@ -204,11 +197,11 @@
                let end-y   = cy + cell-h - r-circle - (4pt * scale)
                
                place(curve(
-                  stroke: stroke-w + arrow-color,
+                  stroke: stroke-w + config.colors.collatz.arrow,
                   curve.move((cx, start-y)),
                   curve.line((cx, end-y - arrow-h)) 
                ))
-               arrow-head((cx, end-y), 0deg, scale, col: arrow-color)
+               arrow-head((cx, end-y), 0deg, scale, col: config.colors.collatz.arrow)
             } 
             else {
                // === FALL B: Snake ===
@@ -227,7 +220,7 @@
                let arc-top    = arrow-base-y - radius
 
                place(curve(
-                  stroke: stroke-w + arrow-color,
+                  stroke: stroke-w + config.colors.collatz.arrow,
                   
                   curve.move((cx, start-y)),
                   
@@ -257,7 +250,7 @@
                      (next-cx, arrow-base-y) 
                   ),
                ))
-               arrow-head((next-cx, dest-y), 0deg, scale, col: arrow-color)
+               arrow-head((next-cx, dest-y), 0deg, scale, col: config.colors.collatz.arrow)
             }
            }
          }
@@ -283,7 +276,7 @@
   
   let text-size = 11pt * scale
   let stroke-w = 2.5pt * scale
-  let circle-stroke-style = stroke-w + circle-stroke-color
+  let circle-stroke-style = stroke-w + config.colors.collatz.circle-stroke
   let arrow-h = 8pt * scale 
 
    // Breite: Inhalt + Lücken + Padding links/rechts
@@ -305,9 +298,9 @@
         // 1. Kreis
         place(top + left, dx: cx - cell-w/2, dy: cy - r-circle, 
           box(width: cell-w, height: 2 * r-circle, align(center + horizon)[
-            #circle(radius: r-circle, stroke: circle-stroke-style, fill: circle-fill-color)[
+            #circle(radius: r-circle, stroke: circle-stroke-style, fill: config.colors.collatz.circle-fill)[
               #set align(center + horizon)
-              #text(size: text-size, weight: "bold", fill: text-color)[#num]
+              #text(size: text-size, weight: "bold", fill: config.colors.collatz.text)[#num]
             ]
           ])
         )
@@ -320,12 +313,12 @@
            let dest-x = next-cx - r-circle - (4pt * scale)
            
            place(curve(
-             stroke: stroke-w + arrow-color,
+             stroke: stroke-w + config.colors.collatz.arrow,
              curve.move((start-x, cy)),
              curve.line((dest-x - arrow-h, cy))
            ))
            
-           arrow-head((dest-x, cy), -90deg, scale, col: arrow-color)
+           arrow-head((dest-x, cy), -90deg, scale, col: config.colors.collatz.arrow)
         }
       }
     })
@@ -372,14 +365,15 @@
    // Page Setup
    set page(
       paper: "a4",
-      margin: (x: 1.5cm, y: 1.5cm),
+      margin: (x: config.distances.page.margin-x,
+               y: config.distances.page.margin-y),
       numbering: "1/1",
       footer: context {
-         set text(8pt, fill: luma(100))
+         set text(8pt, fill: config.colors.footer.text)
          stack(
             dir: ttb,
             spacing: 8pt,
-            line(length: 100%, stroke: 0.5pt + luma(100)),
+            line(length: 100%, stroke: 0.5pt + config.colors.footer.line),
             [Erste Schritte in Typst, Stefan Wolfrum, Dezember 2025, Dokumentversion #version, Typst-Version #sys.version #h(1fr) #counter(page).display()]
          )
       }
@@ -397,7 +391,7 @@
 
    // show rules
    //show link: underline
-   show link: set text(fill: blue)
+   show link: set text(fill: config.colors.link)
    show figure.caption: set text(size: 11pt)
 
    // Show rule, um jede figure mit einem
@@ -409,7 +403,7 @@
          
          // Der Rahmen
          block(
-            stroke: 0.5pt + gray,
+            stroke: 0.5pt + config.colors.figure.frame,
             inset: 1em,
             radius: 3pt,
             it.body
@@ -460,8 +454,8 @@
 
    // Globale Regel für alle Zitate im Dokument
    show quote.where(block: true): it => block(
-      fill: gray.lighten(80%),    // Leichter grauer Hintergrund
-      stroke: (left: 2pt + gray), // Der klassische Balken links
+      fill: config.colors.quote.fill,    // Leichter grauer Hintergrund
+      stroke: (left: 2pt + config.colors.quote.stroke), // Der klassische Balken links
       inset: (x: 1em, y: 0.5em),  // Innenabstand
       outset: (y: 0.5em),         // Außenabstand
       radius: 2pt,                // Leicht abgerundet
@@ -474,7 +468,7 @@
    // Styling für INLINE Code (in Backticks `...`)
    // Wir nutzen 'box', damit es im Textfluss bleibt.
    show raw.where(block: false): it => box(
-      fill: luma(240),          // Sehr helles Grau (255=Weiß, 0=Schwarz)
+      fill: config.colors.code.inline-fill,
       inset: (x: 3pt, y: 0pt),    // Etwas Luft links/rechts, oben/unten eng
       outset: (y: 3pt),           // Trick: Box optisch vergrößern ohne Zeilenabstand zu sprengen
       radius: 3pt,                // Leicht abgerundete Ecken
@@ -487,17 +481,17 @@
    // Codly Konfiguration
    codly(
       languages: typst-icon,
-      fill: luma(240),             // Hintergrund: Hellgrau
-      zebra-fill: luma(230),       // leicht gestreiften Zeilen
-      stroke: 0.5pt + luma(160),   // Rahmen: Dünn, dunkelgrau
+      fill: config.colors.codly.fill,
+      zebra-fill: config.colors.codly.zebra-fill,
+      stroke: 0.5pt + config.colors.codly.stroke,
       radius: 4pt,                   // Ecken: Abgerundet
       inset: 0.32em,
       lang-inset: 0.5em,
       lang-outset: (x: 0.2em, y: 0.4em),
-      display-icon: true,            // Icon aus (nur Text-Label, wie gewünscht)
+      display-icon: true,           
       display-name: true,            // Zeigt den Namen der Sprache an
       number-align: right,
-      number-format: (n) => text(fill: luma(120), size: 8pt, str(n)), // Nummer-Style
+      number-format: (n) => text(fill: config.colors.codly.line-numbers, size: 8pt, str(n)), // Nummer-Style
    )
 
    title[#theTitle]

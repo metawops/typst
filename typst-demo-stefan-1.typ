@@ -158,7 +158,7 @@ Und dies hier ist einfach eine zweite Art Info-Box, die ich `#code-box` genannt 
 //--------------------
 
 = Tabellen
-
+== Statische Tabellen
 _Kapitel muss noch massiv ausgebaut werden!_
 #table(
    columns: (auto, auto, auto),
@@ -168,26 +168,47 @@ _Kapitel muss noch massiv ausgebaut werden!_
    [Charlie], [45], [Manager]
 )
 
+== Dynamisch erzeugte Tabellen
+
 // Wir definieren eine Funktion, die Fibonacci-Zahlen errechnen kann:
 #let fib(n) = (
   if n <= 2 { 1 }
   else { fib(n - 1) + fib(n - 2) }
 )
 
-#let count = 17
+#let count = 15
 
-Ein gutes Beispiel für sowohl Tabellen, als auch dass man in Typst selbst dynamisch Inhalte erzeugen kann, ist diese Tabelle mit den ersten #count Fibonacci Zahlen.
+Ein gutes Beispiel für sowohl Tabellen, als auch dass man in Typst selbst dynamisch Inhalte erzeugen kann, ist diese Tabelle mit den ersten #count Fibonaccizahlen.
 
 #let nums = range(1, count + 1)
 
+#figure(
+   table(
+      columns: count,
+      fill: (_, row) => if row == 0 { luma(230) } else { none },
+      ..nums.map(n => $F_#n$),
+      ..nums.map(n => text(maroon)[#str(fib(n))]),
+   ),
+   caption: [Die ersten #count Fibonnacizahlen]
+)
+
+Erzeugt wurde diese Tabelle dynamisch im Typst Quelldokument mittels dieses Codes:
+
+#code-box[
+```typ
+#let count = 15
+#let nums = range(1, count + 1)
 #align(center,
    table(
       columns: count,
       fill: (_, row) => if row == 0 { luma(230) } else { none },
       ..nums.map(n => $F_#n$),
-      ..nums.map(n => text(orange)[#str(fib(n))]),
+      ..nums.map(n => text(maroon)[#str(fib(n))]),
    )
 )
+```
+Die Funktion `fib()` wurde natürlich auch im Typst Dokument implementiert, ist hier aber nicht abgedruckt. Ein Blick in den Quellcode im Repository bringt Erhellung, falls gewünscht.
+]
 
 = Diagramme
 
@@ -259,6 +280,7 @@ Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vek
 
 Um diese Grafik hier im Dokument selbst erzeugen zu können (und eben _nicht_ als Grafikdatei mit fixer Auflösung einzubetten), ist die Erzeugung als Funktion realisiert. Hier – für den interessierten Leser – der Typst Quellcode dazu:
 
+#code-box[
 ```typ
 #let koch-snowflake(n) = {
   let complex-add(c1, c2) = { c1.zip(c2).map(array.sum) }
@@ -284,8 +306,11 @@ Um diese Grafik hier im Dokument selbst erzeugen zu können (und eben _nicht_ al
   return koch-snowflake-impl(n)
 }
 ```
+]
 
 Das tatsächliche Erzeugen der Grafik im Dokument erfolgt dann über diese Typst Syntax im Dokument:
+
+#code-box[
 ```typ
 #figure(
    lq.diagram(
@@ -300,7 +325,7 @@ Das tatsächliche Erzeugen der Grafik im Dokument erfolgt dann über diese Typst
    caption: [Koch'sche Schneeflocke (ein Fraktal)]
 )
 ```
-
+]
 Dabei wurde wieder – wie schon bei den einfachen Diagramm-Beispielen in @lilaq das Paket _Lilaq_ benutzt.
 
 === Die Collatz Zahlenfolge
