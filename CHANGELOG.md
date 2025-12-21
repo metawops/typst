@@ -48,3 +48,4 @@ Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ s
 - Release Workflow startet nur, wenn es Änderungen in der `CHANGELOG.md` gab.
 
 [v0.2.1]: https://github.com/metawops/typst/compare/v0.1.0...v0.2.1
+[v0.3.0]: https://github.com/metawops/typst/compare/v0.2.1...v0.3.0

@@ -83,20 +83,13 @@ jobs:
       - name: Extract Latest Changelog Entry
         if: steps.check_changelog.outputs.changelog_updated == 'true'
         run: |
-          # Logik für den Informatiker:
-          # Wir suchen den Text zwischen der ersten Überschrift (##) und der zweiten.
-          # 1. 'sed -n' unterdrückt die Standard-Ausgabe.
-          # 2. '/^## /,/^## /p' druckt den Bereich von der ersten zur zweiten H2-Überschrift.
-          # 3. 'head -n -1' entfernt die letzte Zeile (die Überschrift des vorherigen Releases).
-          # 4. 'tail -n +2' entfernt die erste Zeile (die Überschrift des aktuellen Releases).
+          # Extrahiert den ersten H2-Block inklusive der Überschrift selbst
+          awk '/^## / { if (n == 1) exit; n = 1 } n' CHANGELOG.md > latest_release_notes.md
           
-          # Wir extrahieren den Bereich und speichern ihn in einer temporären Datei.
-          sed -n '/^## /,/^## /p' CHANGELOG.md | head -n -1 | tail -n +2 > latest_release_notes.md
-          
-          # Falls die Datei leer ist (z.B. weil es nur eine Überschrift gibt), 
-          # nehmen wir zur Sicherheit alles ab der ersten Überschrift.
-          if [ ! -s latest_release_notes.txt ]; then
-             sed -n '/^## /,$p' CHANGELOG.md | tail -n +2 > latest_release_notes.md
+          # Sicherheits-Check für Mathematiker: Ist die Menge leer?
+          if [ ! -s latest_release_notes.md ]; then
+            echo "::error::Extraktion fehlgeschlagen. CHANGELOG.md Format prüfen!"
+            exit 1
           fi
 
       # 4. Release erstellen
