@@ -2,6 +2,7 @@
 #let config = (
    colors: (
       link: blue,
+      citation: gray,
       collatz: (
          arrow: luma(50),
          circle-fill: color.hsv(270deg, 25%, 100%),
@@ -39,7 +40,7 @@
             fill: rgb("#fff8e0"),
             title: rgb("#d87e1d")
          )
-      ) 
+      )
    ),
    distances: (
       page: (
@@ -47,8 +48,8 @@
          margin-y: 1.5cm
       ),
       figure: (
-         above: 3em,
-         below: 3.5em
+         above: 2.0em,
+         below: 3.0em
       ),
       heading: (
          above: 1.5em,

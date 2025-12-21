@@ -339,6 +339,7 @@
    date: none,
    version: "",
    abstract: none,
+   bib-path: none,  // Pfad zur bzw. Dateiname der .bib Datei
    doc            // das eigentliche Dokument
 ) = {
    // Ab hier alle Setups
@@ -427,6 +428,9 @@
    ]
    show title: set align(center)
 
+   // Alle Literaturverzeichnis-Referenzen im Text in einer anderen Farbe:
+   show cite: set text(fill: luma(150))
+
    // Eine Funktion für das "echte" LaTeX-Logo-Feeling definieren
    let latex-logo = {
       [L]
@@ -512,4 +516,7 @@
       v(1em) // Abstand zum Haupttext
    }
    doc
+
+   pagebreak(weak: true)
+   bibliography(bib-path, style: "ieee", title: "Literaturverzeichnis")
 }

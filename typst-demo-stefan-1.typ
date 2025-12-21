@@ -18,6 +18,7 @@
    keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
    date: datetime(year: 2025, month: 12, day: 18),
    version: "0.2.251218",
+   bib-path: "literatur.bib",
    abstract: [Typst ist ein Satzsystem, mit dem man vor allem PDF Dokumente sehr ordentlich setzen kann. Man kann Typst im einfachsten Fall ähnlich wie Markdown benutzen. Es bietet aber weit mehr Möglichkeiten und man kann extrem komplexe Dokumente damit schreiben. Von der Hausarbeit über die Masterarbeit bis zum Buch. Dabei kann es analog zu LaTeX den wissenschaftlichen Satz inklusive mathematischer Formeln perfekt abbilden und ist darüber hinaus über 3rd party Pakete erweiterbar. Typst ist sogar eine Programmiersprache und so kann man zum Beispiel Grafiken algorithmisch direkt innerhalb des Dokuments erstellen.
    
    Typst ist Open Source und kann daher frei und kostenlos benutzt werden. Es gibt einen Browser-basierten Editor mit Live-Preview#footnote[Abrufbar unter #link("https://typst.app/app")], aber man kann Typst auch lokal auf dem eigenen Rechner installieren und als Editor mit Live-Preview zum Beispiel VSCode mit der Erweiterung "Tinymist Typst" benutzen.
@@ -104,9 +105,16 @@ Da hilft uns die `figure()` Funktion aus @abbildungen.
 Mächtiger als `#image()` ist die Funktion `#figure()`. Mit ihr kann man u.a. das Alignment steuern und auch Bildunterschriften realisieren, wie hier in @abb_hybrid:
 
 #figure(
-   image("img/output_plot-02.png", width: 100%),
+   image("img/output_plot-02.png", width: 90%),
    caption: [Gedämpfte Schwingung, errechnet auf dem Analogcomputer THAT]
 ) <abb_hybrid>
+
+Im Bild sieht man übrigens eine gedämpfte Schwingung, wie sie vom Analogrechner THAT errechnet wurde. Das Auslesen der Werte erfolgte mittels eines Arduino, wie es in @ulmann2021github vorgeschlagen wurde.
+
+#figure(
+   image("img/that_arduino.jpeg", width: 30%),
+   caption: [Setup mit THAT und Arduino]
+)
 
 #pagebreak(weak: true)
 //--------------------
@@ -450,3 +458,20 @@ Der Input dafür im Typst Dokument ist recht übersichtlich und verständlich:
    "Sales": ("Marketing": 30, "Operations": 20)
 ))
 ```
+
+= Literaturverzeichnis & das Zitieren
+
+In wissenschaftlichen Arbeiten ist es unerlässlich, aus anderen Quellen – korrekt – zu zitieren. Dazu hat es sich als Vorgehensweise durchgesetzt, in einer Datei alle seine Quellen strukturiert aufzulisten. Dazu bietet sich vor allem das von LaTeX her bekannte _bibtex_ Format an. Hier im Repository liegt die beispielhafte Datei `literatur.bib` in diesem Format. 
+
+Diese Datei wird dann dem Satzsystem – in unserem Falle also Typst – bekannt gemacht und es wird der *Zitierstil* festgelegt. Davon gibt es in Typst eine große Anzahl zur Auswahl. Aufgelistet sind sie alle #link("https://typst.app/docs/reference/model/bibliography/#parameters-style")[hier] (ggfs. auf "View options" klicken).
+
+Dann kann man in seinem Dokument sehr leicht eine Quelle, wie z.B. diese #text(fill:purple)[@vaswani2017attention] angeben. Was im vorherigen Satz zwischen "diese" und "angeben" erzeugt wird – ich habe es farblich hervorgehoben –, hängt vom gewählten Zitierstil ab. Sollte keiner der aktuell 89 in Typst vorhandenen Zitierstile passen (z.B. weil die Uni ihren ganz eigenen definiert hat), so kann man auch selbst #link("https://citationstyles.org/")[neue Zitierstile definieren] und nutzen. Dazu gibt es sogar einen #link("https://editor.citationstyles.org/visualEditor/")[visuellen CSL Editor].
+
+Es gibt aber im Internet große Menge von CSL Dateien, so dass man dort ggfs. fündig wird oder eine zu 95% passende Variante findet und noch anpassen kann. Zwei guten Quellen sind:
+
+1. #link("https://github.com/citation-style-language/styles")[Das offizielle CSL Verzeichnis auf GitHub]
+2. #link("https://www.zotero.org/styles")[Das Zotero Style Repository] – aktuell 10.741 Styles, unter anderem filterbar nach Fachgebieten
+
+Der gewählte Zitierstil beeinflusst nicht nur das Zitat im Text, sondern auch die Gestaltung des Literaturverzeichnisses.
+
+Im Literaturverzeichnis werden standardmäßig nur die Quellen aufgelistet, die man in seinem Dokument auch tatsächlich verwendet hat. Das kann man optional ändern und _immer alle_ Quellen auflisten lassen.
