@@ -2,7 +2,7 @@
 #let config = (
    colors: (
       link: blue,
-      citation: gray,
+      citation: luma(70),
       collatz: (
          arrow: luma(50),
          circle-fill: color.hsv(270deg, 25%, 100%),
@@ -54,10 +54,22 @@
       heading: (
          above: 1.5em,
          below: 0.8em
+      ),
+      abstract-pad-x: 4em,
+      list: (
+         above: 2em,
+         below: 2em
+      ),
+      enum: (
+         above: 2em,
+         below: 2em
       )
    ),
    document: (
       font-size: 13pt,
+      abstract-font-size: 11pt,
+      list-indent: 2em,
+      enum-indent: 2em,
       footer: (
          font-size: 8pt
       ),
@@ -66,6 +78,12 @@
       ),
       equation: (
          font-size: 1em
+      ),
+      citation: (
+//         style: "ieee",
+         style: "journal-of-universal-computer-science.csl",
+//         title: "Literaturverzeichnis"
+         title: auto
       )
    )
 )

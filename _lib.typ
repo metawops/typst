@@ -389,11 +389,18 @@
    set math.equation(numbering: "(1)")
 //   set figure(gap: 55em)
    set quote(block: true)
+   set list(indent: config.document.list-indent)
+   set enum(indent: config.document.enum-indent)
 
    // show rules
    //show link: underline
    show link: set text(fill: config.colors.link)
    show figure.caption: set text(size: config.document.figure.caption-font-size)
+   // Abstände für unnummerierte Listen
+   show list: set block(above: config.distances.list.above, below: config.distances.list.below)
+
+   // Abstände für nummerierte Aufzählungen
+   show enum: set block(above: config.distances.enum.above, below: config.distances.enum.below)
 
    // Show rule, um jede figure mit einem
    // dünnen, grauen Rahmen zu umrahmen.
@@ -429,7 +436,7 @@
    show title: set align(center)
 
    // Alle Literaturverzeichnis-Referenzen im Text in einer anderen Farbe:
-   show cite: set text(fill: luma(150))
+   show cite: set text(fill: config.colors.citation)
 
    // Eine Funktion für das "echte" LaTeX-Logo-Feeling definieren
    let latex-logo = {
@@ -467,7 +474,7 @@
    )
 
    // Hier wählen wir den Font, der für Codeblöcke (raw) genutzt werden soll:
-   show raw: set text(font: "JetBrains Mono", size: 0.95em) 
+   show raw: set text(font: "JetBrains Mono", size: 1.1em) 
 
    // Styling für INLINE Code (in Backticks `...`)
    // Wir nutzen 'box', damit es im Textfluss bleibt.
@@ -508,15 +515,16 @@
 
    // Abstract rendern (wenn vorhanden)
    if abstract != none {
-      pad(x: 3em)[ // Seitliche Einrückung für den Abstract
+      pad(x: config.distances.abstract-pad-x)[ // Seitliche Einrückung für den Abstract
          #align(center)[*Zusammenfassung*]
-         #set text(style: "italic", size: 11pt)
+         #set text(style: "italic", size: config.document.abstract-font-size)
          #abstract
       ]
-      v(1em) // Abstand zum Haupttext
+//      v(1em) // Abstand zum Haupttext
    }
+
    doc
 
    pagebreak(weak: true)
-   bibliography(bib-path, style: "ieee", title: "Literaturverzeichnis")
+   bibliography(bib-path, style: config.document.citation.style, title: config.document.citation.title)
 }

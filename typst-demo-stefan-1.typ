@@ -25,14 +25,16 @@
    ]
 )
 
-
 = Schrift & Formeln <formeln>
+Typst ist als Satzsystem natürlich vor allem dazu da, Text zu setzen. Beim Schreiben von Text gelten in Typst ähnliche Regeln wie bei der Nutzung von Markdown. Das bedeutet zum Beispiel:
 
-Hier kann man Text schreiben.
+- Kursiven Text umschließt man mit Unterstrichzeichen: `_kursiv_` #sym.arrow.r.bar _kursiv_
+- Fetten Text umschließt man mit Sternchen: `*fett*` #sym.arrow.r.bar *fett*
+- Beides: `*_fett-kursiv_*` oder `_*fett-kursiv*_` #sym.arrow.r.bar _*fett-kursiv*_
 
-Auch *viel* Text. Gerne auch _relevanten_ Text.
+*Überschriften* sind eine Ausnahme zu Markdown: Sie werden in Typst mit dem `=` Zeichen eingeleitet. Je mehr `=` Zeichen, desto höher der Überschrift-Level. (Bei Markdown ist es das `#` Zeichen.)
 
-Das Typesetting sieht wirklich wie bei LaTeX aus!
+Ich empfehle das kleine, offizielle #link("https://typst.app/docs/tutorial/writing-in-typst/")[Tutorial auf den Typst-Doku-Seiten] für weitere Stylings.
 
 Natürlich gehen auch mathematische Formeln: $E=m c^2$, $(a+b)^2 = a^2 + 2a b + b^2$ oder auch $e^(i pi) + 1 = 0$ sind _inline_ Beispiele.
 
@@ -48,10 +50,33 @@ $ <collatz>
 Wir werden in @programmierung noch dynamisch erzeugte (also in Typst programmierte) Diagramme dazu sehen.
 
 Wichtig für alleinstehende Block-Formeln wie diese ist, dass man nach dem einleitenden und vor dem abschließenden `$` Zeichen ein Leerzeichen oder einen Zeilenumbruch setzt!
-#v(2em)
 
-#let loremwords = 42
 
+#let loremwords = 34
+
+#grid(
+   columns: 2,
+   column-gutter: 2em,
+   [Es gibt sogar eine Funktion namens `#lorem()`, mit der man sofort _Lorem ipsum_ Text erzeugen kann. Rechts stehen #loremwords Worte _Lorem ipsum_ Text, erzeugt mit der `#lorem()` Funktion.
+
+   Das zweispaltige Layout mitten im Text erreicht man mit der `#grid()` Funktion.
+   ],
+   [
+      #box(
+         inset: (left: 2em),
+         text(fill: gray.darken(25%))[_#lorem(loremwords)_]
+      )
+   ],
+   grid.vline(
+      x: 1,
+      stroke: 0.5pt + gray.darken(25%)
+   )
+)
+
+Das sieht im Typst Dokument dann so aus:
+
+```typ
+#let loremwords = 34
 #grid(
    columns: 2,
    column-gutter: 2em,
@@ -70,8 +95,7 @@ Wichtig für alleinstehende Block-Formeln wie diese ist, dass man nach dem einle
       stroke: 0.5pt + gray.darken(25%)
    )
 )
-
-#v(2em)
+```
 
 #pagebreak()
 = Das Zeichen \# in Typst
@@ -94,9 +118,9 @@ Bilder können im einfachsten Fall über die Funktion `#image()` eingebettet wer
 
 #image("img/cm5.jpeg", width: 85%)
 
-Die Funktion `image()` eignet sich für das schnelle Einbetten eines Bildes, hat aber zunächst ein paar Nachteile, allen voran: linksbündig, keine Bildunterschrift.
+Die Funktion `#image()` eignet sich für das schnelle Einbetten eines Bildes, hat aber zunächst ein paar Nachteile, allen voran: linksbündig, keine Bildunterschrift.
 
-Da hilft uns die `figure()` Funktion aus @abbildungen.
+Da hilft uns die `#figure()` Funktion, die im folgenden @abbildungen beschrieben wird.
 
 #pagebreak(weak: true)
 //--------------------
@@ -469,8 +493,8 @@ Dann kann man in seinem Dokument sehr leicht eine Quelle, wie z.B. diese #text(f
 
 Es gibt aber im Internet große Menge von CSL Dateien, so dass man dort ggfs. fündig wird oder eine zu 95% passende Variante findet und noch anpassen kann. Zwei guten Quellen sind:
 
-1. #link("https://github.com/citation-style-language/styles")[Das offizielle CSL Verzeichnis auf GitHub]
-2. #link("https://www.zotero.org/styles")[Das Zotero Style Repository] – aktuell 10.741 Styles, unter anderem filterbar nach Fachgebieten
++ #link("https://github.com/citation-style-language/styles")[Das offizielle CSL Verzeichnis auf GitHub]
++ #link("https://www.zotero.org/styles")[Das Zotero Style Repository] – aktuell 10.741 Styles, unter anderem filterbar nach Fachgebieten
 
 Der gewählte Zitierstil beeinflusst nicht nur das Zitat im Text, sondern auch die Gestaltung des Literaturverzeichnisses.
 
