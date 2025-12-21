@@ -2,6 +2,20 @@
 
 Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ stattfinden.
 
+## [v0.3.0] – 2025-12-22
+### Added
+- Auslagerung von Einstellungen in neue `_config.typ`
+- Damit einhergehend Umbau in `_lib.typ`, nämlich Verwendung der Werte aus dem Dictionary in `_config.typ` anstelle von hard-coded Werten
+- Beispielhafte `literatur.bib` Datei
+- Eigener CSL Zitierstil in Datei `journal-of-universal-computer-science.csl`
+- Neues Kapitel über den Umgang mit Literaturverzeichnissen und dem Zitieren
+### Changed
+- Text in Kapitel 1 geändert/erweitert
+### Removed
+- n/a
+### Fixed
+- n/a
+
 ## [v0.2.1] – 2025-12-18
 
 ### Added
