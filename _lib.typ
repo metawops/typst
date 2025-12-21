@@ -359,7 +359,7 @@
    set text(
       // Generic Font that exists on Mac, Windows, Ubuntu (Github!)
       font: "Inter 18pt",
-      size: 13pt
+      size: config.document.font-size
    )
 
    // Page Setup
@@ -369,7 +369,7 @@
                y: config.distances.page.margin-y),
       numbering: "1/1",
       footer: context {
-         set text(8pt, fill: config.colors.footer.text)
+         set text(config.document.footer.font-size, fill: config.colors.footer.text)
          stack(
             dir: ttb,
             spacing: 8pt,
@@ -386,13 +386,13 @@
    )
    set heading(numbering: "1.", supplement: [Kapitel])
    set math.equation(numbering: "(1)")
-   set figure(gap: 5.0em)
+//   set figure(gap: 55em)
    set quote(block: true)
 
    // show rules
    //show link: underline
    show link: set text(fill: config.colors.link)
-   show figure.caption: set text(size: 11pt)
+   show figure.caption: set text(size: config.document.figure.caption-font-size)
 
    // Show rule, um jede figure mit einem
    // dünnen, grauen Rahmen zu umrahmen.
@@ -417,13 +417,13 @@
    // Abstand zwischen einer figure (inkl. caption) und
    // dem umgebenden Fließtext darüber (above) und
    // darunter (below):
-   show figure: set block(above: 3em, below: 3.5em)
+   show figure: set block(above: config.distances.figure.above, below: config.distances.figure.below)
 
-   show math.equation.where(block: true): set text(size: 1.0em)
+   show math.equation.where(block: true): set text(size: config.document.equation.font-size)
    show heading: it => [
-      #v(1.5em)
+      #v(config.distances.heading.above)
       #it
-      #v(0.8em)  // Abstand nach jeder Überschrift
+      #v(config.distances.heading.below)
    ]
    show title: set align(center)
 

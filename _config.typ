@@ -45,7 +45,26 @@
       page: (
          margin-x: 1.5cm,
          margin-y: 1.5cm
+      ),
+      figure: (
+         above: 3em,
+         below: 3.5em
+      ),
+      heading: (
+         above: 1.5em,
+         below: 0.8em
       )
-
+   ),
+   document: (
+      font-size: 13pt,
+      footer: (
+         font-size: 8pt
+      ),
+      figure: (
+         caption-font-size: 10.5pt
+      ),
+      equation: (
+         font-size: 1em
+      )
    )
 )

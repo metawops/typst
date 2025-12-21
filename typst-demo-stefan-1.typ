@@ -203,7 +203,7 @@ Erzeugt wurde diese Tabelle dynamisch im Typst Quelldokument mittels dieses Code
       columns: count,
       fill: (_, row) => if row == 0 { luma(230) } else { none },
       ..nums.map(n => $F_#n$),
-      ..nums.map(n => text(maroon)[#str(fib(n))]),
+      ..nums.map(n => text(purple)[#str(fib(n))]),
    )
 )
 ```
@@ -262,17 +262,17 @@ Ein bisschen anspruchsvoller geht es auch, man beachte z.B. die x-Achsen-Beschri
 == Programmierte Grafiken <programmierung>
 
 === Ein Fraktal
-Die folgende *Koch'sche Schneeflocken-Kurve* ist keine Bitmap und auch keine Vektorgrafik, sondern wurde im Dokument dynamisch durch Typst Code erzeugt.
+Die folgende *Koch'sche Schneeflocken-Kurve* wurde hier nicht als Bitmap und auch nicht als Vektorgrafik eingebaut, sondern wurde dynamisch durch Typst Code erzeugt.
 
 #figure(
    lq.diagram(
-      width: 4cm, height: 5cm,
+      width: 7cm, height: 8cm,
       xaxis: (ticks: none, stroke: none),
       yaxis: (ticks: none, stroke: none),
 
       lq.path(
          ..koch-snowflake(4),
-         fill: blue, closed: true
+         fill: orange, closed: true
       )
    ),
    caption: [Koch'sche Schneeflocke (ein Fraktal)]
