@@ -2,6 +2,14 @@
 
 Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ stattfinden.
 
+## [v0.4.0] – 2025-12-22
+### Added
+- Neues Kapitel "Dokument einrichten" (derzeit Kapitel 2)
+- Neuer OFL Font (Google) "PlayfairDisplay" hinzugefügt; wegen des neuen, stilisierten Schmuck-Anführungszeichens bei Quote-Boxen.
+
+### Changed
+- Quote-Box um ein großes Schmuck-Anführungszeichen erweitert
+
 ## [v0.3.0] – 2025-12-22
 ### Added
 - Auslagerung von Einstellungen in neue `_config.typ`
@@ -50,3 +58,4 @@ Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ s
 
 [v0.2.1]: https://github.com/metawops/typst/compare/v0.1.0...v0.2.1
 [v0.3.0]: https://github.com/metawops/typst/compare/v0.2.1...v0.3.0
+[v0.4.0]: https://github.com/metawops/typst/compare/v0.3.0...v0.4.0
