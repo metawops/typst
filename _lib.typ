@@ -23,7 +23,7 @@
       size: 14pt,
    )[#title]
 
-   #v(8pt)
+   #v(2pt)
 
    // Fließtext
    #text(
@@ -45,7 +45,7 @@
     size: 14pt,
   )[#title]
 
-  #v(8pt)
+  #v(2pt)
 
   // Fließtext
   #text(
@@ -466,15 +466,29 @@
    // Globale Regel für alle Zitate im Dokument
    show quote.where(block: true): it => block(
       fill: config.colors.quote.fill,    // Leichter grauer Hintergrund
-      stroke: (left: 2pt + config.colors.quote.stroke), // Der klassische Balken links
-      inset: (x: 1em, y: 0.5em),  // Innenabstand
+      stroke: (left: 4pt + config.colors.quote.stroke), // Der klassische Balken links
+      inset: (x: 1.2em, y: 0.8em),  // Innenabstand
       outset: (y: 0.5em),         // Außenabstand
-      radius: 2pt,                // Leicht abgerundet
-      it                          // Der eigentliche Inhalt des Zitats
+      radius: 4pt,                // Leicht abgerundet
+      width: 100%,
+      {
+         place(
+            top + left,
+            dx: -1.0em,
+            dy: -10.7em,
+            text(
+               size: 16em,
+               fill: config.colors.quote.stroke.lighten(60%),
+               font: "Playfair Display",
+               weight: "bold"
+            )["]
+         )
+         text(style: "italic")[#it]  // Der eigentliche Inhalt des Zitats
+      }
    )
 
    // Hier wählen wir den Font, der für Codeblöcke (raw) genutzt werden soll:
-   show raw: set text(font: "JetBrains Mono", size: 1.1em) 
+   show raw: set text(font: "JetBrains Mono", size: config.document.code-font-size) 
 
    // Styling für INLINE Code (in Backticks `...`)
    // Wir nutzen 'box', damit es im Textfluss bleibt.

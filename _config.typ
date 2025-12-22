@@ -70,6 +70,7 @@
       abstract-font-size: 11pt,
       list-indent: 2em,
       enum-indent: 2em,
+      code-font-size: 0.95em,
       footer: (
          font-size: 8pt
       ),

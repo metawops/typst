@@ -126,9 +126,77 @@ Und in dieser Datei `_lib.typ` stecken allerlei Funktionen, set-Regeln, show-Reg
 ```
 Die in der `_lib.typ` definierte Funktion `project()` bekommt also allerlei Parameter als Input, führt alle Setups durch (Seitenformat einstellen, Schriftart einstellen, Abstände einstellen, Fußzeile definieren, Metadaten setzen, Literaturverzeichnis anhängen etc.), bekommt dann als letztes Argument noch all das, was hier im Haupt-Dokument nach ihrem Aufruf folgt (also quasi den gesamten Inhalt) und erzeugt als Output dann das gesamte, finale Dokument mit all seinen Einstellungen.
 
-== Titel
+== Titel <dokument-titel>
+Der Titel eines Dokuments ist _eine_ Eigenschaft des Dokuments. Die anderen sind _author, description, keywords_ und _date_. Man setzt diese Attribute über eine _set rule_, für den Titel geht das so:
+```typ
+// Die Titel-Eigenschaft des Dokuments festlegen:
+#set document(title: [Mein Typst Dokument])
+```
+
+Damit erscheint aber der Titel noch nicht im PDF Dokument. Um den Titel auch _auszugeben_, schreiben wir im Dokument dann:
+```typ
+// Jetzt den Titel ausgeben:
+#title()
+```
+Das gibt den zuvor gesetzten Titel aus.
+
+Man kann aber unterscheiden zwischen den #nameref(<metadata>) eines Dokuments – die man nämlich über die `#set document` Regel setzt und die lediglich ins PDF eingebettet werden – und dem im PDF sichtbaren Titel.
+Will man einen anderen Titel im Dokument haben, als in den #nameref(<metadata>), dann gibt man einfach einen anderen Titel aus:
+```typ
+// Die Titel-Eigenschaft des Dokuments festlegen:
+#set document(title: [Mein Typst Dokument])
+
+#title[Wir lernen Typst]
+```
+
+#info-box[
+   *Ein Wort zu eckigen Klammern.*
+
+   In Typst ist alles, was in eckigen Klammern steht, Content. Also Text. Inklusive Auszeichnungen wie fett oder kursiv. Immer dann, wenn eine Funktion (wie z.B. `title()`) Content als Parameter hat, kann man auch die runden Klammern des Funktionsaufrufs weglassen und den Content Block direkt hinter den Funktionsnamen schreiben.
+
+   `#title[Mein Titel]` ist also eine Kurzschreibweise für `#title([Mein Titel])`.
+]
+
+Einen Hinweis zur Verwendung des \# Zeichens gibt es in @hash-character.
+
 == Zusammenfassung
-== PDF Metadaten
+Die Zusammenfassung (oder auch der _Abstract_) taucht oft bei wissenschaftlichen Arbeiten unter dem Titel und den Autoren auf, so wie auch in diesem Dokument. 
+
+Der Zusammenfassungstext ist bei mir ein Parameter der `project()` Funktion und wird als _content block_ in eckigen Klammern übergeben. In der `_lib.typ` wird er dann wie folgt ausgegeben (gerendert):
+#text(features: (calt: 0))[
+```typ
+// Abstract rendern (wenn vorhanden)
+if #abstract != none {
+   #pad(x: config.distances.abstract-pad-x)[        // Seitliche Einrückung
+      #align(center)[*Zusammenfassung*]
+      #set text(style: "italic", size: config.document.abstract-font-size)
+      #abstract
+   ]
+}
+```
+]
+Ich habe manuell ein paar \# Zeichen eingefügt, damit das Syntax Highlighting besser funktioniert. In der `_lib.typ` steht es also nicht genau 1:1 so wie hier, denn dort ist es Teil eines _code blocks_ und das `#abstract` direkt zu Beginn nach dem `if` meint den an die `project()` Funktion übergebenen Parameter mit diesem Namen.
+
+== PDF Metadaten <metadata>
+Über PDF Metadaten haben wir schon etwas im @dokument-titel ("#nameref(<dokument-titel>)") gelernt. Um also ins PDF Metadaten einzubetten, geht man so vor:
+```typ
+// Metadata for PDF
+#set document(
+   title: "Mein tolles Dokument",
+   author: ("Stefan Wolfrum"),
+   description: "In diesem Dokument geht es um Typst.",
+   keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
+   date: datetime(year: 2025, month: 12, day: 22)
+)
+```
+Dazu ein paar Anmerkungen:
+
+- _title_ und _description_ sind einfach Strings
+- _author_ ist ein Array und kann mehrere Einträge enthalten, daher die Klammern
+- _keywords_ genauso
+- _date_ ist ein Datumsobjekt, was man in der gezeigten Weise erzeugt
+Hier sieht man ein Beispiel für das (verpflichtende) _Weglassen_ des \# Zeichens: da die Funktion `datetime()` innerhalb der mit runden Klammern umschlossenen Parameterliste von `document()` erscheint, sind wir schon im _code mode_ und nicht im _content/markup mode_. Daher muss das \# entfallen.
+
 == Sprache, Dokumentformat, Blocksatz und mehr
 Die Sprache des Dokuments festzulegen, das ist eine gute Idee. Denn dann funktioniert z.B. auch eine Silbentrennung automatisch. Deutsch als Sprache festlegen geht über eine sogenannte _set rule_ (weil eben `#set` benutzt wird) so:
 ```typ
@@ -203,18 +271,42 @@ Das mag zunächst umständlich aussehen, ist aber schnell praktisch, weil man da
 Dass diese Zusatzdateien übrigens alle mit einem `_` Zeichen beginnen, das hat mit den automatischen Build- und Release-Workflows zu tun, die ich für #link("https://github.com/metawops/typst")[mein GitHub Repository] eingerichtet habe. Denn diese Dateien enthalten ja keinen zu setzenden Text, sondern nur Funktionen und Variablen. Da würde also ein leeres PDF Dokument entstehen, wenn man sie mit Typst kompilieren würde. Daher werden alle Dateien, die mit einem `_` beginnen beim Build-Prozess ignoriert.
 
 #pagebreak(weak: true)
-= Das Zeichen \# in Typst
+= Das Zeichen \# in Typst <hash-character>
 Wir müssen kurz über das Zeichen \# sprechen. 
 
-Solange man im "Textschreibmodus" ist (_markup mode_), muss man Funktionsaufrufe, wie z.B. `#image()` (siehe @bilder) mit dem \# Zeichen beginnen. Das sagt Typst "Achtung, jetzt kommt ein Funktionsaufruf".
+Solange man im "Textschreibmodus" ist (_markup mode_ oder auch _content mode_), muss man Funktionsaufrufe, wie z.B. `#image()` (siehe @bilder) mit dem \# Zeichen beginnen. Das sagt Typst "Achtung, jetzt kommt ein Funktionsaufruf".
 
 Wenn man aber bereits in einer Funktion ist (_code mode_) und darin nochmal Funktionsaufrufe nutzt – das sehen wir bei `#figure()` in @abbildungen –, dann darf man das Zeichen \# _nicht_ vor den Funktionsnamen setzen!
 
 Das gilt übrigens nicht nur für _Funktionen_, sondern auch für Keywords wie `set`, `show`, `let`, ...
 
-#quote(attribution: "Alan Turing")[
-  We can only see a short distance ahead, but we can see plenty there that needs to be done.
+#quote(attribution: "Oscar Wilde")[
+  Ich habe den ganzen Vormittag damit verbracht, ein Komma aus einem meiner Gedichte zu streichen, und am Nachmittag habe ich es wieder hineingesetzt.
 ]
+
+So ein Zitat fügt man übrigens über die Funktion `#quote()` ein. Dass es hier aber so aussieht, wie es aussieht, liegt daran, dass ich mir in meiner `_lib.typ` Datei eine sehr spezielle _show rule_ für derlei Zitatboxen gemacht habe:
+```typ
+// Globale Regel für alle Zitate im Dokument
+#show quote.where(block: true): it => block(
+   fill: config.colors.quote.fill,                 // Leichter grauer Hintergrund
+   stroke: (left: 4pt+config.colors.quote.stroke), // Balken links
+   inset: (x: 1.2em, y: 0.8em),                    // Innenabstand
+   outset: (y: 0.5em),                             // Außenabstand
+   radius: 2pt,                                    // Leicht abgerundet
+   width: 100%,                                    // ganze Breite
+   {  // Das stilisierte Anführungszeichen:
+      place(top + left,
+            dx: -1.0em,
+            dy: -10.7em,
+            text(size: 16em,
+                 fill: config.colors.quote.stroke.lighten(60%),
+                 font: "Playfair Display",         // Freier Google Font
+                 weight: "bold")["]                // Das eine Anführungszeichen
+      )
+      text(style: "italic")[#it]  // Der eigentliche Inhalt des Zitats
+   }
+)
+```
 
 #pagebreak(weak: true)
 = Bilder mit `image()` <bilder>
