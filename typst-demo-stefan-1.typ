@@ -16,8 +16,8 @@
    description: [Ein kleines Demo-Dokument, was die Nutzung von Typst demonstrieren soll.],
    location: "Bonn, Germany",
    keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
-   date: datetime(year: 2025, month: 12, day: 18),
-   version: "0.2.251218",
+   date: datetime(year: 2025, month: 12, day: 22),
+   version: "0.2.251222",
    bib-path: "literatur.bib",
    abstract: [Typst ist ein Satzsystem, mit dem man vor allem PDF Dokumente sehr ordentlich setzen kann. Man kann Typst im einfachsten Fall ähnlich wie Markdown benutzen. Es bietet aber weit mehr Möglichkeiten und man kann extrem komplexe Dokumente damit schreiben. Von der Hausarbeit über die Masterarbeit bis zum Buch. Dabei kann es analog zu LaTeX den wissenschaftlichen Satz inklusive mathematischer Formeln perfekt abbilden und ist darüber hinaus über 3rd party Pakete erweiterbar. Typst ist sogar eine Programmiersprache und so kann man zum Beispiel Grafiken algorithmisch direkt innerhalb des Dokuments erstellen.
    
@@ -34,7 +34,7 @@ Typst ist als Satzsystem natürlich vor allem dazu da, Text zu setzen. Beim Schr
 
 *Überschriften* sind eine Ausnahme zu Markdown: Sie werden in Typst mit dem `=` Zeichen eingeleitet. Je mehr `=` Zeichen, desto höher der Überschrift-Level. (Bei Markdown ist es das `#` Zeichen.)
 
-Ich empfehle das kleine, offizielle #link("https://typst.app/docs/tutorial/writing-in-typst/")[Tutorial auf den Typst-Doku-Seiten] für weitere Stylings.
+Ich empfehle das kleine, offizielle #link("https://typst.app/docs/tutorial/writing-in-typst/")[Tutorial auf den Typst-Doku-Seiten] für weitere Stylings, wie z.B. Aufzählungen, Zitate, Code, Fußnoten etc.
 
 Natürlich gehen auch mathematische Formeln: $E=m c^2$, $(a+b)^2 = a^2 + 2a b + b^2$ oder auch $e^(i pi) + 1 = 0$ sind _inline_ Beispiele.
 
@@ -96,6 +96,39 @@ Das sieht im Typst Dokument dann so aus:
    )
 )
 ```
+
+= Dokument einrichten
+== Kenngrößen auslagern
+Bei sehr kurzen Dokumenten spielt das sicher keine Rolle, aber je größer die Typst Dokumente werden, desto mehr "Setup Daten" wird man haben: Farben, Abstände, Maße, Schriftgrößen etc. Diese kann man zwar alle auch direkt im Dokument hinterlegen (entweder direkt mit den Funktionsaufrufen oder als Variablen), aber die Erfahrung zeigt, dass das Herausziehen und an einer Stelle Zusammenfassen derlei Daten sinnvoll ist.
+
+Auch ist zu empfehlen, dass alle selbst geschriebenen Funktionen aus der Haupt-Text-Datei herausgenommen und in eine andere `.typ` Datei ausgelagert werden.
+
+Ziel ist es, am Ende in seiner Haupt-Text-Datei nur oben einmal einen Import einer weiteren `.typ` Datei zu haben. Zum Beispiel beginnt _dieses_ Dokument, was Du gerade liest, so:
+```typ
+#import "_lib.typ": *
+```
+Und in dieser Datei `_lib.typ` stecken allerlei Funktionen, set-Regeln, show-Regeln und – ganz wichtig – die eine `project` Funktion, die das ganze Setup des Dokuments regelt. Diese Typst-Datei hier geht nämlich nach dem `#import` Kommando so weiter (gekürzt):
+```typ
+#show: project.with(
+   theTitle: "Erste Schritte in Typst",
+   authors: ("Stefan Wolfrum"),
+   description: [Ein kleines Demo-Dokument, was die Nutzung von Typst demonstrieren soll.],
+   location: "Bonn, Germany",
+   keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
+   date: datetime(year: 2025, month: 12, day: 22),
+   version: "0.2.251222",
+   bib-path: "literatur.bib",
+   abstract: [Typst ist ein Satzsystem, mit dem man ... zum Beispiel VSCode mit der Erweiterung "Tinymist Typst" benutzen.
+   ]
+)
+```
+Die in der `_lib.typ` definierte Funktion `project()` bekommt also allerlei Parameter als Input, führt alle Setups durch (Seitenformat einstellen, Schriftart einstellen, Abstände einstellen, Fußzeile definiere, Metadaten setzen etc.) und erzeugt als Output 
+
+
+== Titel
+== Zusammenfassung
+== PDF Metadaten
+== Maße
 
 #pagebreak(weak: true)
 = Das Zeichen \# in Typst

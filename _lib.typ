@@ -340,7 +340,7 @@
    version: "",
    abstract: none,
    bib-path: none,  // Pfad zur bzw. Dateiname der .bib Datei
-   doc            // das eigentliche Dokument
+   doc              // das eigentliche Dokument
 ) = {
    // Ab hier alle Setups
 
