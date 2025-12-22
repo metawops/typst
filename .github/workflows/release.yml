@@ -83,12 +83,19 @@ jobs:
       - name: Extract Latest Changelog Entry
         if: steps.check_changelog.outputs.changelog_updated == 'true'
         run: |
-          # Extrahiert den ersten H2-Block inklusive der Überschrift selbst
-          awk '/^## / { if (n == 1) exit; n = 1 } n' CHANGELOG.md > latest_release_notes.md
+          # 1. Den Inhalts-Block extrahieren (wie gehabt)
+          awk '/^## / { if (n == 1) exit; n = 1 } n' CHANGELOG.md > latest_notes.md
           
-          # Sicherheits-Check für Mathematiker: Ist die Menge leer?
-          if [ ! -s latest_release_notes.md ]; then
-            echo "::error::Extraktion fehlgeschlagen. CHANGELOG.md Format prüfen!"
+          # 2. Eine Leerzeile für die Sauberkeit einfügen
+          echo -e "\n" >> latest_notes.md
+          
+          # 3. Den spezifischen Referenz-Link für das aktuelle Tag am Ende der Datei suchen 
+          # und an latest_notes.md anhängen.
+          # ${{ github.ref_name }} ist z.B. "v0.3.0"
+          grep "^\[${{ github.ref_name }}\]:" CHANGELOG.md >> latest_notes.md || true
+          
+          if [ ! -s latest_notes.md ]; then
+            echo "::error::Extraktion fehlgeschlagen!"
             exit 1
           fi
 
@@ -99,7 +106,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           prerelease: false
-          body_path: latest_release_notes.md
+          body_path: latest_notes.md
           files: |
               *.pdf
               typst-project-files.zip
