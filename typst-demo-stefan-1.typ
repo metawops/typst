@@ -13,7 +13,7 @@
 #show: project.with(
    theTitle: "Erste Schritte in Typst",
    authors: ("Stefan Wolfrum"),
-   description: [Ein kleines Demo-Dokument, was die Nutzung von Typst demonstrieren soll.],
+   description: [Ein kleines Beispiel-Dokument, was die Nutzung von Typst demonstrieren soll.],
    location: "Bonn, Germany",
    keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
    date: datetime(year: 2025, month: 12, day: 22),
@@ -98,21 +98,23 @@ Das sieht im Typst Dokument dann so aus:
 ```
 
 = Dokument einrichten
+Bevor wir jetzt schnell direkt im Dokument einige Einstellungen machen, sei auf ein wichtiges Paradigma hingewiesen, was sich für die meisten Typst Dokumente lohnt, umzusetzen: Das Auslagern von Settings.
 == Kenngrößen auslagern
-Bei sehr kurzen Dokumenten spielt das sicher keine Rolle, aber je größer die Typst Dokumente werden, desto mehr "Setup Daten" wird man haben: Farben, Abstände, Maße, Schriftgrößen etc. Diese kann man zwar alle auch direkt im Dokument hinterlegen (entweder direkt mit den Funktionsaufrufen oder als Variablen), aber die Erfahrung zeigt, dass das Herausziehen und an einer Stelle Zusammenfassen derlei Daten sinnvoll ist.
+Bei sehr kurzen Dokumenten spielt das sicher keine Rolle, aber je größer die Typst Dokumente werden, desto mehr "Setup Daten" wird man haben: Farben, Abstände, Maße, Schriftgrößen etc. Diese kann man zwar alle auch direkt im Dokument hinterlegen – entweder direkt mit den Funktionsaufrufen oder als Variablen zusammengefasst an einer Stelle und diese dann in den Funktionsaufrufen. Aber die Erfahrung zeigt, dass das Herausziehen und an einer Stelle Zusammenfassen derlei Daten sinnvoll ist.
 
 Auch ist zu empfehlen, dass alle selbst geschriebenen Funktionen aus der Haupt-Text-Datei herausgenommen und in eine andere `.typ` Datei ausgelagert werden.
 
 Ziel ist es, am Ende in seiner Haupt-Text-Datei nur oben einmal einen Import einer weiteren `.typ` Datei zu haben. Zum Beispiel beginnt _dieses_ Dokument, was Du gerade liest, so:
 ```typ
+// Unsere "Library" Datei mit allen Settings importieren
 #import "_lib.typ": *
 ```
-Und in dieser Datei `_lib.typ` stecken allerlei Funktionen, set-Regeln, show-Regeln und – ganz wichtig – die eine `project` Funktion, die das ganze Setup des Dokuments regelt. Diese Typst-Datei hier geht nämlich nach dem `#import` Kommando so weiter (gekürzt):
+Und in dieser Datei `_lib.typ` stecken allerlei Funktionen, set-Regeln, show-Regeln und – ganz wichtig – die eine `project()` Funktion, die das ganze Setup des Dokuments regelt. Diese Typst-Datei hier geht nämlich nach dem `#import` Kommando so weiter (gekürzt):
 ```typ
 #show: project.with(
    theTitle: "Erste Schritte in Typst",
    authors: ("Stefan Wolfrum"),
-   description: [Ein kleines Demo-Dokument, was die Nutzung von Typst demonstrieren soll.],
+   description: [Ein kleines Beispiel-Dokument, was die Nutzung von Typst demonstrieren soll.],
    location: "Bonn, Germany",
    keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
    date: datetime(year: 2025, month: 12, day: 22),
@@ -122,13 +124,83 @@ Und in dieser Datei `_lib.typ` stecken allerlei Funktionen, set-Regeln, show-Reg
    ]
 )
 ```
-Die in der `_lib.typ` definierte Funktion `project()` bekommt also allerlei Parameter als Input, führt alle Setups durch (Seitenformat einstellen, Schriftart einstellen, Abstände einstellen, Fußzeile definiere, Metadaten setzen etc.) und erzeugt als Output 
-
+Die in der `_lib.typ` definierte Funktion `project()` bekommt also allerlei Parameter als Input, führt alle Setups durch (Seitenformat einstellen, Schriftart einstellen, Abstände einstellen, Fußzeile definieren, Metadaten setzen, Literaturverzeichnis anhängen etc.), bekommt dann als letztes Argument noch all das, was hier im Haupt-Dokument nach ihrem Aufruf folgt (also quasi den gesamten Inhalt) und erzeugt als Output dann das gesamte, finale Dokument mit all seinen Einstellungen.
 
 == Titel
 == Zusammenfassung
 == PDF Metadaten
-== Maße
+== Sprache, Dokumentformat, Blocksatz und mehr
+Die Sprache des Dokuments festzulegen, das ist eine gute Idee. Denn dann funktioniert z.B. auch eine Silbentrennung automatisch. Deutsch als Sprache festlegen geht über eine sogenannte _set rule_ (weil eben `#set` benutzt wird) so:
+```typ
+// Deutsch als Sprache des Dokuments
+#set text(lang: "de")
+```
+
+Die Größe des zu erzeugenden PDF Dokuments – z.B. DIN A4 – legt man auch über eine _set rule_ fest. und wo wir gerade schon an der "page" fummeln, legen wir noch ein paar Dinge mehr fest: Die Ränder und die Seitennummerierung:
+
+```typ
+// Page Setup
+#set page(
+   paper: "a4",
+   margin: (x: 1.5cm, y: 1.5cm),
+   numbering: "1/1"
+)
+```
+
+Blocksatz ("Justification") stellt man ebenfalls über eine _set rule_ ein. Und wo wir schonmal bei Paragraph Einstellungen sind, legen wir auch gleich noch den Zeilenabstand über `leading` fest (der Default ist übrigens `0.65em`):
+```typ
+// Paragraph Style: Blocksatz & 0.52em Zeilenabstand
+#set par(
+   justify: true,
+   leading: 0.52em
+)
+```
+Für Paragraphs, also Absätze, gibt es noch allerlei mehr Einstellungen. Auch da sei wieder die gute #link("https://typst.app/docs/reference/model/par/")[Original-Doku] empfohlen. Man kann z.B. das Blocksatzverhalten sehr differenziert feintunen.
+
+== Noch mehr Abstraktion
+Das Auslagern des Aussehens des Dokuments in die `_lib.typ` ist ja schonmal gut. Aber wenn dann auch diese _Library-_ (oder _Template-_) Datei langsam wächst, wird es immer schwieriger, hin und wieder mal die Abstände, Schriftgrößen und Farben anzupassen. Die stecken halt als konkrete Werte irgendwo verstreut in der Datei.
+
+Das ist dann der Zeitpunkt, all diese Zahlen mit ihren Einheiten auch nochmal auszulagern: in eine Art _Theme-_ oder _Config-_Datei.
+
+Das habe ich so gemacht. Neben meiner Haupt-Typst-Datei, die möglichst nur noch den eigentlich Dokument-Text enthalten soll (plus oben ein `#include` und dann einen Aufruf der `project()` Funktion) und der _Library-_Datei `_lib.typ`, habe ich noch eine weitere Typst-Datei namens `_config.typ` erstellt.
+
+In dieser sammle ich dann in einem sogenannten Dictionary alle möglichen Konfigurationsdaten, wie z.B. Farbwerte, Abstände und mehr. _Wie_ man diese Daten strukturiert, welche Taxonomie man da aufsetzt, darüber kann man sich streiten. Ich habe einfach mal _einen_ Ansatz gewählt, mit dem ich ganz gut zurecht komme.
+
+Das bedeutet dann im zweiten Schritt auch, dass diese `_config.typ` oben als erstes in der `_lib.typ` importiert wird und dass dann alle Werte, die dort bisher hard-coded als Zahlen standen jetzt durch ihren Bezeichner aus der `_config.typ` ersetzt werden müssen.
+
+So wird zum Beispiel aus dem bisherigen Page Setup von oben ...
+```typ
+// Page Setup
+#set page(
+   paper: "a4",
+   margin: (x: 1.5cm, y: 1.5cm),
+   numbering: "1/1"
+)
+```
+
+... jetzt dieses:
+```typ
+// Page Setup
+#set page(
+   paper: "a4",
+   margin: (x: config.distances.page.margin-x,
+            y: config.distances.page.margin-y),
+   numbering: "1/1"
+)
+```
+Denn in der `_config.typ` findet sich im _Theme Dictionary_ dies:
+```typ
+#set config = (
+   distances: (
+      page: (
+         margin-x: 1.5cm,
+         margin-y: 1.5cm
+      )
+)
+```
+Das mag zunächst umständlich aussehen, ist aber schnell praktisch, weil man dann weiß, dass man nie mehr in der `_lib.typ` die Stelle im Code finden muss, wo man seine Seitenränder eingestellt hat. Stattdessen weiß man, dass man alle das Dokument beschreibenden Einstellungen zentral in der `_config.typ` hinterlegt hat und auch nur ändern braucht.
+
+Dass diese Zusatzdateien übrigens alle mit einem `_` Zeichen beginnen, das hat mit den automatischen Build- und Release-Workflows zu tun, die ich für #link("https://github.com/metawops/typst")[mein GitHub Repository] eingerichtet habe. Denn diese Dateien enthalten ja keinen zu setzenden Text, sondern nur Funktionen und Variablen. Da würde also ein leeres PDF Dokument entstehen, wenn man sie mit Typst kompilieren würde. Daher werden alle Dateien, die mit einem `_` beginnen beim Build-Prozess ignoriert.
 
 #pagebreak(weak: true)
 = Das Zeichen \# in Typst

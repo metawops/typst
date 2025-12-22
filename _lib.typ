@@ -338,8 +338,8 @@
    keywords: (),
    date: none,
    version: "",
-   abstract: none,
    bib-path: none,  // Pfad zur bzw. Dateiname der .bib Datei
+   abstract: none,
    doc              // das eigentliche Dokument
 ) = {
    // Ab hier alle Setups
@@ -383,7 +383,7 @@
    // Paragraph Style: Blocksatz
    set par(
       justify: true,
-      leading: 0.52em,
+      leading: 0.52em
    )
    set heading(numbering: "1.", supplement: [Kapitel])
    set math.equation(numbering: "(1)")

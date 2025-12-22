@@ -52,7 +52,7 @@
          below: 3.0em
       ),
       heading: (
-         above: 1.5em,
+         above: 1.0em,
          below: 0.8em
       ),
       abstract-pad-x: 4em,
