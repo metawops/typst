@@ -82,7 +82,7 @@ Das sieht im Typst Dokument dann so aus:
    column-gutter: 2em,
    [Es gibt sogar eine Funktion namens `#lorem()`, mit der man sofort _Lorem ipsum_ Text erzeugen kann. Rechts stehen #loremwords Worte _Lorem ipsum_ Text, erzeugt mit der `#lorem()` Funktion.
 
-   Ein spontanes, zweispaltiges Layout mitten im Text erreicht man mit der `#grid()` Funktion, die ich hier angewendet habe.
+   Das zweispaltige Layout mitten im Text erreicht man mit der `#grid()` Funktion.
    ],
    [
       #box(
@@ -97,7 +97,7 @@ Das sieht im Typst Dokument dann so aus:
 )
 ```
 
-#pagebreak()
+#pagebreak(weak: true)
 = Das Zeichen \# in Typst
 Wir müssen kurz über das Zeichen \# sprechen. 
 
@@ -111,7 +111,7 @@ Das gilt übrigens nicht nur für _Funktionen_, sondern auch für Keywords wie `
   We can only see a short distance ahead, but we can see plenty there that needs to be done.
 ]
 
-#pagebreak()
+#pagebreak(weak: true)
 = Bilder mit `image()` <bilder>
 
 Bilder können im einfachsten Fall über die Funktion `#image()` eingebettet werden. Dabei werden viele Formate unterstützt. Neben den Bitmap-Formaten *PNG*, *JPG*, *GIF*, *WebP* auch das Vektorformat *SVG* und sogar *PDF*. Hier ein auf 50% verkleinertes, eingebettetes JPG Foto des Raspberry Pi _Compute Module 5 (CM5)_:
@@ -483,6 +483,7 @@ Der Input dafür im Typst Dokument ist recht übersichtlich und verständlich:
 ))
 ```
 
+#pagebreak(weak: true)
 = Literaturverzeichnis & das Zitieren
 
 In wissenschaftlichen Arbeiten ist es unerlässlich, aus anderen Quellen – korrekt – zu zitieren. Dazu hat es sich als Vorgehensweise durchgesetzt, in einer Datei alle seine Quellen strukturiert aufzulisten. Dazu bietet sich vor allem das von LaTeX her bekannte _bibtex_ Format an. Hier im Repository liegt die beispielhafte Datei `literatur.bib` in diesem Format. 
