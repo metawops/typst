@@ -391,6 +391,10 @@
    set quote(block: true)
    set list(indent: config.document.list-indent)
    set enum(indent: config.document.enum-indent)
+   set terms(
+      separator: [: ],
+      spacing: 0.8em
+   )
 
    // show rules
    //show link: underline

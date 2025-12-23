@@ -357,7 +357,7 @@ Dieser Code erzeugt dieses Bild:
 
 Was geht da genau vor?
 
-#set terms(separator: [: ], spacing: 0.8em)
+
 / Zeile 2: Die Funktion `range(16)` erzeugt ein Array mit den 16 Zahlen $(0, 1, 2, dots.h, 15)$.
 / Zeile 2: Auf jede Zahl $x$ in diesem Array wird die Funktion $x*16$ angewendet. Das ergibt also dieses Array mit 16 Zahlen: $(0, 16, 32, 48, dots.h, 224, 240)$.
 / Zeile 2: Die Funktion `bytes()` (streng genommen ist es nur der _Constructor_) verpackt diese 16 Zahlen in 16 Bytes am Stück. In einem normalen _Array_ Datentyp wären es nämlich _Integers_, die können wir für raw Daten eines Bildes aber nicht gebrauchen.
@@ -467,7 +467,7 @@ Der Code dazu bringt uns zwei Neuerungen: eine neue Funktion und ein neues `enco
 
 Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
 
-#let w = 10
+#let w = 20
 #let h = 10
 
 #let pixel-data = range(w * h).map(i => {
@@ -478,7 +478,7 @@ Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
    // --- 1. Strukturgebende Schicht (gcd = 1) ---
    if g == 1 {
       // Schwarz, voll deckend
-      return (0, 0, 0, 255)
+      return (80, 80, 80, 255)
       //return (196, 128, 96, 255)
    }
    
@@ -513,7 +513,7 @@ Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
    image(
       bytes(pixel-data), 
       format: (encoding: "rgba8", width: w, height: h), 
-      width: 6cm,
+      width: 10cm,
       scaling: "pixelated"
    ),
    caption: "ggT-modulo-Grafik"
@@ -640,6 +640,36 @@ Die Funktion `fib()` wurde natürlich auch im Typst Dokument implementiert, ist 
 ]
 
 = Diagramme
+== Typsts eigene Methoden
+
+#let n = 18
+#let radius = 3.5cm
+#let sq-size = 1.5cm
+// Wir berechnen die benötigte Gesamtgröße (Durchmesser + Quadratgröße)
+#let total-size = 2 * radius + sq-size 
+
+#figure(
+  block(width: total-size, height: total-size)[
+    #for i in range(n) {
+      let angle = i * (360deg / n)
+      let dx = calc.cos(angle) * radius
+      let dy = calc.sin(angle) * radius
+      
+      place(center + horizon, dx: dx, dy: dy)[
+        #rotate(angle)[
+          #rect(
+            width: sq-size,
+            height: sq-size,
+            fill: color.hsv(angle, 100%, 100%),
+            stroke: 3.5pt + black.lighten(60%),
+            radius: 4pt
+          )
+        ]
+      ]
+    }
+  ],
+  caption: [#n Typst Rechtecke, im Kreis rotiert]
+)
 
 == Lilaq <lilaq>
 Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst erweitern. Ein Paket, mit dem man gut Diagramme zeichnen kann, heißt _Lilaq_. Die folgenden Diagramme sind mit Hilfe von _Lilaq_ entstanden.
