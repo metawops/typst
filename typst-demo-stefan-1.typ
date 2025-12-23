@@ -163,6 +163,8 @@ Einen Hinweis zur Verwendung des \# Zeichens gibt es in @hash-character.
 Die Zusammenfassung (oder auch der _Abstract_) taucht oft bei wissenschaftlichen Arbeiten unter dem Titel und den Autoren auf, so wie auch in diesem Dokument. 
 
 Der Zusammenfassungstext ist bei mir ein Parameter der `project()` Funktion und wird als _content block_ in eckigen Klammern übergeben. In der `_lib.typ` wird er dann wie folgt ausgegeben (gerendert):
+
+// Ligaturen für den folgenden Code Block ausschalten:
 #text(features: (calt: 0))[
 ```typ
 // Abstract rendern (wenn vorhanden)
@@ -310,7 +312,9 @@ So ein Zitat fügt man übrigens über die Funktion `#quote()` ein. Dass es hier
 
 #pagebreak(weak: true)
 = Bilder mit `image()` <bilder>
+Natürlich kann man in sein Typst Dokument auch Bilder einbetten. Im einfachsten Fall sind es Bilder, die aus Dateien kommen. Aber es geht auch anders, wie @images-raw zeigt.
 
+== Bilddateien
 Bilder können im einfachsten Fall über die Funktion `#image()` eingebettet werden. Dabei werden viele Formate unterstützt. Neben den Bitmap-Formaten *PNG*, *JPG*, *GIF*, *WebP* auch das Vektorformat *SVG* und sogar *PDF*. Hier ein auf 50% verkleinertes, eingebettetes JPG Foto des Raspberry Pi _Compute Module 5 (CM5)_:
 
 #image("img/cm5.jpeg", width: 85%)
@@ -318,6 +322,202 @@ Bilder können im einfachsten Fall über die Funktion `#image()` eingebettet wer
 Die Funktion `#image()` eignet sich für das schnelle Einbetten eines Bildes, hat aber zunächst ein paar Nachteile, allen voran: linksbündig, keine Bildunterschrift.
 
 Da hilft uns die `#figure()` Funktion, die im folgenden @abbildungen beschrieben wird.
+
+== Dynamisch erzeugte Bitmaps <images-raw>
+Aber man kann auch Bilder über raw bytes erzeugen und einbinden. Dazu ein cooles, kleines Beispiel #link("https://typst.app/docs/reference/visualize/image/#parameters-format")[aus der Doku]:
+
+// Ligaturen für den folgenden Code Block ausschalten:
+#text(features: (calt: 0))[
+```typ
+#image(
+   bytes(range(16).map(x => x * 16)),
+   format: (
+      encoding: "luma8",
+      width: 4, height: 4,
+   ),
+   width: 2cm,
+   scaling: "pixelated"
+)
+```]
+
+Dieser Code erzeugt dieses Bild:
+
+#align(center)[
+   #image(
+      bytes(range(16).map(x => x * 16)),
+      format: (
+         encoding: "luma8",
+         width: 4,
+         height: 4,
+      ),
+      width: 2cm,
+      scaling: "pixelated"
+   )
+]
+
+Was geht da genau vor?
+
+#set terms(separator: [: ], spacing: 0.8em)
+/ Zeile 2: Die Funktion `range(16)` erzeugt ein Array mit den 16 Zahlen $(0, 1, 2, dots.h, 15)$.
+/ Zeile 2: Auf jede Zahl $x$ in diesem Array wird die Funktion $x*16$ angewendet. Das ergibt also dieses Array mit 16 Zahlen: $(0, 16, 32, 48, dots.h, 224, 240)$.
+/ Zeile 2: Die Funktion `bytes()` (streng genommen ist es nur der _Constructor_) verpackt diese 16 Zahlen in 16 Bytes am Stück. In einem normalen _Array_ Datentyp wären es nämlich _Integers_, die können wir für raw Daten eines Bildes aber nicht gebrauchen.
+/ Zeilen 3–7: Jetzt sagen wir Typst, in welchem Format unser "Bild" vorliegt: Die 16 Bytes sollen in einem Quadrat von 4x4 (`width` x `height`) angeordnet sein und jedes Byte soll einem 8-bit-Helligkeitswert (`luma8`) entsprechen. Die Anordnung geschieht dabei so, dass die Bytes der Reihe nach von links oben nach rechts unten positioniert werden. Also in dieser Art:
+#set math.mat(delim: "[")
+$
+   mat(
+        0,  16,  32,  48;
+       64,  80,  96, 112;
+      128, 144, 160, 176;
+      192, 208, 224, 240;   
+   )
+$
+/ Zeile 8: Das Bild soll 2~cm breit werden. Und da es quadratisch ist, wird es auch 2~cm hoch werden.
+/ Zeile 9: Dank des Werts `pixelated` dieses Parameters `scaling` sehen wir tatsächlich 16 Kästchen unterschiedlicher Graustufen. Würden wir den Parameter `scaling` weglassen oder auf seinen anderen, möglichen Wert `smooth` setzen, würden die Graustufenwerte interpoliert werden, was dann so aussieht:
+#align(center)[
+   #image(
+      bytes(range(16).map(x => x * 16)),
+      format: (
+         encoding: "luma8",
+         width: 4,
+         height: 4,
+      ),
+      width: 2cm
+   )
+]
+
+#line(length: 100%, stroke: 0.5pt + gray)
+
+Ein Experiment mit Farbe gefällig? Gern. Wir fangen mit leichter Kost an: 
+#align(center)[
+   #image(
+      bytes((255,0,0, 0,255,0, 0,0,255)),
+      format: (encoding: "rgb8", width: 3, height: 1),
+      width: 3cm,
+      scaling: "pixelated"
+   )
+]
+
+Dazu der Code:
+```typ
+#image(
+   bytes((255,0,0, 0,255,0, 0,0,255)),
+   format: (encoding: "rgb8", width: 3, height: 1),
+   width: 3cm,
+   scaling: "pixelated"
+)
+```
+/ Zeile 2: Wir erzeugen zunächst mit den neun Zahlen in den _inneren_ Klammern die Werte für drei "Pixel": Erst ein rotes über die ersten drei Zahlen $255, 0, 0$, denn die Zahlen geben der Reihenfolge nach jeweils den rot-, grün- und blau-Anteil des Pixels an. Dabei kann jeder dieser Werte zwischen $0$ und $255$ (8 bit eben) liegen.
+
+   So stehen also die ersten drei Zahlen für das erste, rote "Pixel", da sie voll ($255$) rot, aber gar kein ($0$) blau und grün enthalten.
+
+   So geht es weiter: Die nächsten drei Zahlen, $0, 255, 0$ repräsentieren das zweite "Pixel" in unserer obigen Grafik: ein rein grünes Pixel, da rot und blau $0$ sind.
+
+   Schließlich noch ein blaues Pixel, ihr wisst schon, warum es blau ($0,0,255$) ist.
+
+   Aus dem neun Zahlen _Integer_ Array machen wir mit `bytes()` drumherum ein neun Zahlen _Bytes_ Array.
+
+/ Zeile 3: Jetzt brauchen wir als `encoding` auch `rgb8`. Und die `width`-Angabe $3$ sorgt für die Organisation / Zusammenfassung von jeweils drei Zahlen zu einem "Pixel".
+
+Der Rest ist bekannt.
+
+#line(length: 100%, stroke: 0.5pt + gray)
+
+Das nächste Beispiel spielt mit der Transparenz:
+
+#align(center)[
+   #image(
+      bytes(range(16).map(a => (0,0,255,16*a+15)).flatten()),
+      format: (
+         encoding: "rgba8",
+         width: 16,
+         height: 1,
+      ),
+      height: 1cm,
+      scaling: "pixelated"
+   )
+]
+
+Der Code dazu bringt uns zwei Neuerungen: eine neue Funktion und ein neues `encoding`:
+
+```typ
+#image(
+   bytes(range(16).map(a => (0,0,255,16*a+15)).flatten()),
+   format: (encoding: "rgba8", width: 16, height: 1),
+   height: 1cm,
+   scaling: "pixelated"
+)
+```
+
+/ Zeile 2: Diesmal nutzen wir wieder die von oben bekannten Funktionen `range()` und `map()`. Wir wollen Farben mit rot-, grün-, blau- und Transparenz-Anteil benutzen und zwar 16 davon.
+
+   In der `map()` Funktion bauen wir uns solche 4-Tupel und das Ergebnis _vor_ dem darauf angewendeten `flatten()` ist ein Array von 16 Arrays à vier Elemente:
+
+   #range(16).map(a => (0,0,255,16*a+15))
+
+   Daraus macht uns die `flatten()` Funktion ein "flaches" Array von $16*4$ Zahlen hintereinander – genau, wie wir sie für die `image()` Funktion brauchen:
+
+   #raw(
+      range(16).map(a => (0,0,255,16*a+15)).flatten().map(str).join(", "),
+      lang: "txt"
+   )
+
+/ Zeile 3: Jetzt benutzen wir das Encoding `rgba8`, es steht für rot, grün, blau und alpha, jeweils 8 bit. Und wir wollen 16 "Pixel" nebeneinander, daher ist unsere `heigth` diesmal $1$.
+
+#line(length: 100%, stroke: 0.5pt + gray)
+
+Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
+
+#let w = 10
+#let h = 10
+
+#let pixel-data = range(w * h).map(i => {
+   let x = calc.rem(i, w)
+   let y = calc.div-euclid(i, w)
+   let g = calc.gcd(x+1, y+1)
+   
+   // --- 1. Strukturgebende Schicht (gcd = 1) ---
+   if g == 1 {
+      // Schwarz, voll deckend
+      return (0, 0, 0, 255)
+      //return (196, 128, 96, 255)
+   }
+   
+   // --- 2. Mathematische Schichten (für g > 1) ---
+   
+   // ROT: Modulo 2
+   let is-mod2 = calc.rem(g, 2) == 0
+   let r-chan = if is-mod2 { 255 } else { 0 }
+   let a-r = r-chan
+   
+   // GRÜN: Modulo 3 (Mapping ohne explizite Fälle)
+   let m3 = calc.rem(g, 3)
+   let g-chan = int(m3 * 255 / 2) 
+   let a-g = g-chan
+   
+   // BLAU: Modulo 5 (Mapping ohne explizite Fälle)
+   let m5 = calc.rem(g, 5)
+   let b-chan = int(m5 * 255 / 4)
+   let a-b = b-chan
+   
+   // Alpha-Blending (Summe gedeckelt bei 255)
+   //let a-final = calc.min(255, a-r + a-g + a-b)
+   //let a-final = calc.max(a-r, a-g, a-b) // Maximum
+   //let a-final = int(255 - ( (255 - a-r) * (255 - a-g) * (255 - a-b) / calc.pow(255, 2) )) // "Screen" Blending
+   //let a-final = int(calc.sqrt((calc.pow(a-r, 2) + calc.pow(a-g, 2) + calc.pow(a-b, 2)) / 3)) // Euklidisch (RMS, Root-Mean-Square)
+   let a-final = int(a-r * 0.1 + a-g * 0.1 + a-b * 0.8) // Gewichtung (Summer der Faktoren = 1)
+
+   (r-chan, g-chan, b-chan, a-final)
+}).flatten()
+
+#figure(
+   image(
+      bytes(pixel-data), 
+      format: (encoding: "rgba8", width: w, height: h), 
+      width: 6cm,
+      scaling: "pixelated"
+   ),
+   caption: "ggT-modulo-Grafik"
+) <ggt-modulo>
 
 #pagebreak(weak: true)
 //--------------------
