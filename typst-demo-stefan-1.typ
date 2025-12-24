@@ -467,8 +467,8 @@ Der Code dazu bringt uns zwei Neuerungen: eine neue Funktion und ein neues `enco
 
 Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
 
-#let w = 20
-#let h = 10
+#let w = 51
+#let h = 21
 
 #let pixel-data = range(w * h).map(i => {
    let x = calc.rem(i, w)
@@ -477,7 +477,6 @@ Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
    
    // --- 1. Strukturgebende Schicht (gcd = 1) ---
    if g == 1 {
-      // Schwarz, voll deckend
       return (80, 80, 80, 255)
       //return (196, 128, 96, 255)
    }
@@ -503,8 +502,8 @@ Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
    //let a-final = calc.min(255, a-r + a-g + a-b)
    //let a-final = calc.max(a-r, a-g, a-b) // Maximum
    //let a-final = int(255 - ( (255 - a-r) * (255 - a-g) * (255 - a-b) / calc.pow(255, 2) )) // "Screen" Blending
-   //let a-final = int(calc.sqrt((calc.pow(a-r, 2) + calc.pow(a-g, 2) + calc.pow(a-b, 2)) / 3)) // Euklidisch (RMS, Root-Mean-Square)
-   let a-final = int(a-r * 0.1 + a-g * 0.1 + a-b * 0.8) // Gewichtung (Summer der Faktoren = 1)
+   let a-final = int(calc.sqrt((calc.pow(a-r, 2) + calc.pow(a-g, 2) + calc.pow(a-b, 2)) / 3)) // Euklidisch (RMS, Root-Mean-Square)
+   //let a-final = int(a-r * 0.1 + a-g * 0.1 + a-b * 0.8) // Gewichtung (Summer der Faktoren = 1)
 
    (r-chan, g-chan, b-chan, a-final)
 }).flatten()
@@ -513,11 +512,74 @@ Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
    image(
       bytes(pixel-data), 
       format: (encoding: "rgba8", width: w, height: h), 
-      width: 10cm,
+      height: 6cm,
       scaling: "pixelated"
    ),
    caption: "ggT-modulo-Grafik"
 ) <ggt-modulo>
+
+Jede Pixelspalte und -zeile steht hier für eine natürliche Zahl, beginnend mit jeweils $1$ in der Ecke links oben. Wenn der $gcd(x,y)$#footnote[#link("https://de.wikipedia.org/wiki/Größter_gemeinsamer_Teiler")[größter gemeinsamer Teiler]] $1$ ist, wird das Pixel dunkelgrau gemalt.
+
+Ist er das nicht, schauen wir, was bei der Division des ggT durch 2, 3, 5 als Rest rauskommt und färben die Pixel mehr oder weniger rot ($gcd(x,y) mod 2$), grün ($gcd(x,y) mod 3$) oder blau ($gcd(x,y) mod 5$). Die Transparenz der Farben verrechnen wir und achten darauf, dass der finale Transparenzwert nicht größer als 255 wird. Hier ist der Quellcode für das Erzeugen des _raw bytes Arrays_:
+
+// Ligaturen für den folgenden Code Block ausschalten:
+#text(features: (calt: 0))[
+```typ
+#let w = 51  // Anzahl der Kacheln horizontal
+#let h = 21  // Anzahl der Kacheln vertikal
+
+#let pixel-data = range(w * h).map(i => {
+   // x und y aus unserer einen Laufvariablen i ermitteln:
+   let x = calc.rem(i, w)
+   let y = calc.div-euclid(i, w)
+   let g = calc.gcd(x+1, y+1)  // ggT von x und y errechnen
+   
+   // --- 1. Strukturgebende Schicht (gcd = 1) ---
+   if g == 1 {
+      return (80, 80, 80, 255)
+   }
+   
+   // --- 2. Mathematische Schichten (für g > 1) ---
+   // ROT: Modulo 2
+   let is-mod2 = calc.rem(g, 2) == 0
+   let r-chan = if is-mod2 { 255 } else { 0 }
+   let a-r = r-chan
+   
+   // GRÜN: Modulo 3
+   let m3 = calc.rem(g, 3)
+   let g-chan = int(m3 * 255 / 2) 
+   let a-g = g-chan
+   
+   // BLAU: Modulo 5
+   let m5 = calc.rem(g, 5)
+   let b-chan = int(m5 * 255 / 4)
+   let a-b = b-chan
+   
+   // Alpha-Blending: Euklidisch (RMS, Root-Mean-Square)
+   let a-final = int(calc.sqrt((calc.pow(a-r, 2) + calc.pow(a-g, 2) + calc.pow(a-b, 2)) / 3))
+
+   (r-chan, g-chan, b-chan, a-final)
+}).flatten()
+```
+]
+
+Das Einbauen als Bild ins Dokument erfolgt dann über die schon gelernte `image()` Syntax:
+
+```typ
+#figure(
+   image(
+      bytes(pixel-data), 
+      format: (encoding: "rgba8", width: w, height: h), 
+      height: 6cm,
+      scaling: "pixelated"
+   ),
+   caption: "ggT-modulo-Grafik"
+)
+```
+
+Und fertig ist die Laube.
+
+Natürlich kann man dies alles auch durch das Zeichnen von Rechtecken in einem Block machen und diese Art der Grafik-Erzeugung sehen wir im @typst-grafik ("#nameref(<typst-grafik>)").
 
 #pagebreak(weak: true)
 //--------------------
@@ -640,11 +702,13 @@ Die Funktion `fib()` wurde natürlich auch im Typst Dokument implementiert, ist 
 ]
 
 = Diagramme
-== Typsts eigene Methoden
+== Typsts eigene Methoden <typst-grafik>
+
+Man kann in Typst auch direkt zeichnen und somit (einfache) Illustrationen wie z.B. die in @hue-kreis-quadrate erstellen.
 
 #let n = 18
-#let radius = 3.5cm
-#let sq-size = 1.5cm
+#let radius = 2.5cm
+#let sq-size = 0.7cm
 // Wir berechnen die benötigte Gesamtgröße (Durchmesser + Quadratgröße)
 #let total-size = 2 * radius + sq-size 
 
@@ -661,15 +725,51 @@ Die Funktion `fib()` wurde natürlich auch im Typst Dokument implementiert, ist 
             width: sq-size,
             height: sq-size,
             fill: color.hsv(angle, 100%, 100%),
-            stroke: 3.5pt + black.lighten(60%),
+            stroke: 1.5pt + black.lighten(0%),
             radius: 4pt
           )
         ]
       ]
     }
   ],
-  caption: [#n Typst Rechtecke, im Kreis rotiert]
+  caption: [#n Quadrate, im Kreis rotiert]
+) <hue-kreis-quadrate>
+
+Das ist hier gelöst mit einem `block()` als Zeichenfläche, der `place()`- und der `rect()`-Funktion. Der Quellcode dazu sieht so aus:
+
+```typ
+#let n = 18
+#let radius = 2.5cm
+#let sq-size = 0.7cm
+#let total-size = 2 * radius + sq-size
+
+#figure(
+  block(width: total-size, height: total-size)[
+    #for i in range(n) {
+      let angle = i * (360deg / n)
+      let dx = calc.cos(angle) * radius
+      let dy = calc.sin(angle) * radius
+      
+      place(center + horizon, dx: dx, dy: dy)[
+        #rotate(angle)[
+          #rect(
+            width: sq-size,
+            height: sq-size,
+            fill: color.hsv(angle, 100%, 100%),
+            stroke: 1.5pt + black.lighten(0%),
+            radius: 4pt
+          )
+        ]
+      ]
+    }
+  ],
+  caption: [#n Quadrate, im Kreis rotiert]
 )
+```
+Dazu ein paar Erläuterungen.
+/ Zeile 13: Der erste Parameter der `place()` Funktion ist das _alignment_. Mit `center + horizon` sagen wir, dass unser Mittelpunkt relativ zum umschließenden Container (der `block()` aus Zeile 7) sowohl horizontal (`center`), als auch vertikal (`horizon`) in der Mitte liegen soll. Anders ausgedrückt: Unser Koordinatensystem-Ursprung liegt jetzt genau in der Mitte des Blocks.
+
+   Da wir mit Sinus und Cosinus rechnen und diese Werte zwischen $-1$ und $1$ liefern, müssen wir zur Skalierung lediglich mit dem Radius unseres gedachten Kreises multiplizieren. Wir müssen nicht mehr herumrechnen, wie wir den Kreis auch schön in die Mitte des Blocks bekommen.
 
 == Lilaq <lilaq>
 Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst erweitern. Ein Paket, mit dem man gut Diagramme zeichnen kann, heißt _Lilaq_. Die folgenden Diagramme sind mit Hilfe von _Lilaq_ entstanden.
