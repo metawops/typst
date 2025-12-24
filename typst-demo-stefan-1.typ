@@ -362,15 +362,37 @@ Was geht da genau vor?
 / Zeile 2: Auf jede Zahl $x$ in diesem Array wird die Funktion $x*16$ angewendet. Das ergibt also dieses Array mit 16 Zahlen: $(0, 16, 32, 48, dots.h, 224, 240)$.
 / Zeile 2: Die Funktion `bytes()` (streng genommen ist es nur der _Constructor_) verpackt diese 16 Zahlen in 16 Bytes am Stück. In einem normalen _Array_ Datentyp wären es nämlich _Integers_, die können wir für raw Daten eines Bildes aber nicht gebrauchen.
 / Zeilen 3–7: Jetzt sagen wir Typst, in welchem Format unser "Bild" vorliegt: Die 16 Bytes sollen in einem Quadrat von 4x4 (`width` x `height`) angeordnet sein und jedes Byte soll einem 8-bit-Helligkeitswert (`luma8`) entsprechen. Die Anordnung geschieht dabei so, dass die Bytes der Reihe nach von links oben nach rechts unten positioniert werden. Also in dieser Art:
-#set math.mat(delim: "[")
-$
-   mat(
-        0,  16,  32,  48;
-       64,  80,  96, 112;
-      128, 144, 160, 176;
-      192, 208, 224, 240;   
-   )
-$
+
+#let data = range(16).map(x => x * 16)
+
+#align(center)[
+  #grid(
+    columns: (20pt, 20pt, 20pt, 20pt), // 4 feste Spalten
+    rows: 20pt,                       // Feste Zeilenhöhe
+    gutter: 2pt,                      // Abstand zwischen den Zellen
+    
+    // Wir mappen die Zahlen direkt auf gestaltete Boxen
+    ..data.map(val => {
+      // Grauwert definieren (luma akzeptiert 0-255)
+      let bg-color = luma(val)
+      
+      // Lesbarkeit: Weißer Text auf dunklem Grund, schwarzer auf hellem
+      let text-color = if val < 128 { white } else { black }
+      
+      rect(
+        width: 100%,
+        height: 100%,
+        fill: bg-color,
+        stroke: 0.5pt + gray.darken(20%),
+        radius: 2pt,
+        align(center + horizon, 
+          text(fill: text-color, size: 9pt, weight: "bold", [#val])
+        )
+      )
+    })
+  )
+]
+
 / Zeile 8: Das Bild soll 2~cm breit werden. Und da es quadratisch ist, wird es auch 2~cm hoch werden.
 / Zeile 9: Dank des Werts `pixelated` dieses Parameters `scaling` sehen wir tatsächlich 16 Kästchen unterschiedlicher Graustufen. Würden wir den Parameter `scaling` weglassen oder auf seinen anderen, möglichen Wert `smooth` setzen, würden die Graustufenwerte interpoliert werden, was dann so aussieht:
 #align(center)[
