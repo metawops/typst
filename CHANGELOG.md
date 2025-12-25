@@ -2,6 +2,17 @@
 
 Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ stattfinden.
 
+## [v0.5.0] – 2025-12-25
+### Added
+- Bilderzeugung über raw bytes
+- 16x16 luma image
+- ggt-modulo-Grafik
+- Grafikerzeugung direkt in Typst (block, place, rect etc.)
+- Farbspektrum Grafik inkl. Wiensche Verschiebung
+
+### Changed
+- Aufhübschen der Lilaq Diagramme
+
 ## [v0.4.0] – 2025-12-22
 ### Added
 - Neues Kapitel "Dokument einrichten" (derzeit Kapitel 2)
@@ -59,3 +70,4 @@ Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ s
 [v0.2.1]: https://github.com/metawops/typst/compare/v0.1.0...v0.2.1
 [v0.3.0]: https://github.com/metawops/typst/compare/v0.2.1...v0.3.0
 [v0.4.0]: https://github.com/metawops/typst/compare/v0.3.0...v0.4.0
+[v0.5.0]: https://github.com/metawops/typst/compare/v0.4.0...v0.5.0

@@ -16,8 +16,8 @@
    description: [Ein kleines Beispiel-Dokument, was die Nutzung von Typst demonstrieren soll.],
    location: "Bonn, Germany",
    keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
-   date: datetime(year: 2025, month: 12, day: 24),
-   version: "0.2.251224",
+   date: datetime(year: 2025, month: 12, day: 25),
+   version: "0.2.251225",
    bib-path: "literatur.bib",
    abstract: [Typst ist ein Satzsystem, mit dem man vor allem PDF Dokumente sehr ordentlich setzen kann. Man kann Typst im einfachsten Fall ähnlich wie Markdown benutzen. Es bietet aber weit mehr Möglichkeiten und man kann extrem komplexe Dokumente damit schreiben. Von der Hausarbeit über die Masterarbeit bis zum Buch. Dabei kann es analog zu LaTeX den wissenschaftlichen Satz inklusive mathematischer Formeln perfekt abbilden und ist darüber hinaus über 3rd party Pakete erweiterbar. Typst ist sogar eine Programmiersprache und so kann man zum Beispiel Grafiken algorithmisch direkt innerhalb des Dokuments erstellen.
    
