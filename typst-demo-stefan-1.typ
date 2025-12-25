@@ -489,12 +489,12 @@ Der Code dazu bringt uns zwei Neuerungen: eine neue Funktion und ein neues `enco
 
 Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
 
-#let w = 51
-#let h = 21
+#let w-pix = 51
+#let h-pix = 21
 
-#let pixel-data = range(w * h).map(i => {
-   let x = calc.rem(i, w)
-   let y = calc.div-euclid(i, w)
+#let pixel-data = range(w-pix * h-pix).map(i => {
+   let x = calc.rem(i, w-pix)
+   let y = calc.div-euclid(i, w-pix)
    let g = calc.gcd(x+1, y+1)
    
    // --- 1. Strukturgebende Schicht (gcd = 1) ---
@@ -533,7 +533,7 @@ Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
 #figure(
    image(
       bytes(pixel-data), 
-      format: (encoding: "rgba8", width: w, height: h), 
+      format: (encoding: "rgba8", width: w-pix, height: h-pix), 
       height: 6cm,
       scaling: "pixelated"
    ),
@@ -795,7 +795,7 @@ Dazu ein paar Erläuterungen.
 
 #line(length: 100%, stroke: 0.5pt + gray)
 
-Wie wär's mit einem ebenfalls Farbspektrum?
+Wie wär's mit einem ebenfalls mit Typst Code selbst hier im Dokument erzeugten Farbspektrum? Bittesehr:
 
 #let wavelength-to-color(lambda) = {
   // Initialisierung der RGB-Werte
@@ -853,8 +853,6 @@ Wie wär's mit einem ebenfalls Farbspektrum?
   return rgb(adjust(r, factor), adjust(g, factor), adjust(b, factor))
 }
 
-// --- Beispielhafte Anwendung ---
-
 #let spectrum-visualization(width: 100%) = {
   let start-l = 380
   let end-l = 780
@@ -874,7 +872,7 @@ Wie wär's mit einem ebenfalls Farbspektrum?
           width: 100%,
           height: 30pt,
           fill: gradient.linear(
-            ..range(start-l, end-l + 1, step: 5).map(l => wavelength-to-color(l))
+            ..range(start-l, end-l, step: 1).map(l => wavelength-to-color(l))
           ),
           //stroke: 0.5pt + gray,
           // Unten keine Abrundung, damit die Ticks sauber anliegen
@@ -916,44 +914,76 @@ Wie wär's mit einem ebenfalls Farbspektrum?
 // Anwendung in deinem DIN A4 Dokument
 #spectrum-visualization()
 
-Interesant in dem Zusammenhang ist, dass der Zusammenhang zwischen der Wellenlänge und der Farbtemperatur (in Kelvin) _umgekehrt_ proportional ist. Da gibt es das _Wiensche Verschiebungsgesetz_:
+Der Typst-Code dazu ist etwas umfangreich und wird daher hier nicht wiedergegeben, kann aber natürlich im Repository eingesehen werden. Die beiden Funktionen lauten `wavelength-to-color()` und `spectrum-visualization()`.
+
+Interesant ist übrigens, dass der Zusammenhang zwischen der Wellenlänge und der Farbtemperatur (in Kelvin) _umgekehrt_ proportional ist. Da gibt es das #link("https://de.wikipedia.org/wiki/Wiensches_Verschiebungsgesetz")[_Wiensche Verschiebungsgesetz_]:
 $
    lambda_upright(max) = (2898 mu "m" dot "K")/T
 $
+Das $max$ am $lambda$ bedeutet, dass hier die Wellenlänge gemeint ist, bei der die Wärmestrahlung am größten – eben maximal – ist.
 
 Umgestellt nach der Temperatur bedeutet das:
 $
    T = (2898 mu "m" dot "K")/lambda_upright(max)
 $
 
-Je gelblicher ein Licht ist, desto "wärmer" ist es, sagen wir. Und "warm" würde ja bedeuten: eine höhere Temperatur. De facto (in der Physik) ist es aber _umgekehrt_: Ein vermeintlich warmes, orangenes Licht mit z.B. $600 "nm" (=0.6 mu "m"$) Wellenlänge entspricht einer Temperatur von $(2898 mu "m" dot "K")/(0.6 mu "m") = 4830 "K"$. 
+Je gelblicher ein Licht ist, desto "wärmer" empfinden wir es. "Warme" Lichter müssten also gegenüber kälteren eine höhere Temperatur haben. Denn wenn die Temperatur steigt, wird es ja wärmer.
 
-Wohingegen ein Licht, was wir als "kühl" (weil bläulicher) bezeichnen würden, was also im Spektrum eher bei $450 "nm" (=0.45 mu "m")$ liegt, einer Temperatur von $(2898 mu "m" dot "K")/(0.45 mu "m") = 6440 "K"$ entspricht, also einer _höheren_ Temperatur.
+De facto (in der Physik) ist es hier aber _umgekehrt_: Ein vermeintlich warmes, orangenes Licht mit z.B. $600 "nm" (=0.6 mu "m")$ Wellenlänge entspricht einer Temperatur von $(2898 mu "m" dot "K")/(0.6 mu "m") = 4830 "K"$. 
+
+Wohingegen ein Licht, das wir als "kühl" (weil bläulicher) bezeichnen würden – im Spektrum also eher bei ca. $450 "nm" (=0.45 mu "m")$ angesiedelt –, einer Temperatur von $(2898 mu "m" dot "K")/(0.45 mu "m") = 6440 "K"$ entspricht, also einer _höheren_ Temperatur.
 
 
 == Lilaq <lilaq>
 Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst erweitern. Ein Paket, mit dem man gut Diagramme zeichnen kann, heißt _Lilaq_. Die folgenden Diagramme sind mit Hilfe von _Lilaq_ entstanden.
 
-//#import "@preview/lilaq:0.5.0" as lq
-
 #let xs = (0, 1, 2, 3, 4)
 
-#lq.diagram(
-  lq.plot(xs, (3, 5, 4, 2, 3))
+#grid(
+   columns: (1fr, 1fr),
+   align: center + horizon,
+   stroke: 0.0pt + gray,
+   move(dy: -1.5pt)[#lq.diagram(
+      lq.plot(xs, (3, 5, 4, 2, 3))
+   )],
+   [#lq.diagram(
+      title: [Precious data],
+      xlabel: $x$, ylabel: $y$,
+      lq.plot(xs, (3, 5, 4, 2, 3), mark: "s", label: [A]),
+      lq.plot(xs, x => 2*calc.cos(x)+3, mark: "o", label: [B])
+   )]
 )
-#lq.diagram(
-  title: [Precious data],
-  xlabel: $x$, 
-  ylabel: $y$,
-
-  lq.plot(xs, (3, 5, 4, 2, 3), mark: "s", label: [A]),
-  lq.plot(
-    xs, x => 2*calc.cos(x) + 3, 
-    mark: "o", label: [B]
-  )
+Dazu jeweils der Typst-Code:
+#grid(
+   columns: (1fr, 1fr),
+   stroke: 0.0pt + gray,
+   inset: (x: 5pt),
+   [
+      ```typ
+   #let xs = (0, 1, 2, 3, 4)
+   #lq.diagram(
+      lq.plot(xs, (3, 5, 4, 2, 3))
+   )
+      ```
+   ],
+   [
+      ```typ
+   #let xs = (0, 1, 2, 3, 4)
+   #lq.diagram(
+      title: [Precious data],
+      xlabel: $x$, ylabel: $y$,
+      lq.plot(xs, (3, 5, 4, 2, 3),
+         mark: "s", label: [A]),
+      lq.plot(xs, x => 2*calc.cos(x)+3,
+         mark: "o", label: [B])
+   )
+      ```
+   ]
 )
 
-Ein bisschen anspruchsvoller geht es auch, man beachte z.B. die x-Achsen-Beschriftung im folgenden Diagramm.
+#v(1cm)
+
+Ein bisschen anspruchsvoller geht es auch, man beachte z.B. die x-Achsen-Beschriftung und die überlagerte, leicht transparente Legende im folgenden Diagramm.
 
 #let xs = lq.linspace(-2*calc.pi, 2*calc.pi, num: 40)
 #let ys1 = xs.map(x => calc.sin(x))
