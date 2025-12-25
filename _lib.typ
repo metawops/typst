@@ -492,7 +492,8 @@
    )
 
    // Hier wählen wir den Font, der für Codeblöcke (raw) genutzt werden soll:
-   show raw: set text(font: "JetBrains Mono", size: config.document.code-font-size) 
+   show raw: set text(font: "JetBrains Mono",
+                      size: config.document.code-font-size) 
 
    // Styling für INLINE Code (in Backticks `...`)
    // Wir nutzen 'box', damit es im Textfluss bleibt.
@@ -503,6 +504,7 @@
       radius: 3pt,                // Leicht abgerundete Ecken
       it
    )
+
 
    // Codly Initialisierung
    show: codly-init.with()
@@ -516,12 +518,14 @@
       radius: 4pt,                   // Ecken: Abgerundet
       inset: 0.32em,
       lang-inset: 0.5em,
-      lang-outset: (x: 0.2em, y: 0.4em),
+      lang-outset: (x: 0.5em, y: 0.0em),
       display-icon: true,           
       display-name: true,            // Zeigt den Namen der Sprache an
       number-align: right,
       number-format: (n) => text(fill: config.colors.codly.line-numbers, size: 8pt, str(n)), // Nummer-Style
    )
+
+   //show raw.where(block: true): it => pad(x: 1.5em, it)
 
    title[#theTitle]
    align(center)[

@@ -935,7 +935,10 @@ Wohingegen ein Licht, das wir als "kühl" (weil bläulicher) bezeichnen würden 
 
 
 == Lilaq <lilaq>
-Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst erweitern. Ein Paket, mit dem man gut Diagramme zeichnen kann, heißt _Lilaq_. Die folgenden Diagramme sind mit Hilfe von _Lilaq_ entstanden.
+Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst erweitern. Ein Paket, mit dem man gut Diagramme zeichnen kann, heißt _Lilaq_. Die folgenden Diagramme sind mit Hilfe von _Lilaq_ entstanden. Dazu muss das Paket zu Beginn einmal importiert werden:
+```typ
+#import "@preview/lilaq:0.5.0" as lq
+```
 
 #let xs = (0, 1, 2, 3, 4)
 
@@ -953,7 +956,8 @@ Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst 
       lq.plot(xs, x => 2*calc.cos(x)+3, mark: "o", label: [B])
    )]
 )
-Dazu jeweils der Typst-Code:
+Dazu jeweils der Typst-Code (natürlich wurde die Variable `xs` nur _einmal_ definiert):
+
 #grid(
    columns: (1fr, 1fr),
    stroke: 0.0pt + gray,
@@ -981,9 +985,9 @@ Dazu jeweils der Typst-Code:
    ]
 )
 
-#v(1cm)
+#v(0.5cm)
 
-Ein bisschen anspruchsvoller geht es auch, man beachte z.B. die x-Achsen-Beschriftung und die überlagerte, leicht transparente Legende im folgenden Diagramm.
+Ein bisschen anspruchsvoller geht es auch, man beachte z.B. die x-Achsen-Beschriftung im folgenden Diagramm.
 
 #let xs = lq.linspace(-2*calc.pi, 2*calc.pi, num: 40)
 #let ys1 = xs.map(x => calc.sin(x))
@@ -1007,6 +1011,32 @@ Ein bisschen anspruchsvoller geht es auch, man beachte z.B. die x-Achsen-Beschri
    caption: "Ein Diagramm, erzeugt mit Hilfe des Lilaq Pakets"
 )
 
+Hier wurde wieder die Typst Funktion `figure()` – bekannt aus @abbildungen – um das Lilaq-Diagramm angewendet, damit wir eine Bildunterschrift und die automatische Nummerierung haben. Der Quellcode ist nicht besonders kompliziert:
+```typ
+#let xs = lq.linspace(-2*calc.pi, 2*calc.pi, num: 40)
+#let ys1 = xs.map(x => calc.sin(x))
+#let ys2 = xs.map(x => calc.cos(x))
+
+#figure(
+   lq.diagram(
+      width: 14cm,
+      height: 5cm,
+      title: [Trigonometrische Funktionen],
+      xlim: (-2*calc.pi, 2*calc.pi),
+      xaxis: (
+         locate-ticks: lq.tick-locate.linear.with(unit: calc.pi),
+         format-ticks: lq.tick-format.linear.with(suffix: $pi$)
+      ),
+      xlabel: $x$,
+      ylabel: $y$,
+      lq.plot(xs, ys1, color: blue, label: $sin (x)$),
+      lq.plot(xs, ys2, mark: "star", label: $cos(x)$, color: orange),
+   ),
+   caption: "Ein Diagramm, erzeugt mit Hilfe des Lilaq Pakets"
+)
+```
+
+
 #pagebreak()
 == Programmierte Grafiken <programmierung>
 
@@ -1029,7 +1059,6 @@ Die folgende *Koch'sche Schneeflocken-Kurve* wurde hier nicht als Bitmap und auc
 
 Um diese Grafik hier im Dokument selbst erzeugen zu können (und eben _nicht_ als Grafikdatei mit fixer Auflösung einzubetten), ist die Erzeugung als Funktion realisiert. Hier – für den interessierten Leser – der Typst Quellcode dazu:
 
-#code-box[
 ```typ
 #let koch-snowflake(n) = {
   let complex-add(c1, c2) = { c1.zip(c2).map(array.sum) }
@@ -1055,11 +1084,9 @@ Um diese Grafik hier im Dokument selbst erzeugen zu können (und eben _nicht_ al
   return koch-snowflake-impl(n)
 }
 ```
-]
 
 Das tatsächliche Erzeugen der Grafik im Dokument erfolgt dann über diese Typst Syntax im Dokument:
 
-#code-box[
 ```typ
 #figure(
    lq.diagram(
@@ -1074,7 +1101,7 @@ Das tatsächliche Erzeugen der Grafik im Dokument erfolgt dann über diese Typst
    caption: [Koch'sche Schneeflocke (ein Fraktal)]
 )
 ```
-]
+
 Dabei wurde wieder – wie schon bei den einfachen Diagramm-Beispielen in @lilaq das Paket _Lilaq_ benutzt.
 
 === Die Collatz Zahlenfolge
@@ -1167,9 +1194,9 @@ Alle drei Funktionen sind ebenfalls im Typst Quelldokument implementiert, aber z
 Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com/metawops/typst")[liegt auf Github], so dass man jederzeit reinschauen kann, wenn man sich für die Implementierungsdetails interessiert. Die Funktionen habe ich übrigens in die Hilfs-/Library-Typst-Datei `_lib.typ` ausgelagert, damit sie das eigentliche Quelldokument nicht zu unübersichtlich werden lassen.
 
 == Diagramme mit Zusatzpaketen
-Es gibt nahezu 500 #link("https://typst.app/universe/search/?kind=packages")[Zusatzpakete für Typst], darunter zahlreiche, die beim Erzeugen von Diagrammen helfen.
+Es gibt nahezu 500 #link("https://typst.app/universe/search/?kind=packages")[Zusatzpakete für Typst], darunter zahlreiche, die beim Erzeugen von Diagrammen helfen. In @lilaq haben wir bereits eins kennengelernt: Lilaq.
 
-Ich habe mal beispielhaft das Paket #link("https://github.com/solstice23/typst-ribbony")[_Ribbony_] herausgepickt. Damit kann man u.a. ein sogenanntes _Sankey Diagramm_ erzeugen:
+Ein weiteres Beispiel ist das Paket #link("https://github.com/solstice23/typst-ribbony")[_Ribbony_]. Damit kann man u.a. ein sogenanntes _Sankey Diagramm_ erzeugen:
 
 //#import "@preview/ribbony:0.1.0": *
 
