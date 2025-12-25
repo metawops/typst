@@ -793,6 +793,144 @@ Dazu ein paar Erläuterungen.
 
    Da wir mit Sinus und Cosinus rechnen und diese Werte zwischen $-1$ und $1$ liefern, müssen wir zur Skalierung lediglich mit dem Radius unseres gedachten Kreises multiplizieren. Wir müssen nicht mehr herumrechnen, wie wir den Kreis auch schön in die Mitte des Blocks bekommen.
 
+#line(length: 100%, stroke: 0.5pt + gray)
+
+Wie wär's mit einem ebenfalls Farbspektrum?
+
+#let wavelength-to-color(lambda) = {
+  // Initialisierung der RGB-Werte
+  let r = 0.0
+  let g = 0.0
+  let b = 0.0
+
+  // 1. Spektrale Verteilung berechnen
+  if lambda >= 380 and lambda < 440 {
+    r = -(lambda - 440) / (440 - 380)
+    g = 0.0
+    b = 1.0
+  } else if lambda >= 440 and lambda < 490 {
+    r = 0.0
+    g = (lambda - 440) / (490 - 440)
+    b = 1.0
+  } else if lambda >= 490 and lambda < 510 {
+    r = 0.0
+    g = 1.0
+    b = -(lambda - 510) / (510 - 490)
+  } else if lambda >= 510 and lambda < 580 {
+    r = (lambda - 510) / (580 - 510)
+    g = 1.0
+    b = 0.0
+  } else if lambda >= 580 and lambda < 645 {
+    r = 1.0
+    g = -(lambda - 645) / (645 - 580)
+    b = 0.0
+  } else if lambda >= 645 and lambda <= 780 {
+    r = 1.0
+    g = 0.0
+    b = 0.0
+  }
+
+  // 2. Intensitäts-Faktor (Dämpfung an den Rändern)
+  let factor = 0.0
+  if lambda >= 380 and lambda < 420 {
+    factor = 0.3 + 0.7 * (lambda - 380) / (420 - 380)
+  } else if lambda >= 420 and lambda < 701 {
+    factor = 1.0
+  } else if lambda >= 701 and lambda <= 780 {
+    factor = 0.3 + 0.7 * (780 - lambda) / (780 - 700)
+  } else {
+    factor = 0.0
+  }
+
+  // 3. Gamma-Korrektur (typischerweise 0.8 für Monitore)
+  let gamma = 0.8
+  let adjust(val, f) = {
+    if val == 0 { return 0% }
+    // Anwendung von Intensität und Gamma-Kurve
+    return calc.pow(val * f, gamma) * 100%
+  }
+
+  return rgb(adjust(r, factor), adjust(g, factor), adjust(b, factor))
+}
+
+// --- Beispielhafte Anwendung ---
+
+#let spectrum-visualization(width: 100%) = {
+  let start-l = 380
+  let end-l = 780
+  let range-nm = end-l - start-l
+  
+  // Wir definieren einen Seitenabstand für die Labels (ca. die halbe Breite der Zahl "380")
+  let label-margin = 15pt 
+
+  block(width: width, {
+    // Das Padding sorgt dafür, dass die zentrierten Randzahlen nicht überstehen
+    pad(x: label-margin, {
+      stack(
+        spacing: 0pt, // Entfernt den Abstand zwischen Balken und Ticks komplett
+        
+        // 1. Der Farbbalken
+        rect(
+          width: 100%,
+          height: 30pt,
+          fill: gradient.linear(
+            ..range(start-l, end-l + 1, step: 5).map(l => wavelength-to-color(l))
+          ),
+          //stroke: 0.5pt + gray,
+          // Unten keine Abrundung, damit die Ticks sauber anliegen
+          //radius: (top: 2pt, bottom: 0pt) 
+        ),
+
+        // 2. Die Achse (Ticks und Labels)
+        box(width: 100%, height: 25pt, {
+          let labels = (380, 440, 490, 510, 580, 645, 700, 750, 780)
+          
+          for l in labels {
+            // Position relativ zur Breite des Balkens (0% bis 100%)
+            let rel-pos = (l - start-l) / range-nm * 100%
+            
+            place(
+              left,
+              dx: rel-pos - label-margin/2,
+              // align(center) sorgt dafür, dass der Tick und die Zahl 
+              // exakt auf der Position zentriert werden
+              align(center, stack(
+                dir: ttb,
+                spacing: 3pt,
+                // Die Tick-Linie
+                line(angle: 90deg, length: 5pt, stroke: 0.5pt),
+                // Die Zahl
+                text(size: 8pt)[#l]
+              ))
+            )
+          }
+        })
+      )
+    })
+    
+    // Einheit (ganz rechts außen, unabhängig vom Padding des Balkens)
+    place(bottom + right, dy: 5pt, text(size: 7pt, style: "italic", fill: gray)[Wellenlänge in nm])
+  })
+}
+
+// Anwendung in deinem DIN A4 Dokument
+#spectrum-visualization()
+
+Interesant in dem Zusammenhang ist, dass der Zusammenhang zwischen der Wellenlänge und der Farbtemperatur (in Kelvin) _umgekehrt_ proportional ist. Da gibt es das _Wiensche Verschiebungsgesetz_:
+$
+   lambda_upright(max) = (2898 mu "m" dot "K")/T
+$
+
+Umgestellt nach der Temperatur bedeutet das:
+$
+   T = (2898 mu "m" dot "K")/lambda_upright(max)
+$
+
+Je gelblicher ein Licht ist, desto "wärmer" ist es, sagen wir. Und "warm" würde ja bedeuten: eine höhere Temperatur. De facto (in der Physik) ist es aber _umgekehrt_: Ein vermeintlich warmes, orangenes Licht mit z.B. $600 "nm" (=0.6 mu "m"$) Wellenlänge entspricht einer Temperatur von $(2898 mu "m" dot "K")/(0.6 mu "m") = 4830 "K"$. 
+
+Wohingegen ein Licht, was wir als "kühl" (weil bläulicher) bezeichnen würden, was also im Spektrum eher bei $450 "nm" (=0.45 mu "m")$ liegt, einer Temperatur von $(2898 mu "m" dot "K")/(0.45 mu "m") = 6440 "K"$ entspricht, also einer _höheren_ Temperatur.
+
+
 == Lilaq <lilaq>
 Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst erweitern. Ein Paket, mit dem man gut Diagramme zeichnen kann, heißt _Lilaq_. Die folgenden Diagramme sind mit Hilfe von _Lilaq_ entstanden.
 
