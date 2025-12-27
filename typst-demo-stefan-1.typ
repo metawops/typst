@@ -1041,7 +1041,7 @@ Hier wurde wieder die Typst Funktion `figure()` – bekannt aus @abbildungen –
 == Programmierte Grafiken <programmierung>
 
 === Ein Fraktal
-Die folgende *Koch'sche Schneeflocken-Kurve* wurde hier nicht als Bitmap und auch nicht als Vektorgrafik eingebaut, sondern wurde dynamisch durch Typst Code erzeugt.
+Die folgende *#link("https://de.wikipedia.org/wiki/Koch-Kurve")[Koch'sche Schneeflocken-Kurve]* wurde hier nicht als Bitmap und auch nicht als Vektorgrafik eingebaut, sondern wurde dynamisch durch Typst Code erzeugt.
 
 #figure(
    lq.diagram(
@@ -1050,7 +1050,7 @@ Die folgende *Koch'sche Schneeflocken-Kurve* wurde hier nicht als Bitmap und auc
       yaxis: (ticks: none, stroke: none),
 
       lq.path(
-         ..koch-snowflake(4),
+         ..koch-snowflake(5),
          fill: orange, closed: true
       )
    ),
@@ -1148,7 +1148,7 @@ Für die nur geringfügig höhere Startzahl #startzahl ergibt sich schon eine Fo
 Aber so richtig krass wird's, wenn wir die kaum größere Startzahl #startzahl wählen. Denn auf einmal eskaliert alles, die Folge hat nun satte #periodenlaenge Glieder und unser Diagramm müssen wir extra verkleinern, sonst passt es hier nicht hin.
 
 #figure(
-   collatz_visualizer(startzahl, diagrammZeilen, scale: 0.57),
+   collatz_visualizer(startzahl, diagrammZeilen, scale: 0.58),
    caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
 ) <collatzdiagramm3>
 
@@ -1192,6 +1192,131 @@ Da hier sehr viele Folgeglieder zusammenkommen, musste ich den Skalierungsfaktor
 Alle drei Funktionen sind ebenfalls im Typst Quelldokument implementiert, aber zu umfangreich, um sie hier aufzulisten. 
 
 Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com/metawops/typst")[liegt auf Github], so dass man jederzeit reinschauen kann, wenn man sich für die Implementierungsdetails interessiert. Die Funktionen habe ich übrigens in die Hilfs-/Library-Typst-Datei `_lib.typ` ausgelagert, damit sie das eigentliche Quelldokument nicht zu unübersichtlich werden lassen.
+
+==== Collatz Baum
+
+// --- Konfiguration ---
+#let arrow-color = rgb(0, 110, 220) 
+#let circle-fill = rgb(255, 255, 255)
+#let text-color = black
+
+// --- Hilfsfunktion: Pfeilspitze (Skalierbar) ---
+#let arrow-head(pos, angle, scale, col: arrow-color) = {
+  let w = 3.5pt * scale
+  let h = 8pt * scale 
+  place(top + left, dx: pos.at(0), dy: pos.at(1),
+    rotate(angle, origin: left, 
+      polygon(fill: col, stroke: none, (0pt, 0pt), (-w, -h), (w, -h))
+    )
+  )
+}
+
+// --- Visualisierungs-Funktion ---
+#let collatz_tree(max_levels, scale: 1.0) = {
+  
+  // Maße
+  let r-circle = 14pt * scale
+  let cell-x = 1.8cm * scale 
+  let cell-y = 1.5cm * scale 
+  let font-size = 11pt * scale
+  let connection-stroke = 1.2pt * scale + arrow-color
+  let arrow-h = 8pt * scale
+
+  // Queue für Breitensuche
+  let queue = ((val: 1, col: 0, start_lvl: 1),) 
+  let final_content = ()
+  
+  // KORREKTUR 1: Globaler Spaltenzähler (als Array-Hack für Mutability)
+  // Startet bei 0 (Hauptstamm). Nächste freie ist 1.
+  let col_state = (0,) 
+  let max_col_used = 0
+  
+  while queue.len() > 0 {
+     let item = queue.remove(0) 
+     let c_val = item.val
+     let c_col = item.col
+     let c_lvl = item.start_lvl
+     
+     if c_col > max_col_used { max_col_used = c_col }
+     
+     let run_val = c_val
+     let run_lvl = c_lvl
+     
+     while run_lvl <= max_levels {
+        let cx = c_col * cell-x + cell-x/2
+        let cy = (max_levels - run_lvl) * cell-y + cell-y/2
+        
+        // Knoten
+        final_content.push(place(top + left, dx: cx - r-circle, dy: cy - r-circle,
+          box(width: 2*r-circle, height: 2*r-circle, align(center + horizon)[
+             #circle(radius: r-circle, stroke: connection-stroke, fill: circle-fill)[
+               #set align(center + horizon)
+               #text(size: font-size, weight: "bold", fill: text-color)[#run_val]
+             ]
+          ])
+        ))
+        
+        // Vertikaler Pfeil nach unten
+        if run_lvl > c_lvl or (c_col == 0 and run_lvl > 1) {
+           let start-y = cy + r-circle + 4pt*scale
+           let dest-y = cy + cell-y - r-circle - 4pt*scale
+           
+           final_content.push(place(curve(
+             stroke: connection-stroke,
+             curve.move((cx, start-y)),
+             curve.line((cx, dest-y - arrow-h))
+           )))
+           final_content.push(arrow-head((cx, dest-y), 0deg, scale))
+        }
+        
+        // Abzweigung prüfen
+        if run_val > 4 and calc.rem(run_val - 1, 3) == 0 {
+            let odd = int((run_val - 1) / 3)
+            if calc.odd(odd) {
+               // KORREKTUR 1: Neue, unique Spalte zuweisen
+               col_state.at(0) = col_state.at(0) + 1
+               let next-col = col_state.at(0)
+               
+               let branch-cx = next-col * cell-x + cell-x/2
+               
+               // Pfeil von rechts (Quelle) nach links (Ziel)
+               let arrow-dest-x = cx + r-circle + 4pt*scale // Ziel ist der aktuelle Knoten
+               let arrow-src-x  = branch-cx - r-circle - 4pt*scale // Quelle ist der neue Ast
+               
+               final_content.push(place(curve(
+                 stroke: connection-stroke,
+                 curve.move((arrow-src-x, cy)),
+                 // KORREKTUR 2: Pfeil endet rechts vom Zielknoten
+                 curve.line((arrow-dest-x + arrow-h, cy)) 
+               )))
+               // KORREKTUR 2: Rotation 90deg für Pfeil nach links
+               final_content.push(arrow-head((arrow-dest-x, cy), 90deg, scale))
+               
+               // Neuen Job in die Queue
+               queue.push((val: odd, col: next-col, start_lvl: run_lvl))
+            }
+        }
+        run_val = run_val * 2
+        run_lvl = run_lvl + 1
+     }
+  }
+
+  // Breite dynamisch berechnen
+  let total-w = (max_col_used + 1) * cell-x
+  let total-h = max_levels * cell-y
+  
+  align(center)[
+    #block(width: total-w, height: total-h, breakable: false, {
+      for el in final_content { el }
+    })
+  ]
+}
+
+// Beispiel mit Ebene 7, um die 21 und 20 zu sehen
+#collatz_tree(7, scale: 0.75)
+
+
+
 
 == Diagramme mit Zusatzpaketen
 Es gibt nahezu 500 #link("https://typst.app/universe/search/?kind=packages")[Zusatzpakete für Typst], darunter zahlreiche, die beim Erzeugen von Diagrammen helfen. In @lilaq haben wir bereits eins kennengelernt: Lilaq.
