@@ -16,8 +16,8 @@
    description: [Ein kleines Beispiel-Dokument, was die Nutzung von Typst demonstrieren soll.],
    location: "Bonn, Germany",
    keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
-   date: datetime(year: 2025, month: 12, day: 25),
-   version: "0.2.251225",
+   date: datetime(year: 2025, month: 12, day: 31),
+   version: "0.2.251231",
    bib-path: "literatur.bib",
    abstract: [Typst ist ein Satzsystem, mit dem man vor allem PDF Dokumente sehr ordentlich setzen kann. Man kann Typst im einfachsten Fall ähnlich wie Markdown benutzen. Es bietet aber weit mehr Möglichkeiten und man kann extrem komplexe Dokumente damit schreiben. Von der Hausarbeit über die Masterarbeit bis zum Buch. Dabei kann es analog zu LaTeX den wissenschaftlichen Satz inklusive mathematischer Formeln perfekt abbilden und ist darüber hinaus über 3rd party Pakete erweiterbar. Typst ist sogar eine Programmiersprache und so kann man zum Beispiel Grafiken algorithmisch direkt innerhalb des Dokuments erstellen.
    
@@ -1200,7 +1200,7 @@ Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com
 #let circle-fill = rgb(255, 255, 255)
 #let text-color = black
 
-// --- Hilfsfunktion: Pfeilspitze (Skalierbar) ---
+// --- Hilfsfunktion: Pfeilspitze ---
 #let arrow-head(pos, angle, scale, col: arrow-color) = {
   let w = 3.5pt * scale
   let h = 8pt * scale 
@@ -1213,109 +1213,277 @@ Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com
 
 // --- Visualisierungs-Funktion ---
 #let collatz_tree(max_levels, scale: 1.0) = {
-  
-  // Maße
+  // --- Styling ---
   let r-circle = 14pt * scale
   let cell-x = 1.8cm * scale 
   let cell-y = 1.5cm * scale 
   let font-size = 11pt * scale
-  let connection-stroke = 1.2pt * scale + arrow-color
+  let arrow-col = rgb(0, 110, 220)
+  let connection-stroke = 1.2pt * scale + arrow-col
+  let circle-fill = rgb(255, 255, 255)
+  let text-color = black
   let arrow-h = 8pt * scale
 
-  // Queue für Breitensuche
-  let queue = ((val: 1, col: 0, start_lvl: 1),) 
-  let final_content = ()
-  
-  // KORREKTUR 1: Globaler Spaltenzähler (als Array-Hack für Mutability)
-  // Startet bei 0 (Hauptstamm). Nächste freie ist 1.
-  let col_state = (0,) 
-  let max_col_used = 0
-  
-  while queue.len() > 0 {
-     let item = queue.remove(0) 
-     let c_val = item.val
-     let c_col = item.col
-     let c_lvl = item.start_lvl
-     
-     if c_col > max_col_used { max_col_used = c_col }
-     
-     let run_val = c_val
-     let run_lvl = c_lvl
-     
-     while run_lvl <= max_levels {
-        let cx = c_col * cell-x + cell-x/2
-        let cy = (max_levels - run_lvl) * cell-y + cell-y/2
-        
-        // Knoten
-        final_content.push(place(top + left, dx: cx - r-circle, dy: cy - r-circle,
-          box(width: 2*r-circle, height: 2*r-circle, align(center + horizon)[
-             #circle(radius: r-circle, stroke: connection-stroke, fill: circle-fill)[
-               #set align(center + horizon)
-               #text(size: font-size, weight: "bold", fill: text-color)[#run_val]
-             ]
-          ])
-        ))
-        
-        // Vertikaler Pfeil nach unten
-        if run_lvl > c_lvl or (c_col == 0 and run_lvl > 1) {
-           let start-y = cy + r-circle + 4pt*scale
-           let dest-y = cy + cell-y - r-circle - 4pt*scale
-           
-           final_content.push(place(curve(
-             stroke: connection-stroke,
-             curve.move((cx, start-y)),
-             curve.line((cx, dest-y - arrow-h))
-           )))
-           final_content.push(arrow-head((cx, dest-y), 0deg, scale))
-        }
-        
-        // Abzweigung prüfen
-        if run_val > 4 and calc.rem(run_val - 1, 3) == 0 {
-            let odd = int((run_val - 1) / 3)
-            if calc.odd(odd) {
-               // KORREKTUR 1: Neue, unique Spalte zuweisen
-               col_state.at(0) = col_state.at(0) + 1
-               let next-col = col_state.at(0)
-               
-               let branch-cx = next-col * cell-x + cell-x/2
-               
-               // Pfeil von rechts (Quelle) nach links (Ziel)
-               let arrow-dest-x = cx + r-circle + 4pt*scale // Ziel ist der aktuelle Knoten
-               let arrow-src-x  = branch-cx - r-circle - 4pt*scale // Quelle ist der neue Ast
-               
-               final_content.push(place(curve(
-                 stroke: connection-stroke,
-                 curve.move((arrow-src-x, cy)),
-                 // KORREKTUR 2: Pfeil endet rechts vom Zielknoten
-                 curve.line((arrow-dest-x + arrow-h, cy)) 
-               )))
-               // KORREKTUR 2: Rotation 90deg für Pfeil nach links
-               final_content.push(arrow-head((arrow-dest-x, cy), 90deg, scale))
-               
-               // Neuen Job in die Queue
-               queue.push((val: odd, col: next-col, start_lvl: run_lvl))
-            }
-        }
-        run_val = run_val * 2
-        run_lvl = run_lvl + 1
-     }
+  // Pfeilspitze
+  let arrow-head(pos, angle, scale) = {
+    let w = 3.5pt * scale
+    let h = 8pt * scale 
+    place(top + left, dx: pos.at(0), dy: pos.at(1),
+      rotate(angle, origin: left, 
+        polygon(fill: arrow-col, stroke: none, (0pt, 0pt), (-w, -h), (w, -h))
+      )
+    )
   }
 
-  // Breite dynamisch berechnen
-  let total-w = (max_col_used + 1) * cell-x
+  // -----------------------------------------------------------------
+  // SCHRITT 1: Logischen Baum bauen (Rekursiv)
+  // -----------------------------------------------------------------
+  // Gibt zurück: (val: int, lvl: int, straight: node|none, side: node|none, side_is_right: bool)
+  let build_tree(val, lvl, max_lvl, make_right) = {
+    if lvl > max_lvl { return none }
+    
+    let node = (val: val, lvl: lvl, straight: none, side: none, side_is_right: make_right)
+    
+    // 1. Geradeaus-Kind (n * 2)
+    node.straight = build_tree(val * 2, lvl + 1, max_lvl, make_right)
+    
+    // 2. Seiten-Kind (n-1)/3
+    if val > 4 and calc.rem(val - 1, 3) == 0 {
+      let odd = int((val - 1) / 3)
+      if calc.odd(odd) {
+        // Richtungswechsel für Balance:
+        // Wenn dieser Ast "Rechts" ist, geht sein erstes Kind nach "Links" (und umgekehrt).
+        // Das sorgt für natürliche Balance um die Achse.
+        node.side = build_tree(odd, lvl + 1, max_lvl, not make_right)
+      }
+    }
+    return node
+  }
+
+  // -----------------------------------------------------------------
+  // SCHRITT 2: Ausdehnung (Extent) berechnen
+  // -----------------------------------------------------------------
+  // Berechnet rekursiv die relative Breite eines Astes bezogen auf seinen Stamm (0).
+  // Rückgabe: (min: int, max: int)
+  let calc_extent(node) = {
+    if node == none { return (min: 0, max: 0) }
+    
+    // Der Stamm selbst belegt Spalte 0
+    let my_min = 0
+    let my_max = 0
+    
+    // Check Geradeaus-Ast (liegt auch auf Spalte 0, kann aber eigene Side-Branches haben)
+    if node.straight != none {
+      let s_ext = calc_extent(node.straight)
+      if s_ext.min < my_min { my_min = s_ext.min }
+      if s_ext.max > my_max { my_max = s_ext.max }
+    }
+    
+    // Check Seiten-Ast
+    if node.side != none {
+      let side_ext = calc_extent(node.side)
+      // Der Seitenast wird später verschoben (Offset).
+      // Wir müssen berechnen, wie breit er INKLUSIVE Verschiebung wäre.
+      // Aber hier im ersten Pass wissen wir den Offset noch nicht final.
+      // TRICK: Wir nehmen an, wir schieben ihn "sicher" direkt daneben.
+      
+      // Hier vereinfachen wir: Wir speichern die "rohe" Breite des Seitenastes.
+      node.side_width_min = side_ext.min
+      node.side_width_max = side_ext.max
+    }
+    return (min: my_min, max: my_max)
+  }
+
+  // -----------------------------------------------------------------
+  // SCHRITT 3: Layout & Koordinaten zuweisen
+  // -----------------------------------------------------------------
+  // Wir wandern den Baum ab und weisen jedem Knoten eine absolute Spalte (col) zu.
+  // occupied_ranges: Ein Dictionary, das für jeden Level (Y) speichert, welche Spalten (X) belegt sind.
+  // Das erlaubt uns, Äste so eng wie möglich zu schieben ("Contour Tracing").
+  
+  let layout_node(node, current_col, occupied) = {
+    if node == none { return (nodes: (), occupied: occupied) }
+    
+    let result_nodes = ()
+    
+    // 1. Mich selbst platzieren
+    let my_item = (val: node.val, col: current_col, lvl: node.lvl, type: "node")
+    result_nodes.push(my_item)
+    
+    // Occupied updaten
+    let row_key = str(node.lvl)
+    let row_occ = occupied.at(row_key, default: ())
+    row_occ.push(current_col)
+    occupied.insert(row_key, row_occ)
+
+    // Pfeil von oben (außer Root)
+    // (Wird im Rendering gelöst)
+    
+    // 2. Seiten-Ast platzieren (falls vorhanden)
+    if node.side != none {
+      let side = node.side
+      
+      // -- SMARTE PLATZ-SUCHE --
+      // Wir suchen den kleinstmöglichen Offset, damit der Seitenast niemanden überlappt.
+      let offset = 0
+      let found = false
+      let dist = 1
+      
+      // Richtung bestimmen
+      let direction = if node.side_is_right { 1 } else { -1 }
+      
+      // Wir testen Abstände 1, 2, 3... in die gewählte Richtung
+      while found == false {
+        offset = dist * direction
+        let candidate_col = current_col + offset
+        
+        // Simuliere Kollision für den GANZEN Seitenast-Stamm
+        // (Wir prüfen hier vereinfacht den Stamm des Seitenastes vertikal)
+        // Eine volle "Bounding Box"-Prüfung wäre besser, aber "Stamm-Check" reicht meist für Collatz.
+        // Besser: Wir prüfen, ob die Ziel-Spalte auf Start-Level frei ist.
+        
+        let k_curr = str(side.lvl)
+        let occ_curr = occupied.at(k_curr, default: ())
+        
+        // Check: Ist Platz frei?
+        if (candidate_col not in occ_curr) {
+            // Check: Ist Platz richtung Stamm frei (Lücke)?
+            // Optional, aber gut für Lesbarkeit.
+            found = true
+        }
+        
+        if found { break }
+        dist = dist + 1
+        if dist > 50 { found = true; candidate_col = current_col + (50 * direction) } // Notbremse
+      }
+      
+      let side_col = current_col + offset
+      
+      // Rekursiver Aufruf für den Seitenast
+      let res_side = layout_node(side, side_col, occupied)
+      result_nodes += res_side.nodes
+      occupied = res_side.occupied // Grid Update übernehmen!
+      
+      // Pfeil zum Seitenast
+      result_nodes.push((type: "horiz", src: side_col, dest: current_col, lvl: node.lvl))
+    }
+    
+    // 3. Geradeaus-Ast platzieren (bleibt auf gleicher Spalte)
+    if node.straight != none {
+      let res_straight = layout_node(node.straight, current_col, occupied)
+      result_nodes += res_straight.nodes
+      occupied = res_straight.occupied
+      
+      // Vertikaler Pfeil
+      result_nodes.push((type: "vert", col: current_col, lvl: node.lvl))
+    }
+    
+    return (nodes: result_nodes, occupied: occupied)
+  }
+
+  // --- Main Execution ---
+  
+  // 1. Baum bauen (Wurzel 1, Startet mit Ausrichtung der Nebenäste nach RECHTS)
+  let root = build_tree(1, 1, max_levels, true)
+  
+  // 2. Layout berechnen
+  // Wir starten bei Spalte 0. occupied speichert belegte Spalten pro Level.
+  let layout_res = layout_node(root, 0, (:))
+  let final_items = layout_res.nodes
+
+  // 3. Bounds berechnen für Center-Rendering
+  let min_c = 0
+  let max_c = 0
+  for item in final_items {
+    if item.type == "node" {
+      if item.col < min_c { min_c = item.col }
+      if item.col > max_c { max_c = item.col }
+    }
+  }
+
+  // --- RENDERING ---
+  let total-cols = max_c - min_c + 1
+  let total-w = total-cols * cell-x
   let total-h = max_levels * cell-y
   
+  let get_cx(col) = (col - min_c) * cell-x + cell-x/2
+
   align(center)[
     #block(width: total-w, height: total-h, breakable: false, {
-      for el in final_content { el }
+      for item in final_items {
+         let cy = (max_levels - item.lvl) * cell-y + cell-y/2
+         
+         if item.type == "node" {
+            let cx = get_cx(item.col)
+            place(top + left, dx: cx - r-circle, dy: cy - r-circle,
+              box(width: 2*r-circle, height: 2*r-circle, align(center + horizon)[
+                 #circle(radius: r-circle, stroke: connection-stroke, fill: circle-fill)[
+                   #set align(center + horizon)
+                   #text(size: font-size, weight: "bold", fill: text-color)[#item.val]
+                 ]
+              ])
+            )
+         } 
+         else if item.type == "vert" {
+            let cx = get_cx(item.col)
+            // Pfeil geht von item.lvl nach item.lvl+1 (aber Koordinaten sind invers)
+            // item.lvl ist der PARENT (unten), wir zeichnen zum CHILD (oben) -> naja, 
+            // In deiner Logik wächst der Baum nach oben.
+            // item.lvl ist z.B. 1. straight child ist lvl 2.
+            // Y-Koordinate: lvl 1 ist UNTEN, lvl max ist OBEN.
+            
+            // Start (Parent): item.lvl
+            // Ziel (Child): item.lvl + 1
+            let parent-y = (max_levels - item.lvl) * cell-y + cell-y/2
+            let child-y = (max_levels - (item.lvl + 1)) * cell-y + cell-y/2
+            
+            let start-y = parent-y - r-circle - 4pt*scale
+            let dest-y = child-y + r-circle + 4pt*scale + arrow-h
+            
+            // Pfeil zeigt nach OBEN (von 1 zu 2)
+            place(curve(
+               stroke: connection-stroke,
+               curve.move((cx, start-y)),
+               curve.line((cx, dest-y))
+            ))
+            // Spitze am Ziel (Child)
+            arrow-head((cx, dest-y - arrow-h), -90deg, scale)
+         } 
+         else if item.type == "horiz" {
+            let src-x = get_cx(item.src) // Das Kind (z.B. 5)
+            let dest-x = get_cx(item.dest) // Der Parent (z.B. 16)
+            
+            // Der Pfeil zeigt mathematisch: 5 -> 16 (3n+1).
+            // Also von SRC nach DEST.
+            
+            if src-x > dest-x { 
+               // Kind ist Rechts -> Pfeil nach Links
+               let arrow-start = src-x - r-circle - 4pt*scale
+               let arrow-end   = dest-x + r-circle + 4pt*scale
+               place(curve(
+                 stroke: connection-stroke,
+                 curve.move((arrow-start, cy)),
+                 curve.line((arrow-end + arrow-h, cy))
+               ))
+               arrow-head((arrow-end, cy), 90deg, scale)
+            } else { 
+               // Kind ist Links -> Pfeil nach Rechts
+               let arrow-start = src-x + r-circle + 4pt*scale
+               let arrow-end   = dest-x - r-circle - 4pt*scale
+               place(curve(
+                 stroke: connection-stroke,
+                 curve.move((arrow-start, cy)),
+                 curve.line((arrow-end - arrow-h, cy))
+               ))
+               arrow-head((arrow-end, cy), -90deg, scale)
+            }
+         }
+      }
     })
   ]
 }
 
-// Beispiel mit Ebene 7, um die 21 und 20 zu sehen
-#collatz_tree(7, scale: 0.75)
-
-
+#collatz_tree(10, scale: 0.60)
 
 
 == Diagramme mit Zusatzpaketen
