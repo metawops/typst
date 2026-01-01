@@ -1194,297 +1194,321 @@ Alle drei Funktionen sind ebenfalls im Typst Quelldokument implementiert, aber z
 Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com/metawops/typst")[liegt auf Github], so dass man jederzeit reinschauen kann, wenn man sich für die Implementierungsdetails interessiert. Die Funktionen habe ich übrigens in die Hilfs-/Library-Typst-Datei `_lib.typ` ausgelagert, damit sie das eigentliche Quelldokument nicht zu unübersichtlich werden lassen.
 
 ==== Collatz Baum
+// --- Hilfsfunktionen für Collatz-Baum ---
+#let has_odd_collatz_predecessor(n) = {
+  if n <= 4 { return false }
+  if calc.rem(n - 1, 3) == 0 {
+    let m = int((n - 1) / 3)
+    return calc.odd(m)
+  }
+  return false
+}
 
-// --- Konfiguration ---
-#let arrow-color = rgb(0, 110, 220) 
-#let circle-fill = rgb(255, 255, 255)
-#let text-color = black
+#let get_odd_predecessor(n) = {
+  if has_odd_collatz_predecessor(n) {
+    return int((n - 1) / 3)
+  }
+  return none
+}
 
-// --- Hilfsfunktion: Pfeilspitze ---
-#let arrow-head(pos, angle, scale, col: arrow-color) = {
-  let w = 3.5pt * scale
-  let h = 8pt * scale 
-  place(top + left, dx: pos.at(0), dy: pos.at(1),
-    rotate(angle, origin: left, 
-      polygon(fill: col, stroke: none, (0pt, 0pt), (-w, -h), (w, -h))
-    )
+// --- Collatz Tree Funktion ---
+#let collatz_tree(max_levels, scale: 1.0) = {
+  // Skalierte Größen
+  let r-circle = 16pt * scale
+  let h-spacing = 2.2cm * scale
+  let v-spacing = 1.6cm * scale
+  let f-size = 10pt * scale
+  let stroke-width = 2.5pt * scale
+  let arrow-size = 10pt * scale
+
+  // Farben
+  let circle-fill-color = rgb(200, 180, 230)
+  let circle-stroke-color = rgb(120, 80, 160)
+  let arrow-color = rgb(80, 60, 120)
+  let text-color = black
+
+  // Datenstrukturen
+  let nodes = ()
+  let arrows = ()
+  let branch-counters = (:)
+
+  // Schritt 1: Baue den Hauptstamm (2er-Potenzen bei x=0)
+  for level in range(1, max_levels + 1) {
+    let val = calc.pow(2, level - 1)
+    // stem_id identifiziert den Ast (unabhängig von x-Position!)
+    // Hauptstamm hat stem_id = 1
+    nodes.push((value: val, level: level, x: 0, stem_id: 1))
+
+    if level < max_levels {
+      // Pfeil von oben nach unten: von val * 2 zu val
+      arrows.push((from: val * 2, to: val, type: "vertical"))
+    }
+  }
+
+  // Schritt 2: Iteriere level-weise und baue Abzweigungen
+  let max-iterations = max_levels * 3
+  let iteration = 0
+
+  while iteration < max-iterations {
+    iteration = iteration + 1
+    let added-new-nodes = false
+
+    for check-level in range(1, max_levels + 1) {
+      let current-nodes = nodes
+      let nodes-at-level = current-nodes.filter(n => n.level == check-level)
+
+      for node in nodes-at-level {
+        if has_odd_collatz_predecessor(node.value) {
+          let odd-pred = get_odd_predecessor(node.value)
+
+          // Prüfe ob dieser Vorgänger schon existiert
+          let pred-exists = nodes.any(n => n.value == odd-pred and n.level == check-level)
+
+          if not pred-exists {
+            added-new-nodes = true
+
+            // Bestimme den richtigen Counter: Verwende stem_id als Ast-Identifier
+            // stem_id bleibt konstant auch wenn der Ast verschoben wird
+            let counter-key = "stem-" + str(node.stem_id)
+            let counter = branch-counters.at(counter-key, default: 0)
+
+            // Bestimme die Seite: erste Abzweigung = rechts (1), zweite = links (-1)
+            let side = if calc.rem(counter, 2) == 0 { 1 } else { -1 }
+
+            // Erhöhe den Zähler
+            branch-counters.insert(counter-key, counter + 1)
+
+            // Die stem_id für den neuen Ast ist der Startwert dieses Astes
+            let new-stem-id = odd-pred
+            let new-x = node.x + side
+
+            // Wenn wir nach links abzweigen UND die Position belegt ist,
+            // verschieben wir alle Äste, die von diesem Ast abhängen, nach rechts
+            if side == -1 {
+              let target-x = node.x - 1
+              let position-occupied = nodes.any(n => n.x == target-x and n.level == check-level)
+
+              if position-occupied {
+                // Sammle alle stem_ids, die verschoben werden müssen
+                // Das sind: der aktuelle Ast UND alle Äste, die direkt von ihm abzweigen
+                let stems-to-shift = (node.stem_id,)
+
+                // Finde alle Äste, die von Knoten des aktuellen Astes abzweigen
+                for n in nodes {
+                  if n.stem_id == node.stem_id and has_odd_collatz_predecessor(n.value) {
+                    let pred = get_odd_predecessor(n.value)
+                    for pred-node in nodes {
+                      if pred-node.value == pred and pred-node.level == n.level and pred-node.stem_id != node.stem_id {
+                        if pred-node.stem_id not in stems-to-shift {
+                          stems-to-shift.push(pred-node.stem_id)
+                        }
+                      }
+                    }
+                  }
+                }
+
+                // Verschiebe alle Knoten mit diesen stem_ids um 1 nach rechts
+                let shifted = ()
+                for n in nodes {
+                  if n.x > 0 and n.stem_id in stems-to-shift {
+                    shifted.push((value: n.value, level: n.level, x: n.x + 1, stem_id: n.stem_id))
+                  } else {
+                    shifted.push(n)
+                  }
+                }
+                nodes = shifted
+
+                // Aktualisiere node-Referenz
+                if node.x > 0 and node.stem_id in stems-to-shift {
+                  node = nodes.find(n => n.value == node.value and n.level == node.level)
+                }
+              }
+
+              // Setze new-x
+              if node.x == 0 {
+                new-x = -1
+              } else {
+                // Nach dem Verschieben: node ist jetzt bei x+1, wir platzieren bei der alten Position
+                new-x = node.x - 1
+              }
+            }
+
+            // Baue den kompletten Ast von odd-pred aufwärts
+            let current-val = odd-pred
+            let current-level = check-level
+
+            while current-level <= max_levels {
+              nodes.push((value: current-val, level: current-level, x: new-x, stem_id: new-stem-id))
+
+              if current-level == check-level {
+                arrows.push((from: odd-pred, to: node.value, type: "horizontal"))
+              }
+
+              if current-level < max_levels {
+                let next-val = current-val * 2
+                arrows.push((from: next-val, to: current-val, type: "vertical"))
+                current-val = next-val
+                current-level = current-level + 1
+              } else {
+                break
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if not added-new-nodes { break }
+  }
+
+  // Finde min/max x für Breite
+  let min-x = 0
+  let max-x = 0
+  for node in nodes {
+    if node.x < min-x { min-x = node.x }
+    if node.x > max-x { max-x = node.x }
+  }
+
+  let total-width = (max-x - min-x + 1) * h-spacing
+  let total-height = max_levels * v-spacing
+
+  let grid-to-pos(x, level) = {
+    let px = (x - min-x) * h-spacing + h-spacing / 2
+    let py = total-height - (level - 1) * v-spacing - v-spacing / 2
+    return (px, py)
+  }
+
+  // Zeichne den Baum
+  block(
+    width: total-width,
+    height: total-height + v-spacing,
+    breakable: false,
+    {
+      // Zuerst alle Pfeil-Linien zeichnen
+      for arrow in arrows {
+        let from-node = nodes.find(n => n.value == arrow.from)
+        let to-node = nodes.find(n => n.value == arrow.to)
+
+        if from-node == none or to-node == none { continue }
+
+        let from-pos = grid-to-pos(from-node.x, from-node.level)
+        let to-pos = grid-to-pos(to-node.x, to-node.level)
+
+        if arrow.type == "vertical" {
+          let start-y = from-pos.at(1) + r-circle
+          let end-y = to-pos.at(1) - r-circle
+          let x = from-pos.at(0)
+
+          place(top + left, line(
+            start: (x, start-y),
+            end: (x, end-y - arrow-size),
+            stroke: stroke-width + arrow-color
+          ))
+        } else {
+          let start-x = from-pos.at(0)
+          let end-x = to-pos.at(0)
+          let y = from-pos.at(1)
+
+          if start-x < end-x {
+            let sx = start-x + r-circle
+            let ex = end-x - r-circle
+            place(top + left, line(
+              start: (sx, y),
+              end: (ex - arrow-size, y),
+              stroke: stroke-width + arrow-color
+            ))
+          } else {
+            let sx = start-x - r-circle
+            let ex = end-x + r-circle
+            place(top + left, line(
+              start: (sx, y),
+              end: (ex + arrow-size, y),
+              stroke: stroke-width + arrow-color
+            ))
+          }
+        }
+      }
+
+      // Dann die Kreise
+      for node in nodes {
+        let pos = grid-to-pos(node.x, node.level)
+        place(top + left,
+          dx: pos.at(0) - r-circle,
+          dy: pos.at(1) - r-circle,
+          circle(
+            radius: r-circle,
+            fill: circle-fill-color,
+            stroke: 3pt * scale + circle-stroke-color,
+            align(center + horizon, text(size: f-size, weight: "bold", fill: text-color, str(node.value)))
+          )
+        )
+      }
+
+      // Pfeilspitzen
+      for arrow in arrows {
+        let from-node = nodes.find(n => n.value == arrow.from)
+        let to-node = nodes.find(n => n.value == arrow.to)
+
+        if from-node == none or to-node == none { continue }
+
+        let from-pos = grid-to-pos(from-node.x, from-node.level)
+        let to-pos = grid-to-pos(to-node.x, to-node.level)
+        let arrow-width = 8pt * scale
+
+        if arrow.type == "vertical" {
+          let end-y = to-pos.at(1) - r-circle
+          let x = from-pos.at(0)
+
+          place(top + left,
+            dx: x - arrow-width / 2,
+            dy: end-y - arrow-size,
+            polygon(
+              fill: arrow-color,
+              stroke: none,
+              (0pt, 0pt),
+              (arrow-width, 0pt),
+              (arrow-width / 2, arrow-size)
+            )
+          )
+        } else {
+          let start-x = from-pos.at(0)
+          let end-x = to-pos.at(0)
+          let y = from-pos.at(1)
+
+          if start-x < end-x {
+            let ex = end-x - r-circle
+            place(top + left,
+              dx: ex - arrow-size,
+              dy: y - arrow-width / 2,
+              polygon(
+                fill: arrow-color,
+                stroke: none,
+                (0pt, 0pt),
+                (0pt, arrow-width),
+                (arrow-size, arrow-width / 2)
+              )
+            )
+          } else {
+            let ex = end-x + r-circle
+            place(top + left,
+              dx: ex + arrow-size,
+              dy: y - arrow-width / 2,
+              polygon(
+                fill: arrow-color,
+                stroke: none,
+                (0pt, 0pt),
+                (0pt, arrow-width),
+                (-arrow-size, arrow-width / 2)
+              )
+            )
+          }
+        }
+      }
+    }
   )
 }
 
-// --- Visualisierungs-Funktion ---
-#let collatz_tree(max_levels, scale: 1.0) = {
-  // --- Styling ---
-  let r-circle = 14pt * scale
-  let cell-x = 1.8cm * scale 
-  let cell-y = 1.5cm * scale 
-  let font-size = 11pt * scale
-  let arrow-col = rgb(0, 110, 220)
-  let connection-stroke = 1.2pt * scale + arrow-col
-  let circle-fill = rgb(255, 255, 255)
-  let text-color = black
-  let arrow-h = 8pt * scale
-
-  // Pfeilspitze
-  let arrow-head(pos, angle, scale) = {
-    let w = 3.5pt * scale
-    let h = 8pt * scale 
-    place(top + left, dx: pos.at(0), dy: pos.at(1),
-      rotate(angle, origin: left, 
-        polygon(fill: arrow-col, stroke: none, (0pt, 0pt), (-w, -h), (w, -h))
-      )
-    )
-  }
-
-  // -----------------------------------------------------------------
-  // SCHRITT 1: Logischen Baum bauen (Rekursiv)
-  // -----------------------------------------------------------------
-  // Gibt zurück: (val: int, lvl: int, straight: node|none, side: node|none, side_is_right: bool)
-  let build_tree(val, lvl, max_lvl, make_right) = {
-    if lvl > max_lvl { return none }
-    
-    let node = (val: val, lvl: lvl, straight: none, side: none, side_is_right: make_right)
-    
-    // 1. Geradeaus-Kind (n * 2)
-    node.straight = build_tree(val * 2, lvl + 1, max_lvl, make_right)
-    
-    // 2. Seiten-Kind (n-1)/3
-    if val > 4 and calc.rem(val - 1, 3) == 0 {
-      let odd = int((val - 1) / 3)
-      if calc.odd(odd) {
-        // Richtungswechsel für Balance:
-        // Wenn dieser Ast "Rechts" ist, geht sein erstes Kind nach "Links" (und umgekehrt).
-        // Das sorgt für natürliche Balance um die Achse.
-        node.side = build_tree(odd, lvl + 1, max_lvl, not make_right)
-      }
-    }
-    return node
-  }
-
-  // -----------------------------------------------------------------
-  // SCHRITT 2: Ausdehnung (Extent) berechnen
-  // -----------------------------------------------------------------
-  // Berechnet rekursiv die relative Breite eines Astes bezogen auf seinen Stamm (0).
-  // Rückgabe: (min: int, max: int)
-  let calc_extent(node) = {
-    if node == none { return (min: 0, max: 0) }
-    
-    // Der Stamm selbst belegt Spalte 0
-    let my_min = 0
-    let my_max = 0
-    
-    // Check Geradeaus-Ast (liegt auch auf Spalte 0, kann aber eigene Side-Branches haben)
-    if node.straight != none {
-      let s_ext = calc_extent(node.straight)
-      if s_ext.min < my_min { my_min = s_ext.min }
-      if s_ext.max > my_max { my_max = s_ext.max }
-    }
-    
-    // Check Seiten-Ast
-    if node.side != none {
-      let side_ext = calc_extent(node.side)
-      // Der Seitenast wird später verschoben (Offset).
-      // Wir müssen berechnen, wie breit er INKLUSIVE Verschiebung wäre.
-      // Aber hier im ersten Pass wissen wir den Offset noch nicht final.
-      // TRICK: Wir nehmen an, wir schieben ihn "sicher" direkt daneben.
-      
-      // Hier vereinfachen wir: Wir speichern die "rohe" Breite des Seitenastes.
-      node.side_width_min = side_ext.min
-      node.side_width_max = side_ext.max
-    }
-    return (min: my_min, max: my_max)
-  }
-
-  // -----------------------------------------------------------------
-  // SCHRITT 3: Layout & Koordinaten zuweisen
-  // -----------------------------------------------------------------
-  // Wir wandern den Baum ab und weisen jedem Knoten eine absolute Spalte (col) zu.
-  // occupied_ranges: Ein Dictionary, das für jeden Level (Y) speichert, welche Spalten (X) belegt sind.
-  // Das erlaubt uns, Äste so eng wie möglich zu schieben ("Contour Tracing").
-  
-  let layout_node(node, current_col, occupied) = {
-    if node == none { return (nodes: (), occupied: occupied) }
-    
-    let result_nodes = ()
-    
-    // 1. Mich selbst platzieren
-    let my_item = (val: node.val, col: current_col, lvl: node.lvl, type: "node")
-    result_nodes.push(my_item)
-    
-    // Occupied updaten
-    let row_key = str(node.lvl)
-    let row_occ = occupied.at(row_key, default: ())
-    row_occ.push(current_col)
-    occupied.insert(row_key, row_occ)
-
-    // Pfeil von oben (außer Root)
-    // (Wird im Rendering gelöst)
-    
-    // 2. Seiten-Ast platzieren (falls vorhanden)
-    if node.side != none {
-      let side = node.side
-      
-      // -- SMARTE PLATZ-SUCHE --
-      // Wir suchen den kleinstmöglichen Offset, damit der Seitenast niemanden überlappt.
-      let offset = 0
-      let found = false
-      let dist = 1
-      
-      // Richtung bestimmen
-      let direction = if node.side_is_right { 1 } else { -1 }
-      
-      // Wir testen Abstände 1, 2, 3... in die gewählte Richtung
-      while found == false {
-        offset = dist * direction
-        let candidate_col = current_col + offset
-        
-        // Simuliere Kollision für den GANZEN Seitenast-Stamm
-        // (Wir prüfen hier vereinfacht den Stamm des Seitenastes vertikal)
-        // Eine volle "Bounding Box"-Prüfung wäre besser, aber "Stamm-Check" reicht meist für Collatz.
-        // Besser: Wir prüfen, ob die Ziel-Spalte auf Start-Level frei ist.
-        
-        let k_curr = str(side.lvl)
-        let occ_curr = occupied.at(k_curr, default: ())
-        
-        // Check: Ist Platz frei?
-        if (candidate_col not in occ_curr) {
-            // Check: Ist Platz richtung Stamm frei (Lücke)?
-            // Optional, aber gut für Lesbarkeit.
-            found = true
-        }
-        
-        if found { break }
-        dist = dist + 1
-        if dist > 50 { found = true; candidate_col = current_col + (50 * direction) } // Notbremse
-      }
-      
-      let side_col = current_col + offset
-      
-      // Rekursiver Aufruf für den Seitenast
-      let res_side = layout_node(side, side_col, occupied)
-      result_nodes += res_side.nodes
-      occupied = res_side.occupied // Grid Update übernehmen!
-      
-      // Pfeil zum Seitenast
-      result_nodes.push((type: "horiz", src: side_col, dest: current_col, lvl: node.lvl))
-    }
-    
-    // 3. Geradeaus-Ast platzieren (bleibt auf gleicher Spalte)
-    if node.straight != none {
-      let res_straight = layout_node(node.straight, current_col, occupied)
-      result_nodes += res_straight.nodes
-      occupied = res_straight.occupied
-      
-      // Vertikaler Pfeil
-      result_nodes.push((type: "vert", col: current_col, lvl: node.lvl))
-    }
-    
-    return (nodes: result_nodes, occupied: occupied)
-  }
-
-  // --- Main Execution ---
-  
-  // 1. Baum bauen (Wurzel 1, Startet mit Ausrichtung der Nebenäste nach RECHTS)
-  let root = build_tree(1, 1, max_levels, true)
-  
-  // 2. Layout berechnen
-  // Wir starten bei Spalte 0. occupied speichert belegte Spalten pro Level.
-  let layout_res = layout_node(root, 0, (:))
-  let final_items = layout_res.nodes
-
-  // 3. Bounds berechnen für Center-Rendering
-  let min_c = 0
-  let max_c = 0
-  for item in final_items {
-    if item.type == "node" {
-      if item.col < min_c { min_c = item.col }
-      if item.col > max_c { max_c = item.col }
-    }
-  }
-
-  // --- RENDERING ---
-  let total-cols = max_c - min_c + 1
-  let total-w = total-cols * cell-x
-  let total-h = max_levels * cell-y
-  
-  let get_cx(col) = (col - min_c) * cell-x + cell-x/2
-
-  align(center)[
-    #block(width: total-w, height: total-h, breakable: false, {
-      for item in final_items {
-         let cy = (max_levels - item.lvl) * cell-y + cell-y/2
-         
-         if item.type == "node" {
-            let cx = get_cx(item.col)
-            place(top + left, dx: cx - r-circle, dy: cy - r-circle,
-              box(width: 2*r-circle, height: 2*r-circle, align(center + horizon)[
-                 #circle(radius: r-circle, stroke: connection-stroke, fill: circle-fill)[
-                   #set align(center + horizon)
-                   #text(size: font-size, weight: "bold", fill: text-color)[#item.val]
-                 ]
-              ])
-            )
-         } 
-         else if item.type == "vert" {
-            let cx = get_cx(item.col)
-            // Pfeil geht von item.lvl nach item.lvl+1 (aber Koordinaten sind invers)
-            // item.lvl ist der PARENT (unten), wir zeichnen zum CHILD (oben) -> naja, 
-            // In deiner Logik wächst der Baum nach oben.
-            // item.lvl ist z.B. 1. straight child ist lvl 2.
-            // Y-Koordinate: lvl 1 ist UNTEN, lvl max ist OBEN.
-            
-            // Start (Parent): item.lvl
-            // Ziel (Child): item.lvl + 1
-            let parent-y = (max_levels - item.lvl) * cell-y + cell-y/2
-            let child-y = (max_levels - (item.lvl + 1)) * cell-y + cell-y/2
-            
-            let start-y = parent-y - r-circle - 4pt*scale
-            let dest-y = child-y + r-circle + 4pt*scale + arrow-h
-            
-            // Pfeil zeigt nach OBEN (von 1 zu 2)
-            place(curve(
-               stroke: connection-stroke,
-               curve.move((cx, start-y)),
-               curve.line((cx, dest-y))
-            ))
-            // Spitze am Ziel (Child)
-            arrow-head((cx, dest-y - arrow-h), -90deg, scale)
-         } 
-         else if item.type == "horiz" {
-            let src-x = get_cx(item.src) // Das Kind (z.B. 5)
-            let dest-x = get_cx(item.dest) // Der Parent (z.B. 16)
-            
-            // Der Pfeil zeigt mathematisch: 5 -> 16 (3n+1).
-            // Also von SRC nach DEST.
-            
-            if src-x > dest-x { 
-               // Kind ist Rechts -> Pfeil nach Links
-               let arrow-start = src-x - r-circle - 4pt*scale
-               let arrow-end   = dest-x + r-circle + 4pt*scale
-               place(curve(
-                 stroke: connection-stroke,
-                 curve.move((arrow-start, cy)),
-                 curve.line((arrow-end + arrow-h, cy))
-               ))
-               arrow-head((arrow-end, cy), 90deg, scale)
-            } else { 
-               // Kind ist Links -> Pfeil nach Rechts
-               let arrow-start = src-x + r-circle + 4pt*scale
-               let arrow-end   = dest-x - r-circle - 4pt*scale
-               place(curve(
-                 stroke: connection-stroke,
-                 curve.move((arrow-start, cy)),
-                 curve.line((arrow-end - arrow-h, cy))
-               ))
-               arrow-head((arrow-end, cy), -90deg, scale)
-            }
-         }
-      }
-    })
-  ]
-}
-
-#collatz_tree(10, scale: 0.60)
-
+#collatz_tree(8, scale: 0.8)
 
 == Diagramme mit Zusatzpaketen
 Es gibt nahezu 500 #link("https://typst.app/universe/search/?kind=packages")[Zusatzpakete für Typst], darunter zahlreiche, die beim Erzeugen von Diagrammen helfen. In @lilaq haben wir bereits eins kennengelernt: Lilaq.
@@ -1537,3 +1561,5 @@ Es gibt aber im Internet große Menge von CSL Dateien, so dass man dort ggfs. f�
 Der gewählte Zitierstil beeinflusst nicht nur das Zitat im Text, sondern auch die Gestaltung des Literaturverzeichnisses.
 
 Im Literaturverzeichnis werden standardmäßig nur die Quellen aufgelistet, die man in seinem Dokument auch tatsächlich verwendet hat. Das kann man optional ändern und _immer alle_ Quellen auflisten lassen.
+#collatz_tree(8, scale: 0.9)
+
