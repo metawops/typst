@@ -1222,10 +1222,10 @@ Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com
   let arrow-size = 10pt * scale
 
   // Farben
-  let circle-fill-color = rgb(200, 180, 230)
-  let circle-stroke-color = rgb(120, 80, 160)
-  let arrow-color = rgb(80, 60, 120)
-  let text-color = black
+  let circle-fill-color = config.colors.collatz.circle-fill
+  let circle-stroke-color = config.colors.collatz.circle-stroke
+  let arrow-color = config.colors.collatz.arrow
+  let text-color = config.colors.collatz.text
 
   // Datenstrukturen
   let nodes = ()
@@ -1282,55 +1282,83 @@ Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com
             let new-stem-id = odd-pred
             let new-x = node.x + side
 
-            // Wenn wir nach links abzweigen UND die Position belegt ist,
-            // verschieben wir alle Äste, die von diesem Ast abhängen, nach rechts
-            if side == -1 {
-              let target-x = node.x - 1
-              let position-occupied = nodes.any(n => n.x == target-x and n.level == check-level)
+            // Prüfe ob die Zielposition belegt ist
+            let target-x = node.x + side
+            let position-occupied = nodes.any(n => n.x == target-x and n.level == check-level)
 
-              if position-occupied {
-                // Sammle alle stem_ids, die verschoben werden müssen
-                // Das sind: der aktuelle Ast UND alle Äste, die direkt von ihm abzweigen
-                let stems-to-shift = (node.stem_id,)
+            if position-occupied and side == 1 {
+              // Rechts-Abzweigung: Sammle Äste an target-x und rechts davon
+              let stems-to-shift = ()
 
-                // Finde alle Äste, die von Knoten des aktuellen Astes abzweigen
-                for n in nodes {
-                  if n.stem_id == node.stem_id and has_odd_collatz_predecessor(n.value) {
-                    let pred = get_odd_predecessor(n.value)
-                    for pred-node in nodes {
-                      if pred-node.value == pred and pred-node.level == n.level and pred-node.stem_id != node.stem_id {
-                        if pred-node.stem_id not in stems-to-shift {
-                          stems-to-shift.push(pred-node.stem_id)
-                        }
+              for n in nodes {
+                if n.x >= target-x and n.stem_id not in stems-to-shift {
+                  stems-to-shift.push(n.stem_id)
+                }
+              }
+
+              // Verschiebe alle Knoten mit diesen stem_ids um 1 nach rechts
+              let shifted = ()
+              for n in nodes {
+                if n.stem_id in stems-to-shift and n.x > 0 {
+                  shifted.push((value: n.value, level: n.level, x: n.x + 1, stem_id: n.stem_id))
+                } else {
+                  shifted.push(n)
+                }
+              }
+              nodes = shifted
+
+              // Aktualisiere node-Referenz falls nötig
+              if node.stem_id in stems-to-shift and node.x > 0 {
+                node = nodes.find(n => n.value == node.value and n.level == node.level)
+              }
+            } else if position-occupied and side == -1 {
+              // Links-Abzweigung und Position belegt: Verschiebe den Ast, von dem wir abzweigen, plus Sub-Äste
+              let old-node-x = node.x  // Merke die alte Position BEVOR wir verschieben
+              let stems-to-shift = (node.stem_id,)
+
+              // Finde alle Äste, die von diesem Ast abzweigen
+              for n in nodes {
+                if n.stem_id == node.stem_id and has_odd_collatz_predecessor(n.value) {
+                  let pred = get_odd_predecessor(n.value)
+                  for pred-node in nodes {
+                    if pred-node.value == pred and pred-node.level == n.level and pred-node.stem_id != node.stem_id {
+                      if pred-node.stem_id not in stems-to-shift {
+                        stems-to-shift.push(pred-node.stem_id)
                       }
                     }
                   }
                 }
-
-                // Verschiebe alle Knoten mit diesen stem_ids um 1 nach rechts
-                let shifted = ()
-                for n in nodes {
-                  if n.x > 0 and n.stem_id in stems-to-shift {
-                    shifted.push((value: n.value, level: n.level, x: n.x + 1, stem_id: n.stem_id))
-                  } else {
-                    shifted.push(n)
-                  }
-                }
-                nodes = shifted
-
-                // Aktualisiere node-Referenz
-                if node.x > 0 and node.stem_id in stems-to-shift {
-                  node = nodes.find(n => n.value == node.value and n.level == node.level)
-                }
               }
 
-              // Setze new-x
-              if node.x == 0 {
-                new-x = -1
-              } else {
-                // Nach dem Verschieben: node ist jetzt bei x+1, wir platzieren bei der alten Position
-                new-x = node.x - 1
+              // Verschiebe alle Knoten mit diesen stem_ids um 1 nach rechts
+              let shifted = ()
+              for n in nodes {
+                if n.stem_id in stems-to-shift and n.x > 0 {
+                  shifted.push((value: n.value, level: n.level, x: n.x + 1, stem_id: n.stem_id))
+                } else {
+                  shifted.push(n)
+                }
               }
+              nodes = shifted
+
+              // Aktualisiere node-Referenz
+              if node.x > 0 and node.stem_id in stems-to-shift {
+                node = nodes.find(n => n.value == node.value and n.level == node.level)
+              }
+
+              // Überschreibe target-x mit der alten Position
+              target-x = old-node-x
+            }
+
+            // Setze new-x basierend auf der Richtung
+            if side == -1 and node.x == 0 {
+              new-x = -1  // Links vom Hauptstamm
+            } else if position-occupied {
+              // Position war belegt, wir haben verschoben, platziere an der alten Position
+              new-x = target-x
+            } else {
+              // Position war frei, einfach dort platzieren
+              new-x = node.x + side
             }
 
             // Baue den kompletten Ast von odd-pred aufwärts
@@ -1508,7 +1536,7 @@ Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com
   )
 }
 
-#collatz_tree(8, scale: 0.8)
+#collatz_tree(10, scale: 0.9)
 
 == Diagramme mit Zusatzpaketen
 Es gibt nahezu 500 #link("https://typst.app/universe/search/?kind=packages")[Zusatzpakete für Typst], darunter zahlreiche, die beim Erzeugen von Diagrammen helfen. In @lilaq haben wir bereits eins kennengelernt: Lilaq.
@@ -1561,5 +1589,3 @@ Es gibt aber im Internet große Menge von CSL Dateien, so dass man dort ggfs. f�
 Der gewählte Zitierstil beeinflusst nicht nur das Zitat im Text, sondern auch die Gestaltung des Literaturverzeichnisses.
 
 Im Literaturverzeichnis werden standardmäßig nur die Quellen aufgelistet, die man in seinem Dokument auch tatsächlich verwendet hat. Das kann man optional ändern und _immer alle_ Quellen auflisten lassen.
-#collatz_tree(8, scale: 0.9)
-
