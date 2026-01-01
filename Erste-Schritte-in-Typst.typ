@@ -1214,12 +1214,12 @@ Vor der $8$ kann nur die $16$ kommen, denn $8-1=7$, was nicht glatt durch $3$ te
 
 Aber vor der $16$ kann neben der $32$ auch die $5$ kommen, denn $3*5+1$ ist $15$.
 
-#let level = 5
+#let level = 6
 
 So bauen wir rückwärts denkend einen Baum auf, in dem wir Vorgängerzahlen sehen. Das beginnt also so für einen Baum der Höhe #level:
 
 #figure(
-   collatz_tree(level, scale: 0.9),
+   collatz_tree(level, scale: 1.0),
    caption: [Collatz Baum mit den ersten #level Ebenen]
 )
 
@@ -1228,7 +1228,7 @@ So bauen wir rückwärts denkend einen Baum auf, in dem wir Vorgängerzahlen seh
 Nun denken wir das weiter und vervollständigen den Baum nach oben. Exemplarisch – und aus Platzgründen – sei hier der Baum der Ebene #level dargestellt:
 
 #figure(
-   collatz_tree(10, scale: 0.55),
+   collatz_tree(level, scale: 0.8),
    caption: [Collatz Baum der Ebene #level]
 )
 
