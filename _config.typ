@@ -4,7 +4,7 @@
       link: blue,
       citation: luma(70),
       collatz: (
-         arrow: luma(50),
+         arrow: luma(100),
          circle-fill: color.hsv(270deg, 25%, 100%),
          circle-stroke: color.hsv(270deg, 50%, 65%),
          text: luma(60)
@@ -85,6 +85,7 @@
          style: "journal-of-universal-computer-science.csl",
 //         title: "Literaturverzeichnis"
          title: auto
-      )
+      ),
+      license: "CC-BY-SA-4.0"
    )
 )
