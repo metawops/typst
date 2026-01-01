@@ -1,7 +1,10 @@
 // ------------------------------
 // Demo-File für Typst
 // Geschrieben von Stefan Wolfrum
-// November/Dezember 2025
+// Ab Ende November 2025
+// ------------------------------
+// Das Dokument protokolliert
+// mein Lernen von Typst.
 // ------------------------------
 
 #import "_lib.typ": *

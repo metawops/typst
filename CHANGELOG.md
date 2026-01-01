@@ -2,6 +2,16 @@
 
 Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ stattfinden.
 
+## [v0.6.0] – 2026-01-01
+### Added
+- Collatz Bäume Funktion (mit Hilfe von Claude) und Text
+
+### Changed
+- Fußnote mit Lizenz
+- Fußnote holt sich dynamisch die Version aus der `CHANGELOG.md`
+- Fußnote enthält Datum aus dem date Parameter der `project()` Funktion
+- Dateiname der Hauptdatei angepasst
+
 ## [v0.5.0] – 2025-12-25
 ### Added
 - Bilderzeugung über raw bytes
@@ -71,3 +81,4 @@ Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ s
 [v0.3.0]: https://github.com/metawops/typst/compare/v0.2.1...v0.3.0
 [v0.4.0]: https://github.com/metawops/typst/compare/v0.3.0...v0.4.0
 [v0.5.0]: https://github.com/metawops/typst/compare/v0.4.0...v0.5.0
+[v0.6.0]: https://github.com/metawops/typst/compare/v0.5.0...v0.6.0
