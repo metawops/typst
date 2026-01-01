@@ -1203,8 +1203,35 @@ Alle drei Funktionen sind ebenfalls im Typst Quelldokument implementiert, aber z
 Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com/metawops/typst")[liegt auf Github], so dass man jederzeit reinschauen kann, wenn man sich für die Implementierungsdetails interessiert. Die Funktionen habe ich übrigens in die Hilfs-/Library-Typst-Datei `_lib.typ` ausgelagert, damit sie das eigentliche Quelldokument nicht zu unübersichtlich werden lassen.
 
 ==== Collatz Baum
+Eine weitere Art der Darstellung für die Collatz-Zahlenfolge ist eine Baum-Form.
 
-#collatz_tree(10, scale: 0.9)
+Wir wissen bereits, dass die Folge immer zur $1$ kommt, das ist quasi unsere Wurzel, die ganz unten steht. Nun gehen wir rückwärts vor: Welche Zahl kann vor der $1$ kommen? Nur die $2$. Vor der $2$ kann nur die $4$ stehen und vor der $4$ nur die $8$, denn es gibt keine natürlich Zahl, die mit $3$ multipliziert und mit $1$ addiert wird, $4$ ergibt – außer der $1$, aber _diese_ Schleife blenden wir ja aus.
+
+Vor der $8$ kann nur die $16$ kommen, denn $8-1=7$, was nicht glatt durch $3$ teilbar ist.
+
+Aber vor der $16$ kann neben der $32$ auch die $5$ kommen, denn $3*5+1$ ist $15$.
+
+#let level = 5
+
+So bauen wir rückwärts denkend einen Baum auf, in dem wir Vorgängerzahlen sehen. Das beginnt also so für einen Baum der Höhe #level:
+
+#figure(
+   collatz_tree(level, scale: 0.9),
+   caption: [Collatz Baum mit den ersten #level Ebenen]
+)
+
+#let level = 10
+
+Nun denken wir das weiter und vervollständigen den Baum nach oben. Exemplarisch – und aus Platzgründen – sei hier der Baum der Ebene #level dargestellt:
+
+#figure(
+   collatz_tree(10, scale: 0.55),
+   caption: [Collatz Baum der Ebene #level]
+)
+
+Wollte man nun beweisen, dass _jede_ Startzahl auf die $1$ führt, müsste man "nur noch" zeigen, dass in diesem Baum, jede natürlich Zahl vorkommt. Aber natürlich hat das bisher auch noch nicht geklappt.
+
+Bei der Implementierung der Funktion, die diese Baum-Grafik erzeugt, hat mir die K.I. _Claude_ geholfen. Das Code-Ergebnis kann sich der geneigte Leser gern im Repository im File `_lib.typ` anschauen. Vermutlich ist es – wie bei von K.I. erzeugtem Code üblich – unnötig kompliziert. Aber immerhin: Claude hat einigermaßen verstanden, worum es ging.
 
 == Diagramme mit Zusatzpaketen
 Es gibt nahezu 500 #link("https://typst.app/universe/search/?kind=packages")[Zusatzpakete für Typst], darunter zahlreiche, die beim Erzeugen von Diagrammen helfen. In @lilaq haben wir bereits eins kennengelernt: Lilaq.

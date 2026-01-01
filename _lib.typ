@@ -540,7 +540,7 @@
   // Zeichne den Baum
   block(
     width: total-width,
-    height: total-height + v-spacing,
+    height: total-height,
     breakable: false,
     {
       // Zuerst alle Pfeil-Linien zeichnen
