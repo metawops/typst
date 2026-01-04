@@ -769,7 +769,8 @@ Man kann in Typst auch direkt zeichnen und somit (einfache) Illustrationen wie z
   caption: [#n Quadrate, im Kreis rotiert]
 ) <hue-kreis-quadrate>
 
-Das ist hier gelöst mit einem `block()` als Zeichenfläche, der `place()`- und der `rect()`-Funktion. Der Quellcode dazu sieht so aus:
+Das ist hier gelöst mit einem `block()` als Zeichenfläche, der `place()`- und der `rect()`#sym.wj;-Funktion. Der Quellcode dazu sieht so aus:
+// Faszinierend: Das spezielle "wj" Symbol ist ein "word joiner". Unsichtbar, sorgt aber dafür, dass das - nach rect() nicht umgebrochen wird in die nächste Zeile.
 
 ```typ
 #let n = 18
