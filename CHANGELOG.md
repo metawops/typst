@@ -2,6 +2,18 @@
 
 Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ stattfinden.
 
+## [v0.6.1] – 2026-01-11
+### Added
+- Weitere dynamisch erzeugte Tabelle (i/Spalte/Zeile)
+
+### Changed
+- Allerlei kleinere, textuelle Optimierungen
+- Farbe der Zitat-Blöcke geändert
+- Zahlreiche harte pagebreaks entfernt; Layout macht erst später Sinn
+
+### Fixed
+- Die Regel für das Setzen der Vor- und Nach-Abstände bei Überschriften anhand [dieses Learnings](https://www.reddit.com/r/typst/comments/1q8gbyc/comment/nys4qer/) in `_lib.typ` korrigiert
+
 ## [v0.6.0] – 2026-01-01
 ### Added
 - Collatz Bäume Funktion (mit Hilfe von Claude) und Text
@@ -82,3 +94,4 @@ Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ s
 [v0.4.0]: https://github.com/metawops/typst/compare/v0.3.0...v0.4.0
 [v0.5.0]: https://github.com/metawops/typst/compare/v0.4.0...v0.5.0
 [v0.6.0]: https://github.com/metawops/typst/compare/v0.5.0...v0.6.0
+[v0.6.1]: https://github.com/metawops/typst/compare/v0.6.0...v0.6.1

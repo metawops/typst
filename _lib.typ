@@ -717,15 +717,19 @@
             dir: ttb,
             spacing: 8pt,
             line(length: 100%, stroke: 0.5pt + config.colors.footer.line),
-            [Erste Schritte in Typst #sym.dot Stefan Wolfrum #sym.dot Version #version #sym.dot #date.display("[month repr:long] [year]") #sym.dot Typst-Version #sys.version #sym.dot License: #config.document.license #h(1fr) #counter(page).display()]
+            [Erste Schritte in Typst #sym.dot Stefan Wolfrum #sym.dot Version #version #sym.dot #date.display() #sym.dot Typst-Version #sys.version #sym.dot License: #config.document.license #h(1fr) #counter(page).display()]
          )
       }
    )
+   // date format für die Darstellung "January 2026": "[month repr:long] [year]"
+   // Leider kann Typst derzeit (Version 0.14.2, Januar 2026) Monatsnamen nur auf
+   // Englisch ausgeben, selbst wenn die Dokumentsprache – wie hier – auf Deutsch 
+   // gestellt wurde.
 
    // Paragraph Style: Blocksatz
    set par(
       justify: true,
-      leading: 0.52em
+      leading: config.distances.line-spacing
    )
    set heading(numbering: "1.", supplement: [Kapitel])
    set math.equation(numbering: "(1)")
@@ -739,6 +743,7 @@
    )
 
    // show rules
+   show footnote.entry: set text(size: 8pt)
    //show link: underline
    show link: set text(fill: config.colors.link)
    show figure.caption: set text(size: config.document.figure.caption-font-size)
@@ -774,11 +779,9 @@
    show figure: set block(above: config.distances.figure.above, below: config.distances.figure.below)
 
    show math.equation.where(block: true): set text(size: config.document.equation.font-size)
-   show heading: it => [
-      #v(config.distances.heading.above)
-      #it
-      #v(config.distances.heading.below)
-   ]
+
+   show heading: set block(above: config.distances.heading.above,
+                           below: config.distances.heading.below)   
    show title: set align(center)
 
    // Alle Literaturverzeichnis-Referenzen im Text in einer anderen Farbe:
@@ -824,7 +827,7 @@
             dy: -10.7em,
             text(
                size: 16em,
-               fill: config.colors.quote.stroke.lighten(60%),
+               fill: config.colors.quote.stroke.lighten(65%),
                font: "Playfair Display",
                weight: "bold"
             )["]

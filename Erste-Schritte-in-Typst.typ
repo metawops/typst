@@ -14,8 +14,15 @@
 // alle Setups für unser Dokument enthält:
 
 #let raw-changelog = read("CHANGELOG.md")
+
+// Die folgende regex holt sich aus der CHANGELOG.md Datei aus dem ersten
+// Vorkommen einer Versionsnummer, die mit [v beginnt, eben diese Versions-
+// nummer heraus. Die Versionsnummer entspricht dem Schema a.b.c und bis
+// inkl. c, aber ohne die eckigen Klammern wird gematcht.
 #let version-pattern = regex("(?m)^##\s+\[?v?([\d\.]+)\]?")
+
 #let match = raw-changelog.match(version-pattern)
+
 #let doc-version = if match != none {
   match.captures.first()
 } else {
@@ -28,7 +35,7 @@
    description: [Ein kleines Beispiel-Dokument, was die Nutzung von Typst demonstrieren soll.],
    location: "Bonn, Germany",
    keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
-   date: datetime(year: 2026, month: 1, day: 1),
+   date: datetime(year: 2026, month: 1, day: 11),
    version: doc-version,
    bib-path: "literatur.bib",
    abstract: [Typst ist ein Satzsystem, mit dem man vor allem PDF Dokumente sehr ordentlich setzen kann. Man kann Typst im einfachsten Fall ähnlich wie Markdown benutzen. Es bietet aber weit mehr Möglichkeiten und man kann extrem komplexe Dokumente damit schreiben. Von der Hausarbeit über die Masterarbeit bis zum Buch. Dabei kann es analog zu LaTeX den wissenschaftlichen Satz inklusive mathematischer Formeln perfekt abbilden und ist darüber hinaus über 3rd party Pakete erweiterbar. Typst ist sogar eine Programmiersprache und so kann man zum Beispiel Grafiken algorithmisch direkt innerhalb des Dokuments erstellen.
@@ -114,7 +121,7 @@ Bevor wir jetzt schnell direkt im Dokument einige Einstellungen machen, sei auf 
 == Kenngrößen auslagern
 Bei sehr kurzen Dokumenten spielt das sicher keine Rolle, aber je größer die Typst Dokumente werden, desto mehr "Setup Daten" wird man haben: Farben, Abstände, Maße, Schriftgrößen etc. Diese kann man zwar alle auch direkt im Dokument hinterlegen – entweder direkt mit den Funktionsaufrufen oder als Variablen zusammengefasst an einer Stelle und diese dann in den Funktionsaufrufen. Aber die Erfahrung zeigt, dass das Herausziehen und an einer Stelle Zusammenfassen derlei Daten sinnvoll ist.
 
-Auch ist zu empfehlen, dass alle selbst geschriebenen Funktionen aus der Haupt-Text-Datei herausgenommen und in eine andere `.typ` Datei ausgelagert werden.
+Auch ist zu empfehlen, dass alle (oder zumindest die meisten) selbst geschriebenen Funktionen aus der Haupt-Text-Datei herausgenommen und in eine andere `.typ` Datei ausgelagert werden.
 
 Ziel ist es, am Ende in seiner Haupt-Text-Datei nur oben einmal einen Import einer weiteren `.typ` Datei zu haben. Zum Beispiel beginnt _dieses_ Dokument, was Du gerade liest, so:
 ```typ
@@ -132,8 +139,7 @@ Und in dieser Datei `_lib.typ` stecken allerlei Funktionen, set-Regeln, show-Reg
    date: datetime(year: 2025, month: 12, day: 22),
    version: "0.2.251222",
    bib-path: "literatur.bib",
-   abstract: [Typst ist ein Satzsystem, mit dem man ... zum Beispiel VSCode mit der Erweiterung "Tinymist Typst" benutzen.
-   ]
+   abstract: [Typst ist ein Satzsystem, mit dem man ... zum Beispiel VSCode mit der Erweiterung "Tinymist Typst" benutzen.]
 )
 ```
 Die in der `_lib.typ` definierte Funktion `project()` bekommt also allerlei Parameter als Input, führt alle Setups durch (Seitenformat einstellen, Schriftart einstellen, Abstände einstellen, Fußzeile definieren, Metadaten setzen, Literaturverzeichnis anhängen etc.), bekommt dann als letztes Argument noch all das, was hier im Haupt-Dokument nach ihrem Aufruf folgt (also quasi den gesamten Inhalt) und erzeugt als Output dann das gesamte, finale Dokument mit all seinen Einstellungen.
@@ -152,7 +158,7 @@ Damit erscheint aber der Titel noch nicht im PDF Dokument. Um den Titel auch _au
 ```
 Das gibt den zuvor gesetzten Titel aus.
 
-Man kann aber unterscheiden zwischen den #nameref(<metadata>) eines Dokuments – die man nämlich über die `#set document` Regel setzt und die lediglich ins PDF eingebettet werden – und dem im PDF sichtbaren Titel.
+Man kann aber unterscheiden zwischen den #nameref(<metadata>) eines Dokuments – die man nämlich über die `#set document` Regel setzt und die lediglich ins PDF eingebettet werden – und dem im PDF _sichtbaren_ Titel.
 Will man einen anderen Titel im Dokument haben, als in den #nameref(<metadata>), dann gibt man einfach einen anderen Titel aus:
 ```typ
 // Die Titel-Eigenschaft des Dokuments festlegen:
@@ -169,7 +175,7 @@ Will man einen anderen Titel im Dokument haben, als in den #nameref(<metadata>),
    `#title[Mein Titel]` ist also eine Kurzschreibweise für `#title([Mein Titel])`.
 ]
 
-Einen Hinweis zur Verwendung des \# Zeichens gibt es in @hash-character.
+Einen Hinweis zur Verwendung des \#-Zeichens gibt es in @hash-character.
 
 == Zusammenfassung
 Die Zusammenfassung (oder auch der _Abstract_) taucht oft bei wissenschaftlichen Arbeiten unter dem Titel und den Autoren auf, so wie auch in diesem Dokument. 
@@ -189,7 +195,9 @@ if #abstract != none {
 }
 ```
 ]
-Ich habe manuell ein paar \# Zeichen eingefügt, damit das Syntax Highlighting besser funktioniert. In der `_lib.typ` steht es also nicht genau 1:1 so wie hier, denn dort ist es Teil eines _code blocks_ und das `#abstract` direkt zu Beginn nach dem `if` meint den an die `project()` Funktion übergebenen Parameter mit diesem Namen.
+Ich habe manuell ein paar \# Zeichen eingefügt, damit das Syntax Highlighting besser funktioniert. In der `_lib.typ` steht es  nicht genau 1:1 so wie hier, denn dort ist es Teil eines _code blocks_ und das `#abstract` direkt zu Beginn nach dem `if` meint den an die `project()` Funktion übergebenen Parameter mit diesem Namen.
+
+Warum hinter dem Parameter `x` der `pad()` Funktion keine konkrete Zahl steht, sondern `config.distances.abstract-pad-x`, dazu steht im @config mehr. #emoji.face.wink
 
 == PDF Metadaten <metadata>
 Über PDF Metadaten haben wir schon etwas im @dokument-titel ("#nameref(<dokument-titel>)") gelernt. Um also ins PDF Metadaten einzubetten, geht man so vor:
@@ -239,7 +247,7 @@ Blocksatz ("Justification") stellt man ebenfalls über eine _set rule_ ein. Und 
 ```
 Für Paragraphs, also Absätze, gibt es noch allerlei mehr Einstellungen. Auch da sei wieder die gute #link("https://typst.app/docs/reference/model/par/")[Original-Doku] empfohlen. Man kann z.B. das Blocksatzverhalten sehr differenziert feintunen.
 
-== Noch mehr Abstraktion
+== Noch mehr Abstraktion <config>
 Das Auslagern des Aussehens des Dokuments in die `_lib.typ` ist ja schonmal gut. Aber wenn dann auch diese _Library-_ (oder _Template-_) Datei langsam wächst, wird es immer schwieriger, hin und wieder mal die Abstände, Schriftgrößen und Farben anzupassen. Die stecken halt als konkrete Werte irgendwo verstreut in der Datei.
 
 Das ist dann der Zeitpunkt, all diese Zahlen mit ihren Einheiten auch nochmal auszulagern: in eine Art _Theme-_ oder _Config-_Datei.
@@ -284,7 +292,7 @@ Das mag zunächst umständlich aussehen, ist aber schnell praktisch, weil man da
 
 Dass diese Zusatzdateien übrigens alle mit einem `_` Zeichen beginnen, das hat mit den automatischen Build- und Release-Workflows zu tun, die ich für #link("https://github.com/metawops/typst")[mein GitHub Repository] eingerichtet habe. Denn diese Dateien enthalten ja keinen zu setzenden Text, sondern nur Funktionen und Variablen. Da würde also ein leeres PDF Dokument entstehen, wenn man sie mit Typst kompilieren würde. Daher werden alle Dateien, die mit einem `_` beginnen beim Build-Prozess ignoriert.
 
-#pagebreak(weak: true)
+// #pagebreak(weak: true)
 = Das Zeichen \# in Typst <hash-character>
 Wir müssen kurz über das Zeichen \# sprechen. 
 
@@ -322,14 +330,14 @@ So ein Zitat fügt man übrigens über die Funktion `#quote()` ein. Dass es hier
 )
 ```
 
-#pagebreak(weak: true)
+// #pagebreak(weak: true)
 = Bilder mit `image()` <bilder>
 Natürlich kann man in sein Typst Dokument auch Bilder einbetten. Im einfachsten Fall sind es Bilder, die aus Dateien kommen. Aber es geht auch anders, wie @images-raw zeigt.
 
 == Bilddateien
 Bilder können im einfachsten Fall über die Funktion `#image()` eingebettet werden. Dabei werden viele Formate unterstützt. Neben den Bitmap-Formaten *PNG*, *JPG*, *GIF*, *WebP* auch das Vektorformat *SVG* und sogar *PDF*. Hier ein auf 50% verkleinertes, eingebettetes JPG Foto des Raspberry Pi _Compute Module 5 (CM5)_:
 
-#image("img/cm5.jpeg", width: 85%)
+#image("img/cm5.jpeg", width: 75%)
 
 Die Funktion `#image()` eignet sich für das schnelle Einbetten eines Bildes, hat aber zunächst ein paar Nachteile, allen voran: linksbündig, keine Bildunterschrift.
 
@@ -419,7 +427,7 @@ Was geht da genau vor?
    )
 ]
 
-#line(length: 100%, stroke: 0.5pt + gray)
+//#line(length: 100%, stroke: 0.5pt + gray)
 
 Ein Experiment mit Farbe gefällig? Gern. Wir fangen mit leichter Kost an: 
 #align(center)[
@@ -448,9 +456,9 @@ Dazu der Code:
 
    Schließlich noch ein blaues Pixel, ihr wisst schon, warum es blau ($0,0,255$) ist.
 
-   Aus dem neun Zahlen _Integer_ Array machen wir mit `bytes()` drumherum ein neun Zahlen _Bytes_ Array.
+   Aus dem Neun-Zahlen-_Integer_-Array machen wir mit `bytes()` drumherum ein Neun-Zahlen-_Bytes_-Array, denn …
 
-/ Zeile 3: Jetzt brauchen wir als `encoding` auch `rgb8`. Und die `width`-Angabe $3$ sorgt für die Organisation / Zusammenfassung von jeweils drei Zahlen zu einem "Pixel".
+/ Zeile 3: … jetzt brauchen wir als `encoding` auch `rgb8`, wobei die $8$ darin eben für Bytes steht. Und die `width`-Angabe $3$ sorgt für die Organisation / Zusammenfassung von jeweils drei Zahlen zu einem "Pixel".
 
 Der Rest ist bekannt.
 
@@ -552,7 +560,7 @@ Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
    caption: "ggT-modulo-Grafik"
 ) <ggt-modulo>
 
-Jede Pixelspalte und -zeile steht hier für eine natürliche Zahl, beginnend mit jeweils $1$ in der Ecke links oben. Wenn der $gcd(x,y)$#footnote[#link("https://de.wikipedia.org/wiki/Größter_gemeinsamer_Teiler")[größter gemeinsamer Teiler]] $1$ ist, wird das Pixel dunkelgrau gemalt.
+Jede Pixelspalte $x$ und -zeile $y$ steht hier für eine natürliche Zahl, beginnend mit jeweils $1$ in der Ecke links oben. Wenn der $gcd(x,y)=1$ ist, wird das Pixel dunkelgrau gemalt.#footnote[gcd = greatest common devisor = #link("https://de.wikipedia.org/wiki/Größter_gemeinsamer_Teiler")[größter gemeinsamer Teiler] (ggT)]
 
 Ist er das nicht, schauen wir, was bei der Division des ggT durch 2, 3, 5 als Rest rauskommt und färben die Pixel mehr oder weniger rot ($gcd(x,y) mod 2$), grün ($gcd(x,y) mod 3$) oder blau ($gcd(x,y) mod 5$). Die Transparenz der Farben verrechnen wir und achten darauf, dass der finale Transparenzwert nicht größer als 255 wird. Hier ist der Quellcode für das Erzeugen des _raw bytes Arrays_:
 
@@ -608,25 +616,25 @@ Das Einbauen als Bild ins Dokument erfolgt dann über die schon gelernte `image(
       scaling: "pixelated"
    ),
    caption: "ggT-modulo-Grafik"
-)
+) <ggt-modulo>
 ```
 
 Und fertig ist die Laube.
 
 Natürlich kann man dies alles auch durch das Zeichnen von Rechtecken in einem Block machen und diese Art der Grafik-Erzeugung sehen wir im @typst-grafik ("#nameref(<typst-grafik>)").
 
-#pagebreak(weak: true)
+// #pagebreak(weak: true)
 //--------------------
 
 = Abbildungen mit `#figure()` <abbildungen>
-Mächtiger als `#image()` ist die Funktion `#figure()`. Mit ihr kann man u.a. das Alignment steuern und auch Bildunterschriften realisieren, wie hier in @abb_hybrid:
+Mächtiger als `#image()` ist die Funktion `#figure()` – ich habe sie heimlich gerade schon bei @ggt-modulo verwendet. Mit ihr kann man u.a. das Alignment steuern und auch Bildunterschriften realisieren, wie hier in @abb_hybrid:
 
 #figure(
-   image("img/output_plot-02.png", width: 90%),
+   image("img/output_plot-02.png", width: 89%),
    caption: [Gedämpfte Schwingung, errechnet auf dem Analogcomputer THAT]
 ) <abb_hybrid>
 
-Im Bild sieht man übrigens eine gedämpfte Schwingung, wie sie vom Analogrechner THAT errechnet wurde. Das Auslesen der Werte erfolgte mittels eines Arduino, wie es in @ulmann2021github vorgeschlagen wurde.
+Im Bild sieht man übrigens eine gedämpfte Schwingung, wie sie vom #link("https://the-analog-thing.org")[Analogrechner THAT] errechnet wurde. Das Auslesen der Werte erfolgte mittels eines Arduino, wie es in @ulmann2021github vorgeschlagen wurde.
 
 #figure(
    image("img/that_arduino.jpeg", width: 30%),
@@ -644,7 +652,7 @@ Im Bild sieht man übrigens eine gedämpfte Schwingung, wie sie vom Analogrechne
    + Man kann jede Info-Box neu mit Code schreiben.
    + Man definiert sich einmal eine neue Funktion inklusive Parametern und nutzt diese immer wieder, wenn man eine Info-Box einfügen will.
 
-   So wie im zweiten Punkt wurde es hier gemacht. Dadurch reduziert sich das Erzeugen dieser Info-Box auf einen Aufruf der selbst definierten Funktion `#info-box` (siehe Quellcode dieses Dokuments).
+   So wie im zweiten Punkt wurde es hier gemacht. Dadurch reduziert sich das Erzeugen dieser Info-Box auf einen Aufruf der selbst definierten Funktion `#info-box`.
 ]
 
 #code-box[
@@ -728,21 +736,49 @@ Erzeugt wurde diese Tabelle dynamisch im Typst Quelldokument mittels dieses Code
       columns: count,
       fill: (_, row) => if row == 0 { luma(230) } else { none },
       ..nums.map(n => $F_#n$),
-      ..nums.map(n => text(purple)[#str(fib(n))]),
+      ..nums.map(n => text(purple)[#str(fib(n))])
    )
 )
 ```
 Die Funktion `fib()` wurde natürlich auch im Typst Dokument implementiert, ist hier aber nicht abgedruckt. Ein Blick in den Quellcode im Repository bringt Erhellung, falls gewünscht.
 ]
 
+#let breite = 4
+#let hoehe = 3
+
+Hier ist noch ein anderes Beispiel: Wir haben oben im Code zur @ggt-modulo mit einem Range, also lediglich einer Liste von aufeinanderfolgenden Zahlen angefangen und daraus unsere Spalten- und Zeilen-Koordinaten erzeugt. Für eine Breite von #breite Spalten und eine Höhe von #hoehe Zeilen könnte man das Mapping der einen Laufvariable _i_ auch tabellarisch folgendermaßen darstellen:
+
+#let feld = range(breite * hoehe)
+#show table.cell.where(y: 0): set text(fill: white)
+
+#show table.header: set table.cell(fill: maroon)
+#figure(
+   table(
+      columns: 3,
+      fill: (x, y) => if y == 0 { maroon } else { none },
+
+      [_i_], [_Spalte_], [_Zeile_],
+      // [_i_], [_Spalte_], [_Zeile_],
+      ..feld.map(i => (
+         [#i], [#calc.rem(i, breite)], [#calc.div-euclid(i, breite)]
+      )).flatten()
+   ),
+   caption: [Wie man aus einer Laufvariablen (_i_) zwei x/y-Koordinaten (_Spalte, Zeile_) machen kann]
+)
+
+Dabei wurden die Werte für die _Spalte_ so berechnet: `calc.rem(i, breite)` und die Werte für die _Zeile_ so: `calc.div-euclid(i, breite)`.
+
+Oben in @ggt-modulo haben wir natürlich deutlich mehr Spalten und Zeilen, aber dann würde die Tabelle hier nicht hin passen.
+
+// #pagebreak(weak: true)
 = Diagramme
 == Typsts eigene Methoden <typst-grafik>
 
 Man kann in Typst auch direkt zeichnen und somit (einfache) Illustrationen wie z.B. die in @hue-kreis-quadrate erstellen.
 
 #let n = 18
-#let radius = 2.5cm
-#let sq-size = 0.7cm
+#let radius = 1.4cm
+#let sq-size = 0.4cm
 // Wir berechnen die benötigte Gesamtgröße (Durchmesser + Quadratgröße)
 #let total-size = 2 * radius + sq-size 
 
@@ -759,7 +795,7 @@ Man kann in Typst auch direkt zeichnen und somit (einfache) Illustrationen wie z
             width: sq-size,
             height: sq-size,
             fill: color.hsv(angle, 100%, 100%),
-            stroke: 1.5pt + black.lighten(0%),
+            stroke: 1.0pt + black.lighten(0%),
             radius: 4pt
           )
         ]
@@ -1220,7 +1256,7 @@ Aber vor der $16$ kann neben der $32$ auch die $5$ kommen, denn $3*5+1$ ist $15$
 So bauen wir rückwärts denkend einen Baum auf, in dem wir Vorgängerzahlen sehen. Das beginnt also so für einen Baum der Höhe #level:
 
 #figure(
-   collatz_tree(level, scale: 1.0),
+   collatz_tree(level, scale: 0.7),
    caption: [Collatz Baum mit den ersten #level Ebenen]
 )
 
@@ -1229,7 +1265,7 @@ So bauen wir rückwärts denkend einen Baum auf, in dem wir Vorgängerzahlen seh
 Nun denken wir das weiter und vervollständigen den Baum nach oben. Exemplarisch – und aus Platzgründen – sei hier der Baum der Ebene #level dargestellt:
 
 #figure(
-   collatz_tree(level, scale: 0.8),
+   collatz_tree(level, scale: 0.7),
    caption: [Collatz Baum der Ebene #level]
 )
 

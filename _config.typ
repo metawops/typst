@@ -17,8 +17,8 @@
          frame: gray
       ),
       quote: (
-         fill: gray.lighten(80%),
-         stroke: gray
+         fill: maroon.lighten(80%),
+         stroke: maroon
       ),
       code: (
          inline-fill: luma(240)
@@ -47,13 +47,14 @@
          margin-x: 1.5cm,
          margin-y: 1.5cm
       ),
+      line-spacing: 0.52em,
       figure: (
          above: 2.0em,
          below: 3.0em
       ),
       heading: (
-         above: 1.0em,
-         below: 0.8em
+         above: 1.8em,
+         below: 1.2em
       ),
       abstract-pad-x: 4em,
       list: (
