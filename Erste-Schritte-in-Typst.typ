@@ -30,18 +30,18 @@
 }
 
 #show: project.with(
-   theTitle: "Erste Schritte in Typst",
-   authors: ("Stefan Wolfrum"),
-   description: [Ein kleines Beispiel-Dokument, was die Nutzung von Typst demonstrieren soll.],
-   location: "Bonn, Germany",
-   keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
-   date: datetime(year: 2026, month: 1, day: 11),
-   version: doc-version,
-   bib-path: "literatur.bib",
-   abstract: [Typst ist ein Satzsystem, mit dem man vor allem PDF Dokumente sehr ordentlich setzen kann. Man kann Typst im einfachsten Fall ähnlich wie Markdown benutzen. Es bietet aber weit mehr Möglichkeiten und man kann extrem komplexe Dokumente damit schreiben. Von der Hausarbeit über die Masterarbeit bis zum Buch. Dabei kann es analog zu LaTeX den wissenschaftlichen Satz inklusive mathematischer Formeln perfekt abbilden und ist darüber hinaus über 3rd party Pakete erweiterbar. Typst ist sogar eine Programmiersprache und so kann man zum Beispiel Grafiken algorithmisch direkt innerhalb des Dokuments erstellen.
-   
-   Typst ist Open Source und kann daher frei und kostenlos benutzt werden. Es gibt einen Browser-basierten Editor mit Live-Preview#footnote[Abrufbar unter #link("https://typst.app/app")], aber man kann Typst auch lokal auf dem eigenen Rechner installieren und als Editor mit Live-Preview zum Beispiel VSCode mit der Erweiterung "Tinymist Typst" benutzen.
-   ]
+  theTitle: "Erste Schritte in Typst",
+  authors: "Stefan Wolfrum",
+  description: [Ein kleines Beispiel-Dokument, was die Nutzung von Typst demonstrieren soll.],
+  location: "Bonn, Germany",
+  keywords: ("Typst", "Demonstration", "Sample", "Beispiel"),
+  date: datetime(year: 2026, month: 1, day: 11),
+  version: doc-version,
+  bib-path: "literatur.bib",
+  abstract: [Typst ist ein Satzsystem, mit dem man vor allem PDF Dokumente sehr ordentlich setzen kann. Man kann Typst im einfachsten Fall ähnlich wie Markdown benutzen. Es bietet aber weit mehr Möglichkeiten und man kann extrem komplexe Dokumente damit schreiben. Von der Hausarbeit über die Masterarbeit bis zum Buch. Dabei kann es analog zu LaTeX den wissenschaftlichen Satz inklusive mathematischer Formeln perfekt abbilden und ist darüber hinaus über 3rd party Pakete erweiterbar. Typst ist sogar eine Programmiersprache und so kann man zum Beispiel Grafiken algorithmisch direkt innerhalb des Dokuments erstellen.
+
+    Typst ist Open Source und kann daher frei und kostenlos benutzt werden. Es gibt einen Browser-basierten Editor mit Live-Preview#footnote[Abrufbar unter #link("https://typst.app/app")], aber man kann Typst auch lokal auf dem eigenen Rechner installieren und als Editor mit Live-Preview zum Beispiel VSCode mit der Erweiterung "Tinymist Typst" benutzen.
+  ],
 )
 
 = Schrift & Formeln <formeln>
@@ -60,10 +60,10 @@ Natürlich gehen auch mathematische Formeln: $E=m c^2$, $(a+b)^2 = a^2 + 2a b + 
 Hier ein Beispiel für eine eigenständig stehende Formel, die auch automatisch nummeriert wurde. Das Beispiel in @collatz zeigt die Definition der _Hailstone Numbers_ bzw. des sog. #link("https://de.wikipedia.org/wiki/Collatz-Problem")[_Collatz- oder auch 3n+1-Problems_], was immer noch ungelöst ist:
 
 $
-a_(n+1) := cases(
-   a_n / 2 ","  & "wenn" a_n "gerade",
-   3 a_n +1 "," & "wenn" a_n "ungerade"
-)
+  a_(n+1) := cases(
+    a_n / 2 "," & "wenn" a_n "gerade",
+    3 a_n +1 "," & "wenn" a_n "ungerade"
+  )
 $ <collatz>
 
 Wir werden in @programmierung noch dynamisch erzeugte (also in Typst programmierte) Diagramme dazu sehen.
@@ -74,22 +74,22 @@ Wichtig für alleinstehende Block-Formeln wie diese ist, dass man nach dem einle
 #let loremwords = 34
 
 #grid(
-   columns: 2,
-   column-gutter: 2em,
-   [Es gibt sogar eine Funktion namens `#lorem()`, mit der man sofort _Lorem ipsum_ Text erzeugen kann. Rechts stehen #loremwords Worte _Lorem ipsum_ Text, erzeugt mit der `#lorem()` Funktion.
+  columns: 2,
+  column-gutter: 2em,
+  [Es gibt sogar eine Funktion namens `#lorem()`, mit der man sofort _Lorem ipsum_ Text erzeugen kann. Rechts stehen #loremwords Worte _Lorem ipsum_ Text, erzeugt mit der `#lorem()` Funktion.
 
-   Das zweispaltige Layout mitten im Text erreicht man mit der `#grid()` Funktion.
-   ],
-   [
-      #box(
-         inset: (left: 2em),
-         text(fill: gray.darken(25%))[_#lorem(loremwords)_]
-      )
-   ],
-   grid.vline(
-      x: 1,
-      stroke: 0.5pt + gray.darken(25%)
-   )
+    Das zweispaltige Layout mitten im Text erreicht man mit der `#grid()` Funktion.
+  ],
+  [
+    #box(
+      inset: (left: 2em),
+      text(fill: gray.darken(25%))[_#lorem(loremwords)_],
+    )
+  ],
+  grid.vline(
+    x: 1,
+    stroke: 0.5pt + gray.darken(25%),
+  ),
 )
 
 Das sieht im Typst Dokument dann so aus:
@@ -168,32 +168,32 @@ Will man einen anderen Titel im Dokument haben, als in den #nameref(<metadata>),
 ```
 
 #info-box[
-   *Ein Wort zu eckigen Klammern.*
+  *Ein Wort zu eckigen Klammern.*
 
-   In Typst ist alles, was in eckigen Klammern steht, Content. Also Text. Inklusive Auszeichnungen wie fett oder kursiv. Immer dann, wenn eine Funktion (wie z.B. `title()`) Content als Parameter hat, kann man auch die runden Klammern des Funktionsaufrufs weglassen und den Content Block direkt hinter den Funktionsnamen schreiben.
+  In Typst ist alles, was in eckigen Klammern steht, Content. Also Text. Inklusive Auszeichnungen wie fett oder kursiv. Immer dann, wenn eine Funktion (wie z.B. `title()`) Content als Parameter hat, kann man auch die runden Klammern des Funktionsaufrufs weglassen und den Content Block direkt hinter den Funktionsnamen schreiben.
 
-   `#title[Mein Titel]` ist also eine Kurzschreibweise für `#title([Mein Titel])`.
+  `#title[Mein Titel]` ist also eine Kurzschreibweise für `#title([Mein Titel])`.
 ]
 
 Einen Hinweis zur Verwendung des \#-Zeichens gibt es in @hash-character.
 
 == Zusammenfassung
-Die Zusammenfassung (oder auch der _Abstract_) taucht oft bei wissenschaftlichen Arbeiten unter dem Titel und den Autoren auf, so wie auch in diesem Dokument. 
+Die Zusammenfassung (oder auch der _Abstract_) taucht oft bei wissenschaftlichen Arbeiten unter dem Titel und den Autoren auf, so wie auch in diesem Dokument.
 
 Der Zusammenfassungstext ist bei mir ein Parameter der `project()` Funktion und wird als _content block_ in eckigen Klammern übergeben. In der `_lib.typ` wird er dann wie folgt ausgegeben (gerendert):
 
 // Ligaturen für den folgenden Code Block ausschalten:
 #text(features: (calt: 0))[
-```typ
-// Abstract rendern (wenn vorhanden)
-if #abstract != none {
-   #pad(x: config.distances.abstract-pad-x)[        // Seitliche Einrückung
-      #align(center)[*Zusammenfassung*]
-      #set text(style: "italic", size: config.document.abstract-font-size)
-      #abstract
-   ]
-}
-```
+  ```typ
+  // Abstract rendern (wenn vorhanden)
+  if #abstract != none {
+     #pad(x: config.distances.abstract-pad-x)[        // Seitliche Einrückung
+        #align(center)[*Zusammenfassung*]
+        #set text(style: "italic", size: config.document.abstract-font-size)
+        #abstract
+     ]
+  }
+  ```
 ]
 Ich habe manuell ein paar \# Zeichen eingefügt, damit das Syntax Highlighting besser funktioniert. In der `_lib.typ` steht es  nicht genau 1:1 so wie hier, denn dort ist es Teil eines _code blocks_ und das `#abstract` direkt zu Beginn nach dem `if` meint den an die `project()` Funktion übergebenen Parameter mit diesem Namen.
 
@@ -294,7 +294,7 @@ Dass diese Zusatzdateien übrigens alle mit einem `_` Zeichen beginnen, das hat 
 
 // #pagebreak(weak: true)
 = Das Zeichen \# in Typst <hash-character>
-Wir müssen kurz über das Zeichen \# sprechen. 
+Wir müssen kurz über das Zeichen \# sprechen.
 
 Solange man im "Textschreibmodus" ist (_markup mode_ oder auch _content mode_), muss man Funktionsaufrufe, wie z.B. `#image()` (siehe @bilder) mit dem \# Zeichen beginnen. Das sagt Typst "Achtung, jetzt kommt ein Funktionsaufruf".
 
@@ -348,31 +348,31 @@ Aber man kann auch Bilder über raw bytes erzeugen und einbinden. Dazu ein coole
 
 // Ligaturen für den folgenden Code Block ausschalten:
 #text(features: (calt: 0))[
-```typ
-#image(
-   bytes(range(16).map(x => x * 16)),
-   format: (
-      encoding: "luma8",
-      width: 4, height: 4,
-   ),
-   width: 2cm,
-   scaling: "pixelated"
-)
-```]
+  ```typ
+  #image(
+     bytes(range(16).map(x => x * 16)),
+     format: (
+        encoding: "luma8",
+        width: 4, height: 4,
+     ),
+     width: 2cm,
+     scaling: "pixelated"
+  )
+  ```]
 
 Dieser Code erzeugt dieses Bild:
 
 #align(center)[
-   #image(
-      bytes(range(16).map(x => x * 16)),
-      format: (
-         encoding: "luma8",
-         width: 4,
-         height: 4,
-      ),
-      width: 2cm,
-      scaling: "pixelated"
-   )
+  #image(
+    bytes(range(16).map(x => x * 16)),
+    format: (
+      encoding: "luma8",
+      width: 4,
+      height: 4,
+    ),
+    width: 2cm,
+    scaling: "pixelated",
+  )
 ]
 
 Was geht da genau vor?
@@ -388,26 +388,24 @@ Was geht da genau vor?
 #align(center)[
   #grid(
     columns: (20pt, 20pt, 20pt, 20pt), // 4 feste Spalten
-    rows: 20pt,                       // Feste Zeilenhöhe
-    gutter: 2pt,                      // Abstand zwischen den Zellen
-    
+    rows: 20pt, // Feste Zeilenhöhe
+    gutter: 2pt, // Abstand zwischen den Zellen
+
     // Wir mappen die Zahlen direkt auf gestaltete Boxen
     ..data.map(val => {
       // Grauwert definieren (luma akzeptiert 0-255)
       let bg-color = luma(val)
-      
+
       // Lesbarkeit: Weißer Text auf dunklem Grund, schwarzer auf hellem
       let text-color = if val < 128 { white } else { black }
-      
+
       rect(
         width: 100%,
         height: 100%,
         fill: bg-color,
         stroke: 0.5pt + gray.darken(20%),
         radius: 2pt,
-        align(center + horizon, 
-          text(fill: text-color, size: 9pt, weight: "bold", [#val])
-        )
+        align(center + horizon, text(fill: text-color, size: 9pt, weight: "bold", [#val])),
       )
     })
   )
@@ -416,27 +414,27 @@ Was geht da genau vor?
 / Zeile 8: Das Bild soll 2~cm breit werden. Und da es quadratisch ist, wird es auch 2~cm hoch werden.
 / Zeile 9: Dank des Werts `pixelated` dieses Parameters `scaling` sehen wir tatsächlich 16 Kästchen unterschiedlicher Graustufen. Würden wir den Parameter `scaling` weglassen oder auf seinen anderen, möglichen Wert `smooth` setzen, würden die Graustufenwerte interpoliert werden, was dann so aussieht:
 #align(center)[
-   #image(
-      bytes(range(16).map(x => x * 16)),
-      format: (
-         encoding: "luma8",
-         width: 4,
-         height: 4,
-      ),
-      width: 2cm
-   )
+  #image(
+    bytes(range(16).map(x => x * 16)),
+    format: (
+      encoding: "luma8",
+      width: 4,
+      height: 4,
+    ),
+    width: 2cm,
+  )
 ]
 
 //#line(length: 100%, stroke: 0.5pt + gray)
 
-Ein Experiment mit Farbe gefällig? Gern. Wir fangen mit leichter Kost an: 
+Ein Experiment mit Farbe gefällig? Gern. Wir fangen mit leichter Kost an:
 #align(center)[
-   #image(
-      bytes((255,0,0, 0,255,0, 0,0,255)),
-      format: (encoding: "rgb8", width: 3, height: 1),
-      width: 3cm,
-      scaling: "pixelated"
-   )
+  #image(
+    bytes((255, 0, 0, 0, 255, 0, 0, 0, 255)),
+    format: (encoding: "rgb8", width: 3, height: 1),
+    width: 3cm,
+    scaling: "pixelated",
+  )
 ]
 
 Dazu der Code:
@@ -450,13 +448,13 @@ Dazu der Code:
 ```
 / Zeile 2: Wir erzeugen zunächst mit den neun Zahlen in den _inneren_ Klammern die Werte für drei "Pixel": Erst ein rotes über die ersten drei Zahlen $255, 0, 0$, denn die Zahlen geben der Reihenfolge nach jeweils den rot-, grün- und blau-Anteil des Pixels an. Dabei kann jeder dieser Werte zwischen $0$ und $255$ (8 bit eben) liegen.
 
-   So stehen also die ersten drei Zahlen für das erste, rote "Pixel", da sie voll ($255$) rot, aber gar kein ($0$) blau und grün enthalten.
+  So stehen also die ersten drei Zahlen für das erste, rote "Pixel", da sie voll ($255$) rot, aber gar kein ($0$) blau und grün enthalten.
 
-   So geht es weiter: Die nächsten drei Zahlen, $0, 255, 0$ repräsentieren das zweite "Pixel" in unserer obigen Grafik: ein rein grünes Pixel, da rot und blau $0$ sind.
+  So geht es weiter: Die nächsten drei Zahlen, $0, 255, 0$ repräsentieren das zweite "Pixel" in unserer obigen Grafik: ein rein grünes Pixel, da rot und blau $0$ sind.
 
-   Schließlich noch ein blaues Pixel, ihr wisst schon, warum es blau ($0,0,255$) ist.
+  Schließlich noch ein blaues Pixel, ihr wisst schon, warum es blau ($0,0,255$) ist.
 
-   Aus dem Neun-Zahlen-_Integer_-Array machen wir mit `bytes()` drumherum ein Neun-Zahlen-_Bytes_-Array, denn …
+  Aus dem Neun-Zahlen-_Integer_-Array machen wir mit `bytes()` drumherum ein Neun-Zahlen-_Bytes_-Array, denn …
 
 / Zeile 3: … jetzt brauchen wir als `encoding` auch `rgb8`, wobei die $8$ darin eben für Bytes steht. Und die `width`-Angabe $3$ sorgt für die Organisation / Zusammenfassung von jeweils drei Zahlen zu einem "Pixel".
 
@@ -467,16 +465,16 @@ Der Rest ist bekannt.
 Das nächste Beispiel spielt mit der Transparenz:
 
 #align(center)[
-   #image(
-      bytes(range(16).map(a => (0,0,255,16*a+15)).flatten()),
-      format: (
-         encoding: "rgba8",
-         width: 16,
-         height: 1,
-      ),
-      height: 1cm,
-      scaling: "pixelated"
-   )
+  #image(
+    bytes(range(16).map(a => (0, 0, 255, 16 * a + 15)).flatten()),
+    format: (
+      encoding: "rgba8",
+      width: 16,
+      height: 1,
+    ),
+    height: 1cm,
+    scaling: "pixelated",
+  )
 ]
 
 Der Code dazu bringt uns zwei Neuerungen: eine neue Funktion und ein neues `encoding`:
@@ -492,16 +490,16 @@ Der Code dazu bringt uns zwei Neuerungen: eine neue Funktion und ein neues `enco
 
 / Zeile 2: Diesmal nutzen wir wieder die von oben bekannten Funktionen `range()` und `map()`. Wir wollen Farben mit rot-, grün-, blau- und Transparenz-Anteil benutzen und zwar 16 davon.
 
-   In der `map()` Funktion bauen wir uns solche 4-Tupel und das Ergebnis _vor_ dem darauf angewendeten `flatten()` ist ein Array von 16 Arrays à vier Elemente:
+  In der `map()` Funktion bauen wir uns solche 4-Tupel und das Ergebnis _vor_ dem darauf angewendeten `flatten()` ist ein Array von 16 Arrays à vier Elemente:
 
-   #range(16).map(a => (0,0,255,16*a+15))
+  #range(16).map(a => (0, 0, 255, 16 * a + 15))
 
-   Daraus macht uns die `flatten()` Funktion ein "flaches" Array von $16*4$ Zahlen hintereinander – genau, wie wir sie für die `image()` Funktion brauchen:
+  Daraus macht uns die `flatten()` Funktion ein "flaches" Array von $16*4$ Zahlen hintereinander – genau, wie wir sie für die `image()` Funktion brauchen:
 
-   #raw(
-      range(16).map(a => (0,0,255,16*a+15)).flatten().map(str).join(", "),
-      lang: "txt"
-   )
+  #raw(
+    range(16).map(a => (0, 0, 255, 16 * a + 15)).flatten().map(str).join(", "),
+    lang: "txt",
+  )
 
 / Zeile 3: Jetzt benutzen wir das Encoding `rgba8`, es steht für rot, grün, blau und alpha, jeweils 8 bit. Und wir wollen 16 "Pixel" nebeneinander, daher ist unsere `heigth` diesmal $1$.
 
@@ -512,97 +510,101 @@ Unser nächstes Beispiel wird etwas komplexer – und ein wenig mathematischer:
 #let w-pix = 51
 #let h-pix = 21
 
-#let pixel-data = range(w-pix * h-pix).map(i => {
-   let x = calc.rem(i, w-pix)
-   let y = calc.div-euclid(i, w-pix)
-   let g = calc.gcd(x+1, y+1)
-   
-   // --- 1. Strukturgebende Schicht (gcd = 1) ---
-   if g == 1 {
-      return (80, 80, 80, 255)
-      //return (196, 128, 96, 255)
-   }
-   
-   // --- 2. Mathematische Schichten (für g > 1) ---
-   
-   // ROT: Modulo 2
-   let is-mod2 = calc.rem(g, 2) == 0
-   let r-chan = if is-mod2 { 255 } else { 0 }
-   let a-r = r-chan
-   
-   // GRÜN: Modulo 3 (Mapping ohne explizite Fälle)
-   let m3 = calc.rem(g, 3)
-   let g-chan = int(m3 * 255 / 2) 
-   let a-g = g-chan
-   
-   // BLAU: Modulo 5 (Mapping ohne explizite Fälle)
-   let m5 = calc.rem(g, 5)
-   let b-chan = int(m5 * 255 / 4)
-   let a-b = b-chan
-   
-   // Alpha-Blending (Summe gedeckelt bei 255)
-   //let a-final = calc.min(255, a-r + a-g + a-b)
-   //let a-final = calc.max(a-r, a-g, a-b) // Maximum
-   //let a-final = int(255 - ( (255 - a-r) * (255 - a-g) * (255 - a-b) / calc.pow(255, 2) )) // "Screen" Blending
-   let a-final = int(calc.sqrt((calc.pow(a-r, 2) + calc.pow(a-g, 2) + calc.pow(a-b, 2)) / 3)) // Euklidisch (RMS, Root-Mean-Square)
-   //let a-final = int(a-r * 0.1 + a-g * 0.1 + a-b * 0.8) // Gewichtung (Summer der Faktoren = 1)
+#let pixel-data = (
+  range(w-pix * h-pix)
+    .map(i => {
+      let x = calc.rem(i, w-pix)
+      let y = calc.div-euclid(i, w-pix)
+      let g = calc.gcd(x + 1, y + 1)
 
-   (r-chan, g-chan, b-chan, a-final)
-}).flatten()
+      // --- 1. Strukturgebende Schicht (gcd = 1) ---
+      if g == 1 {
+        return (80, 80, 80, 255)
+        //return (196, 128, 96, 255)
+      }
+
+      // --- 2. Mathematische Schichten (für g > 1) ---
+
+      // ROT: Modulo 2
+      let is-mod2 = calc.rem(g, 2) == 0
+      let r-chan = if is-mod2 { 255 } else { 0 }
+      let a-r = r-chan
+
+      // GRÜN: Modulo 3 (Mapping ohne explizite Fälle)
+      let m3 = calc.rem(g, 3)
+      let g-chan = int(m3 * 255 / 2)
+      let a-g = g-chan
+
+      // BLAU: Modulo 5 (Mapping ohne explizite Fälle)
+      let m5 = calc.rem(g, 5)
+      let b-chan = int(m5 * 255 / 4)
+      let a-b = b-chan
+
+      // Alpha-Blending (Summe gedeckelt bei 255)
+      //let a-final = calc.min(255, a-r + a-g + a-b)
+      //let a-final = calc.max(a-r, a-g, a-b) // Maximum
+      //let a-final = int(255 - ( (255 - a-r) * (255 - a-g) * (255 - a-b) / calc.pow(255, 2) )) // "Screen" Blending
+      let a-final = int(calc.sqrt((calc.pow(a-r, 2) + calc.pow(a-g, 2) + calc.pow(a-b, 2)) / 3)) // Euklidisch (RMS, Root-Mean-Square)
+      //let a-final = int(a-r * 0.1 + a-g * 0.1 + a-b * 0.8) // Gewichtung (Summer der Faktoren = 1)
+
+      (r-chan, g-chan, b-chan, a-final)
+    })
+    .flatten()
+)
 
 #figure(
-   image(
-      bytes(pixel-data), 
-      format: (encoding: "rgba8", width: w-pix, height: h-pix), 
-      height: 6cm,
-      scaling: "pixelated"
-   ),
-   caption: "ggT-modulo-Grafik"
+  image(
+    bytes(pixel-data),
+    format: (encoding: "rgba8", width: w-pix, height: h-pix),
+    height: 6cm,
+    scaling: "pixelated",
+  ),
+  caption: "ggT-modulo-Grafik",
 ) <ggt-modulo>
 
-Jede Pixelspalte $x$ und -zeile $y$ steht hier für eine natürliche Zahl, beginnend mit jeweils $1$ in der Ecke links oben. Wenn der $gcd(x,y)=1$ ist, wird das Pixel dunkelgrau gemalt.#footnote[gcd = greatest common devisor = #link("https://de.wikipedia.org/wiki/Größter_gemeinsamer_Teiler")[größter gemeinsamer Teiler] (ggT)]
+Jede Pixelspalte $x$ und -zeile $y$ steht hier für eine natürliche Zahl, beginnend mit jeweils $1$ in der Ecke links oben. Wenn der $gcd(x, y)=1$ ist, wird das Pixel dunkelgrau gemalt.#footnote[gcd = greatest common devisor = #link("https://de.wikipedia.org/wiki/Größter_gemeinsamer_Teiler")[größter gemeinsamer Teiler] (ggT)]
 
-Ist er das nicht, schauen wir, was bei der Division des ggT durch 2, 3, 5 als Rest rauskommt und färben die Pixel mehr oder weniger rot ($gcd(x,y) mod 2$), grün ($gcd(x,y) mod 3$) oder blau ($gcd(x,y) mod 5$). Die Transparenz der Farben verrechnen wir und achten darauf, dass der finale Transparenzwert nicht größer als 255 wird. Hier ist der Quellcode für das Erzeugen des _raw bytes Arrays_:
+Ist er das nicht, schauen wir, was bei der Division des ggT durch 2, 3, 5 als Rest rauskommt und färben die Pixel mehr oder weniger rot ($gcd(x, y) mod 2$), grün ($gcd(x, y) mod 3$) oder blau ($gcd(x, y) mod 5$). Die Transparenz der Farben verrechnen wir und achten darauf, dass der finale Transparenzwert nicht größer als 255 wird. Hier ist der Quellcode für das Erzeugen des _raw bytes Arrays_:
 
 // Ligaturen für den folgenden Code Block ausschalten:
 #text(features: (calt: 0))[
-```typ
-#let w = 51  // Anzahl der Kacheln horizontal
-#let h = 21  // Anzahl der Kacheln vertikal
+  ```typ
+  #let w = 51  // Anzahl der Kacheln horizontal
+  #let h = 21  // Anzahl der Kacheln vertikal
 
-#let pixel-data = range(w * h).map(i => {
-   // x und y aus unserer einen Laufvariablen i ermitteln:
-   let x = calc.rem(i, w)
-   let y = calc.div-euclid(i, w)
-   let g = calc.gcd(x+1, y+1)  // ggT von x und y errechnen
-   
-   // --- 1. Strukturgebende Schicht (gcd = 1) ---
-   if g == 1 {
-      return (80, 80, 80, 255)
-   }
-   
-   // --- 2. Mathematische Schichten (für g > 1) ---
-   // ROT: Modulo 2
-   let is-mod2 = calc.rem(g, 2) == 0
-   let r-chan = if is-mod2 { 255 } else { 0 }
-   let a-r = r-chan
-   
-   // GRÜN: Modulo 3
-   let m3 = calc.rem(g, 3)
-   let g-chan = int(m3 * 255 / 2) 
-   let a-g = g-chan
-   
-   // BLAU: Modulo 5
-   let m5 = calc.rem(g, 5)
-   let b-chan = int(m5 * 255 / 4)
-   let a-b = b-chan
-   
-   // Alpha-Blending: Euklidisch (RMS, Root-Mean-Square)
-   let a-final = int(calc.sqrt((calc.pow(a-r, 2) + calc.pow(a-g, 2) + calc.pow(a-b, 2)) / 3))
+  #let pixel-data = range(w * h).map(i => {
+     // x und y aus unserer einen Laufvariablen i ermitteln:
+     let x = calc.rem(i, w)
+     let y = calc.div-euclid(i, w)
+     let g = calc.gcd(x+1, y+1)  // ggT von x und y errechnen
 
-   (r-chan, g-chan, b-chan, a-final)
-}).flatten()
-```
+     // --- 1. Strukturgebende Schicht (gcd = 1) ---
+     if g == 1 {
+        return (80, 80, 80, 255)
+     }
+
+     // --- 2. Mathematische Schichten (für g > 1) ---
+     // ROT: Modulo 2
+     let is-mod2 = calc.rem(g, 2) == 0
+     let r-chan = if is-mod2 { 255 } else { 0 }
+     let a-r = r-chan
+
+     // GRÜN: Modulo 3
+     let m3 = calc.rem(g, 3)
+     let g-chan = int(m3 * 255 / 2)
+     let a-g = g-chan
+
+     // BLAU: Modulo 5
+     let m5 = calc.rem(g, 5)
+     let b-chan = int(m5 * 255 / 4)
+     let a-b = b-chan
+
+     // Alpha-Blending: Euklidisch (RMS, Root-Mean-Square)
+     let a-final = int(calc.sqrt((calc.pow(a-r, 2) + calc.pow(a-g, 2) + calc.pow(a-b, 2)) / 3))
+
+     (r-chan, g-chan, b-chan, a-final)
+  }).flatten()
+  ```
 ]
 
 Das Einbauen als Bild ins Dokument erfolgt dann über die schon gelernte `image()` Syntax:
@@ -610,8 +612,8 @@ Das Einbauen als Bild ins Dokument erfolgt dann über die schon gelernte `image(
 ```typ
 #figure(
    image(
-      bytes(pixel-data), 
-      format: (encoding: "rgba8", width: w, height: h), 
+      bytes(pixel-data),
+      format: (encoding: "rgba8", width: w, height: h),
       height: 6cm,
       scaling: "pixelated"
    ),
@@ -630,15 +632,15 @@ Natürlich kann man dies alles auch durch das Zeichnen von Rechtecken in einem B
 Mächtiger als `#image()` ist die Funktion `#figure()` – ich habe sie heimlich gerade schon bei @ggt-modulo verwendet. Mit ihr kann man u.a. das Alignment steuern und auch Bildunterschriften realisieren, wie hier in @abb_hybrid:
 
 #figure(
-   image("img/output_plot-02.png", width: 89%),
-   caption: [Gedämpfte Schwingung, errechnet auf dem Analogcomputer THAT]
+  image("img/output_plot-02.png", width: 89%),
+  caption: [Gedämpfte Schwingung, errechnet auf dem Analogcomputer THAT],
 ) <abb_hybrid>
 
 Im Bild sieht man übrigens eine gedämpfte Schwingung, wie sie vom #link("https://the-analog-thing.org")[Analogrechner THAT] errechnet wurde. Das Auslesen der Werte erfolgte mittels eines Arduino, wie es in @ulmann2021github vorgeschlagen wurde.
 
 #figure(
-   image("img/that_arduino.jpeg", width: 30%),
-   caption: [Setup mit THAT und Arduino]
+  image("img/that_arduino.jpeg", width: 60%),
+  caption: [Setup mit THAT und Arduino],
 )
 
 #pagebreak(weak: true)
@@ -647,44 +649,44 @@ Im Bild sieht man übrigens eine gedämpfte Schwingung, wie sie vom #link("https
 = Info-Box
 
 #info-box[
-   Man kann auch hübsche Info-Boxen wie diese hier gestalten. Dabei gibt es prinzipiell zwei Möglichkeiten:
+  Man kann auch hübsche Info-Boxen wie diese hier gestalten. Dabei gibt es prinzipiell zwei Möglichkeiten:
 
-   + Man kann jede Info-Box neu mit Code schreiben.
-   + Man definiert sich einmal eine neue Funktion inklusive Parametern und nutzt diese immer wieder, wenn man eine Info-Box einfügen will.
+  + Man kann jede Info-Box neu mit Code schreiben.
+  + Man definiert sich einmal eine neue Funktion inklusive Parametern und nutzt diese immer wieder, wenn man eine Info-Box einfügen will.
 
-   So wie im zweiten Punkt wurde es hier gemacht. Dadurch reduziert sich das Erzeugen dieser Info-Box auf einen Aufruf der selbst definierten Funktion `#info-box`.
+  So wie im zweiten Punkt wurde es hier gemacht. Dadurch reduziert sich das Erzeugen dieser Info-Box auf einen Aufruf der selbst definierten Funktion `#info-box`.
 ]
 
 #code-box[
-Hier ist der Quellcode der Definition der eigenen `#info-box` Funktion:
+  Hier ist der Quellcode der Definition der eigenen `#info-box` Funktion:
 
-```typ
-#let info-box(title: "INFO", body) = block(
-  width: 100%,
-  inset: 12pt,
-  radius: 8pt,
-  stroke: rgb("#3b82f6"),        // Rahmen blau
-  fill: rgb("#e0f2ff"),          // hellblauer Hintergrund
-)[
-  // Titelzeile
-  #text(
-    weight: "bold",
-    fill: rgb("#1d4ed8"),
-    size: 12pt,
-  )[#title]
+  ```typ
+  #let info-box(title: "INFO", body) = block(
+    width: 100%,
+    inset: 12pt,
+    radius: 8pt,
+    stroke: rgb("#3b82f6"),        // Rahmen blau
+    fill: rgb("#e0f2ff"),          // hellblauer Hintergrund
+  )[
+    // Titelzeile
+    #text(
+      weight: "bold",
+      fill: rgb("#1d4ed8"),
+      size: 12pt,
+    )[#title]
 
-  #v(8pt)
+    #v(8pt)
 
-  // Fließtext
-  #text(
-    size: 11pt,
-  )[ #body ]
-]
-```
+    // Fließtext
+    #text(
+      size: 11pt,
+    )[ #body ]
+  ]
+  ```
 
-Wie man sieht, kann man auch die Quellcode-Formatierung innerhalb einer Info-Box benutzen.
+  Wie man sieht, kann man auch die Quellcode-Formatierung innerhalb einer Info-Box benutzen.
 
-Und dies hier ist einfach eine zweite Art Info-Box, die ich `#code-box` genannt und genauso definiert habe, wie die `#info-box`, nur mit anderen Farben und der Überschrift *CODE*.
+  Und dies hier ist einfach eine zweite Art Info-Box, die ich `#code-box` genannt und genauso definiert habe, wie die `#info-box`, nur mit anderen Farben und der Überschrift *CODE*.
 ]
 
 #pagebreak(weak: true)
@@ -694,53 +696,52 @@ Und dies hier ist einfach eine zweite Art Info-Box, die ich `#code-box` genannt 
 == Statische Tabellen
 _Kapitel muss noch massiv ausgebaut werden!_
 #table(
-   columns: (auto, auto, auto),
-   [*Name*], [*Age*], [*Role*],
-   [Alice], [28], [Developer],
-   [Bob], [34], [Designer],
-   [Charlie], [45], [Manager]
+  columns: (auto, auto, auto),
+  [*Name*], [*Age*], [*Role*],
+  [Alice], [28], [Developer],
+  [Bob], [34], [Designer],
+  [Charlie], [45], [Manager],
 )
 
 == Dynamisch erzeugte Tabellen
 
 // Wir definieren eine Funktion, die Fibonacci-Zahlen errechnen kann:
 #let fib(n) = (
-  if n <= 2 { 1 }
-  else { fib(n - 1) + fib(n - 2) }
+  if n <= 2 { 1 } else { fib(n - 1) + fib(n - 2) }
 )
 
-#let count = 15
+#let count = 17
 
 Ein gutes Beispiel für sowohl Tabellen, als auch dass man in Typst selbst dynamisch Inhalte erzeugen kann, ist diese Tabelle mit den ersten #count Fibonaccizahlen.
 
 #let nums = range(1, count + 1)
 
 #figure(
-   table(
-      columns: count,
-      fill: (_, row) => if row == 0 { luma(230) } else { none },
-      ..nums.map(n => $F_#n$),
-      ..nums.map(n => text(maroon)[#str(fib(n))]),
-   ),
-   caption: [Die ersten #count Fibonnacizahlen]
+  table(
+    columns: count,
+    fill: (_, row) => if row == 0 { luma(230) } else { none },
+    ..nums.map(n => $F_#n$),
+    ..nums.map(n => text(maroon)[#str(fib(n))]),
+  ),
+  caption: [Die ersten #count Fibonnacizahlen],
 )
 
 Erzeugt wurde diese Tabelle dynamisch im Typst Quelldokument mittels dieses Codes:
 
 #code-box[
-```typ
-#let count = 15
-#let nums = range(1, count + 1)
-#align(center,
-   table(
-      columns: count,
-      fill: (_, row) => if row == 0 { luma(230) } else { none },
-      ..nums.map(n => $F_#n$),
-      ..nums.map(n => text(purple)[#str(fib(n))])
-   )
-)
-```
-Die Funktion `fib()` wurde natürlich auch im Typst Dokument implementiert, ist hier aber nicht abgedruckt. Ein Blick in den Quellcode im Repository bringt Erhellung, falls gewünscht.
+  ```typ
+  #let count = 17
+  #let nums = range(1, count + 1)
+  #align(center,
+     table(
+        columns: count,
+        fill: (_, row) => if row == 0 { luma(230) } else { none },
+        ..nums.map(n => $F_#n$),
+        ..nums.map(n => text(purple)[#str(fib(n))])
+     )
+  )
+  ```
+  Die Funktion `fib()` wurde natürlich auch im Typst Dokument implementiert, ist hier aber nicht abgedruckt. Ein Blick in den Quellcode im Repository bringt Erhellung, falls gewünscht.
 ]
 
 #let breite = 4
@@ -753,17 +754,21 @@ Hier ist noch ein anderes Beispiel: Wir haben oben im Code zur @ggt-modulo mit e
 
 #show table.header: set table.cell(fill: maroon)
 #figure(
-   table(
-      columns: 3,
-      fill: (x, y) => if y == 0 { maroon } else { none },
+  table(
+    columns: 3,
+    fill: (x, y) => if y == 0 { maroon } else { none },
 
-      [_i_], [_Spalte_], [_Zeile_],
-      // [_i_], [_Spalte_], [_Zeile_],
-      ..feld.map(i => (
-         [#i], [#calc.rem(i, breite)], [#calc.div-euclid(i, breite)]
-      )).flatten()
-   ),
-   caption: [Wie man aus einer Laufvariablen (_i_) zwei x/y-Koordinaten (_Spalte, Zeile_) machen kann]
+    [_i_], [_Spalte_], [_Zeile_],
+    // [_i_], [_Spalte_], [_Zeile_],
+    ..feld
+      .map(i => (
+        [#i],
+        [#calc.rem(i, breite)],
+        [#calc.div-euclid(i, breite)],
+      ))
+      .flatten(),
+  ),
+  caption: [Wie man aus einer Laufvariablen (_i_) zwei x/y-Koordinaten (_Spalte, Zeile_) machen kann],
 )
 
 Dabei wurden die Werte für die _Spalte_ so berechnet: `calc.rem(i, breite)` und die Werte für die _Zeile_ so: `calc.div-euclid(i, breite)`.
@@ -780,7 +785,7 @@ Man kann in Typst auch direkt zeichnen und somit (einfache) Illustrationen wie z
 #let radius = 1.4cm
 #let sq-size = 0.4cm
 // Wir berechnen die benötigte Gesamtgröße (Durchmesser + Quadratgröße)
-#let total-size = 2 * radius + sq-size 
+#let total-size = 2 * radius + sq-size
 
 #figure(
   block(width: total-size, height: total-size)[
@@ -788,7 +793,7 @@ Man kann in Typst auch direkt zeichnen und somit (einfache) Illustrationen wie z
       let angle = i * (360deg / n)
       let dx = calc.cos(angle) * radius
       let dy = calc.sin(angle) * radius
-      
+
       place(center + horizon, dx: dx, dy: dy)[
         #rotate(angle)[
           #rect(
@@ -796,13 +801,13 @@ Man kann in Typst auch direkt zeichnen und somit (einfache) Illustrationen wie z
             height: sq-size,
             fill: color.hsv(angle, 100%, 100%),
             stroke: 1.0pt + black.lighten(0%),
-            radius: 4pt
+            radius: 4pt,
           )
         ]
       ]
     }
   ],
-  caption: [#n Quadrate, im Kreis rotiert]
+  caption: [#n Quadrate, im Kreis rotiert],
 ) <hue-kreis-quadrate>
 
 Das ist hier gelöst mit einem `block()` als Zeichenfläche, der `place()`- und der `rect()`#sym.wj;-Funktion. Der Quellcode dazu sieht so aus:
@@ -820,7 +825,7 @@ Das ist hier gelöst mit einem `block()` als Zeichenfläche, der `place()`- und 
       let angle = i * (360deg / n)
       let dx = calc.cos(angle) * radius
       let dy = calc.sin(angle) * radius
-      
+
       place(center + horizon, dx: dx, dy: dy)[
         #rotate(angle)[
           #rect(
@@ -840,7 +845,7 @@ Das ist hier gelöst mit einem `block()` als Zeichenfläche, der `place()`- und 
 Dazu ein paar Erläuterungen.
 / Zeile 13: Der erste Parameter der `place()` Funktion ist das _alignment_. Mit `center + horizon` sagen wir, dass unser Mittelpunkt relativ zum umschließenden Container (der `block()` aus Zeile 7) sowohl horizontal (`center`), als auch vertikal (`horizon`) in der Mitte liegen soll. Anders ausgedrückt: Unser Koordinatensystem-Ursprung liegt jetzt genau in der Mitte des Blocks.
 
-   Da wir mit Sinus und Cosinus rechnen und diese Werte zwischen $-1$ und $1$ liefern, müssen wir zur Skalierung lediglich mit dem Radius unseres gedachten Kreises multiplizieren. Wir müssen nicht mehr herumrechnen, wie wir den Kreis auch schön in die Mitte des Blocks bekommen.
+  Da wir mit Sinus und Cosinus rechnen und diese Werte zwischen $-1$ und $1$ liefern, müssen wir zur Skalierung lediglich mit dem Radius unseres gedachten Kreises multiplizieren. Wir müssen nicht mehr herumrechnen, wie wir den Kreis auch schön in die Mitte des Blocks bekommen.
 
 #line(length: 100%, stroke: 0.5pt + gray)
 
@@ -906,40 +911,40 @@ Wie wär's mit einem ebenfalls mit Typst Code selbst hier im Dokument erzeugten 
   let start-l = 380
   let end-l = 780
   let range-nm = end-l - start-l
-  
+
   // Wir definieren einen Seitenabstand für die Labels (ca. die halbe Breite der Zahl "380")
-  let label-margin = 15pt 
+  let label-margin = 15pt
 
   block(width: width, {
     // Das Padding sorgt dafür, dass die zentrierten Randzahlen nicht überstehen
     pad(x: label-margin, {
       stack(
         spacing: 0pt, // Entfernt den Abstand zwischen Balken und Ticks komplett
-        
+
         // 1. Der Farbbalken
         rect(
           width: 100%,
           height: 30pt,
           fill: gradient.linear(
-            ..range(start-l, end-l, step: 1).map(l => wavelength-to-color(l))
+            ..range(start-l, end-l, step: 1).map(l => wavelength-to-color(l)),
           ),
           //stroke: 0.5pt + gray,
           // Unten keine Abrundung, damit die Ticks sauber anliegen
-          //radius: (top: 2pt, bottom: 0pt) 
+          //radius: (top: 2pt, bottom: 0pt)
         ),
 
         // 2. Die Achse (Ticks und Labels)
         box(width: 100%, height: 25pt, {
           let labels = (380, 440, 490, 510, 580, 645, 700, 750, 780)
-          
+
           for l in labels {
             // Position relativ zur Breite des Balkens (0% bis 100%)
             let rel-pos = (l - start-l) / range-nm * 100%
-            
+
             place(
               left,
-              dx: rel-pos - label-margin/2,
-              // align(center) sorgt dafür, dass der Tick und die Zahl 
+              dx: rel-pos - label-margin / 2,
+              // align(center) sorgt dafür, dass der Tick und die Zahl
               // exakt auf der Position zentriert werden
               align(center, stack(
                 dir: ttb,
@@ -947,14 +952,14 @@ Wie wär's mit einem ebenfalls mit Typst Code selbst hier im Dokument erzeugten 
                 // Die Tick-Linie
                 line(angle: 90deg, length: 5pt, stroke: 0.5pt),
                 // Die Zahl
-                text(size: 8pt)[#l]
-              ))
+                text(size: 8pt)[#l],
+              )),
             )
           }
-        })
+        }),
       )
     })
-    
+
     // Einheit (ganz rechts außen, unabhängig vom Padding des Balkens)
     place(bottom + right, dy: 5pt, text(size: 7pt, style: "italic", fill: gray)[Wellenlänge in nm])
   })
@@ -965,22 +970,22 @@ Wie wär's mit einem ebenfalls mit Typst Code selbst hier im Dokument erzeugten 
 
 Der Typst-Code dazu ist etwas umfangreich und wird daher hier nicht wiedergegeben, kann aber natürlich im Repository eingesehen werden. Die beiden Funktionen lauten `wavelength-to-color()` und `spectrum-visualization()`.
 
-Interesant ist übrigens, dass der Zusammenhang zwischen der Wellenlänge und der Farbtemperatur (in Kelvin) _umgekehrt_ proportional ist. Da gibt es das #link("https://de.wikipedia.org/wiki/Wiensches_Verschiebungsgesetz")[_Wiensche Verschiebungsgesetz_]:
+Interessant ist übrigens, dass der Zusammenhang zwischen der Wellenlänge und der Farbtemperatur (in Kelvin) _umgekehrt_ proportional ist. Da gibt es das #link("https://de.wikipedia.org/wiki/Wiensches_Verschiebungsgesetz")[_Wiensche Verschiebungsgesetz_]:
 $
-   lambda_upright(max) = (2898 mu "m" dot "K")/T
+  lambda_upright(max) = (2898 thin "µm" dot "K")/T
 $
 Das $max$ am $lambda$ bedeutet, dass hier die Wellenlänge gemeint ist, bei der die Wärmestrahlung am größten – eben maximal – ist.
 
 Umgestellt nach der Temperatur bedeutet das:
 $
-   T = (2898 mu "m" dot "K")/lambda_upright(max)
+  T = (2898 thin "µm" dot "K")/lambda_upright(max)
 $
 
 Je gelblicher ein Licht ist, desto "wärmer" empfinden wir es. "Warme" Lichter müssten also gegenüber kälteren eine höhere Temperatur haben. Denn wenn die Temperatur steigt, wird es ja wärmer.
 
-De facto (in der Physik) ist es hier aber _umgekehrt_: Ein vermeintlich warmes, orangenes Licht mit z.B. $600 "nm" (=0.6 mu "m")$ Wellenlänge entspricht einer Temperatur von $(2898 mu "m" dot "K")/(0.6 mu "m") = 4830 "K"$. 
+De facto (in der Physik) ist es hier aber _umgekehrt_: Ein vermeintlich warmes, orangenes Licht mit z.B. $600 thin "nm" (= 0.6 thin "µm")$ Wellenlänge entspricht einer Temperatur von $(2898 thin "µm" dot "K")/(0.6 thin "µm") = 4830 thin "K"$.
 
-Wohingegen ein Licht, das wir als "kühl" (weil bläulicher) bezeichnen würden – im Spektrum also eher bei ca. $450 "nm" (=0.45 mu "m")$ angesiedelt –, einer Temperatur von $(2898 mu "m" dot "K")/(0.45 mu "m") = 6440 "K"$ entspricht, also einer _höheren_ Temperatur.
+Wohingegen ein Licht, das wir als "kühl" (weil bläulicher) bezeichnen würden – im Spektrum also eher bei ca. $450 thin "nm" (= 0.45 thin "µm")$ angesiedelt –, einer Temperatur von $(2898 thin "µm" dot "K")/(0.45 thin "µm") = 6440 thin "K"$ entspricht, also einer _höheren_ Temperatur.
 
 
 == Lilaq <lilaq>
@@ -992,72 +997,73 @@ Für Typst gibt es viele importierbare Pakete, die die Möglichkeiten von Typst 
 #let xs = (0, 1, 2, 3, 4)
 
 #grid(
-   columns: (1fr, 1fr),
-   align: center + horizon,
-   stroke: 0.0pt + gray,
-   move(dy: -1.5pt)[#lq.diagram(
-      lq.plot(xs, (3, 5, 4, 2, 3))
-   )],
-   [#lq.diagram(
-      title: [Precious data],
-      xlabel: $x$, ylabel: $y$,
-      lq.plot(xs, (3, 5, 4, 2, 3), mark: "s", label: [A]),
-      lq.plot(xs, x => 2*calc.cos(x)+3, mark: "o", label: [B])
-   )]
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  stroke: 0.0pt + gray,
+  move(dy: -1.5pt)[#lq.diagram(
+    lq.plot(xs, (3, 5, 4, 2, 3)),
+  )],
+  [#lq.diagram(
+    title: [Precious data],
+    xlabel: $x$,
+    ylabel: $y$,
+    lq.plot(xs, (3, 5, 4, 2, 3), mark: "s", label: [A]),
+    lq.plot(xs, x => 2 * calc.cos(x) + 3, mark: "o", label: [B]),
+  )],
 )
 Dazu jeweils der Typst-Code (natürlich wurde die Variable `xs` nur _einmal_ definiert):
 
 #grid(
-   columns: (1fr, 1fr),
-   stroke: 0.0pt + gray,
-   inset: (x: 5pt),
-   [
-      ```typ
-   #let xs = (0, 1, 2, 3, 4)
-   #lq.diagram(
-      lq.plot(xs, (3, 5, 4, 2, 3))
-   )
-      ```
-   ],
-   [
-      ```typ
-   #let xs = (0, 1, 2, 3, 4)
-   #lq.diagram(
-      title: [Precious data],
-      xlabel: $x$, ylabel: $y$,
-      lq.plot(xs, (3, 5, 4, 2, 3),
-         mark: "s", label: [A]),
-      lq.plot(xs, x => 2*calc.cos(x)+3,
-         mark: "o", label: [B])
-   )
-      ```
-   ]
+  columns: (1fr, 1fr),
+  stroke: 0.0pt + gray,
+  inset: (x: 5pt),
+  [
+    ```typ
+    #let xs = (0, 1, 2, 3, 4)
+    #lq.diagram(
+       lq.plot(xs, (3, 5, 4, 2, 3))
+    )
+    ```
+  ],
+  [
+    ```typ
+    #let xs = (0, 1, 2, 3, 4)
+    #lq.diagram(
+       title: [Precious data],
+       xlabel: $x$, ylabel: $y$,
+       lq.plot(xs, (3, 5, 4, 2, 3),
+          mark: "s", label: [A]),
+       lq.plot(xs, x => 2*calc.cos(x)+3,
+          mark: "o", label: [B])
+    )
+    ```
+  ],
 )
 
 #v(0.5cm)
 
 Ein bisschen anspruchsvoller geht es auch, man beachte z.B. die x-Achsen-Beschriftung im folgenden Diagramm.
 
-#let xs = lq.linspace(-2*calc.pi, 2*calc.pi, num: 40)
+#let xs = lq.linspace(-2 * calc.pi, 2 * calc.pi, num: 40)
 #let ys1 = xs.map(x => calc.sin(x))
 #let ys2 = xs.map(x => calc.cos(x))
 
 #figure(
-   lq.diagram(
-      width: 14cm,
-      height: 5cm,
-      title: [Trigonometrische Funktionen],
-      xlim: (-2*calc.pi, 2*calc.pi),
-      xaxis: (
-         locate-ticks: lq.tick-locate.linear.with(unit: calc.pi),
-         format-ticks: lq.tick-format.linear.with(suffix: $pi$)
-      ),
-      xlabel: $x$,
-      ylabel: $y$,
-      lq.plot(xs, ys1, color: blue, label: $sin (x)$),
-      lq.plot(xs, ys2, mark: "star", label: $cos(x)$, color: orange),
-   ),
-   caption: "Ein Diagramm, erzeugt mit Hilfe des Lilaq Pakets"
+  lq.diagram(
+    width: 14cm,
+    height: 5cm,
+    title: [Trigonometrische Funktionen],
+    xlim: (-2 * calc.pi, 2 * calc.pi),
+    xaxis: (
+      locate-ticks: lq.tick-locate.linear.with(unit: calc.pi),
+      format-ticks: lq.tick-format.linear.with(suffix: $pi$),
+    ),
+    xlabel: $x$,
+    ylabel: $y$,
+    lq.plot(xs, ys1, color: blue, label: $sin (x)$),
+    lq.plot(xs, ys2, mark: "star", label: $cos(x)$, color: orange),
+  ),
+  caption: "Ein Diagramm, erzeugt mit Hilfe des Lilaq Pakets",
 )
 
 Hier wurde wieder die Typst Funktion `figure()` – bekannt aus @abbildungen – um das Lilaq-Diagramm angewendet, damit wir eine Bildunterschrift und die automatische Nummerierung haben. Der Quellcode ist nicht besonders kompliziert:
@@ -1093,17 +1099,19 @@ Hier wurde wieder die Typst Funktion `figure()` – bekannt aus @abbildungen –
 Die folgende *#link("https://de.wikipedia.org/wiki/Koch-Kurve")[Koch'sche Schneeflocken-Kurve]* wurde hier nicht als Bitmap und auch nicht als Vektorgrafik eingebaut, sondern wurde dynamisch durch Typst Code erzeugt.
 
 #figure(
-   lq.diagram(
-      width: 7cm, height: 8cm,
-      xaxis: (ticks: none, stroke: none),
-      yaxis: (ticks: none, stroke: none),
+  lq.diagram(
+    width: 7cm,
+    height: 8cm,
+    xaxis: (ticks: none, stroke: none),
+    yaxis: (ticks: none, stroke: none),
 
-      lq.path(
-         ..koch-snowflake(5),
-         fill: orange, closed: true
-      )
-   ),
-   caption: [Koch'sche Schneeflocke (ein Fraktal)]
+    lq.path(
+      ..koch-snowflake(5),
+      fill: orange,
+      closed: true,
+    ),
+  ),
+  caption: [Koch'sche Schneeflocke (ein Fraktal)],
 )
 
 Um diese Grafik hier im Dokument selbst erzeugen zu können (und eben _nicht_ als Grafikdatei mit fixer Auflösung einzubetten), ist die Erzeugung als Funktion realisiert. Hier – für den interessierten Leser – der Typst Quellcode dazu:
@@ -1115,7 +1123,7 @@ Um diese Grafik hier im Dokument selbst erzeugen zu können (und eben _nicht_ al
   let complex-inverse-array(a) = { a.map(c => c.map(x => -x)) }
   let complex-multiply-array(a, c) = { a.map(c1 => complex-multiply(c1, c)) }
   let complex-add-array(a1, a2) = { a1.zip(a2).map(cs => complex-add(..cs)) }
-  
+
   let koch-snowflake-impl(n) = {
     if n == 0 {
       return (90deg, 210deg, 330deg).map(phi => (calc.cos(phi), calc.sin(phi)))
@@ -1158,10 +1166,10 @@ Dabei wurde wieder – wie schon bei den einfachen Diagramm-Beispielen in @lilaq
 Die mathematische Definition der Collatz-Zahlenfolge haben wir schon in @formeln in @collatz gesehen. Sie sei hier noch einmal wiederholt:
 
 $
-a_(n+1) := cases(
-   a_n / 2 ","  & "wenn" a_n "gerade",
-   3 a_n +1 "," & "wenn" a_n "ungerade"
-)
+  a_(n+1) := cases(
+    a_n / 2 "," & "wenn" a_n "gerade",
+    3 a_n +1 "," & "wenn" a_n "ungerade"
+  )
 $
 
 ==== Collatz Diagramme
@@ -1176,8 +1184,8 @@ Kommen wir bei der Zahl 1 an, hören wir auf, denn würden wir die Bildungsgeset
 Beginnen wir mit der Startzahl #startzahl, ergibt sich diese, aus #periodenlaenge Zahlen bestehende Folge:
 
 #figure(
-   collatz_visualizer_horizontal(startzahl, scale: 1),
-   caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
+  collatz_visualizer_horizontal(startzahl, scale: 1),
+  caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge],
 ) <collatzdiagramm1>
 
 #let startzahl = 14
@@ -1187,8 +1195,8 @@ Beginnen wir mit der Startzahl #startzahl, ergibt sich diese, aus #periodenlaeng
 Für die nur geringfügig höhere Startzahl #startzahl ergibt sich schon eine Folge mit #periodenlaenge Zahlen:
 
 #figure(
-   collatz_visualizer(startzahl, diagrammZeilen, scale: 1.1),
-   caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
+  collatz_visualizer(startzahl, diagrammZeilen, scale: 1.1),
+  caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge],
 ) <collatzdiagramm2>
 
 #let startzahl = 27
@@ -1197,8 +1205,8 @@ Für die nur geringfügig höhere Startzahl #startzahl ergibt sich schon eine Fo
 Aber so richtig krass wird's, wenn wir die kaum größere Startzahl #startzahl wählen. Denn auf einmal eskaliert alles, die Folge hat nun satte #periodenlaenge Glieder und unser Diagramm müssen wir extra verkleinern, sonst passt es hier nicht hin.
 
 #figure(
-   collatz_visualizer(startzahl, diagrammZeilen, scale: 0.58),
-   caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge]
+  collatz_visualizer(startzahl, diagrammZeilen, scale: 0.58),
+  caption: [$3n+1$ Folgenglieder für die Startzahl #startzahl mit Periodenlänge #periodenlaenge],
 ) <collatzdiagramm3>
 
 ==== Collatz in Typst
@@ -1238,7 +1246,7 @@ Das erledigt die Funktion `collatz_visualizer()` und das Beispiel aus @collatzdi
 
 Da hier sehr viele Folgeglieder zusammenkommen, musste ich den Skalierungsfaktor auf $0.5$ setzen.
 
-Alle drei Funktionen sind ebenfalls im Typst Quelldokument implementiert, aber zu umfangreich, um sie hier aufzulisten. 
+Alle drei Funktionen sind ebenfalls im Typst Quelldokument implementiert, aber zu umfangreich, um sie hier aufzulisten.
 
 Aber dieses Typst Quelldokument ist ja Open Source und #link("https://github.com/metawops/typst")[liegt auf Github], so dass man jederzeit reinschauen kann, wenn man sich für die Implementierungsdetails interessiert. Die Funktionen habe ich übrigens in die Hilfs-/Library-Typst-Datei `_lib.typ` ausgelagert, damit sie das eigentliche Quelldokument nicht zu unübersichtlich werden lassen.
 
@@ -1256,8 +1264,8 @@ Aber vor der $16$ kann neben der $32$ auch die $5$ kommen, denn $3*5+1$ ist $15$
 So bauen wir rückwärts denkend einen Baum auf, in dem wir Vorgängerzahlen sehen. Das beginnt also so für einen Baum der Höhe #level:
 
 #figure(
-   collatz_tree(level, scale: 0.7),
-   caption: [Collatz Baum mit den ersten #level Ebenen]
+  collatz_tree(level, scale: 0.7),
+  caption: [Collatz Baum mit den ersten #level Ebenen],
 )
 
 #let level = 10
@@ -1265,8 +1273,8 @@ So bauen wir rückwärts denkend einen Baum auf, in dem wir Vorgängerzahlen seh
 Nun denken wir das weiter und vervollständigen den Baum nach oben. Exemplarisch – und aus Platzgründen – sei hier der Baum der Ebene #level dargestellt:
 
 #figure(
-   collatz_tree(level, scale: 0.7),
-   caption: [Collatz Baum der Ebene #level]
+  collatz_tree(level, scale: 0.7),
+  caption: [Collatz Baum der Ebene #level],
 )
 
 Wollte man nun beweisen, dass _jede_ Startzahl auf die $1$ führt, müsste man "nur noch" zeigen, dass in diesem Baum, jede natürlich Zahl vorkommt. Aber natürlich hat das bisher auch noch nicht geklappt.
@@ -1281,15 +1289,15 @@ Ein weiteres Beispiel ist das Paket #link("https://github.com/solstice23/typst-r
 //#import "@preview/ribbony:0.1.0": *
 
 #figure(
-   sankey-diagram((
-      "Clients": ("Company": 70),
-      "Investors": ("Company": 20),
-      "Partners": ("Company": 10),
-      "Company": ("HR": 20, "IT": 30, "Sales": 50),
-      "IT": ("Infra": 20, "Support": 10),
-      "Sales": ("Marketing": 30, "Operations": 20)
-   )),
-   caption: [Ein beispielhaftes Sankey Diagramm, erzeugt mit Hilfe des Pakets "Ribbony"]
+  sankey-diagram((
+    "Clients": ("Company": 70),
+    "Investors": ("Company": 20),
+    "Partners": ("Company": 10),
+    "Company": ("HR": 20, "IT": 30, "Sales": 50),
+    "IT": ("Infra": 20, "Support": 10),
+    "Sales": ("Marketing": 30, "Operations": 20),
+  )),
+  caption: [Ein beispielhaftes Sankey Diagramm, erzeugt mit Hilfe des Pakets "Ribbony"],
 )
 
 Der Input dafür im Typst Dokument ist recht übersichtlich und verständlich:
@@ -1310,11 +1318,11 @@ Der Input dafür im Typst Dokument ist recht übersichtlich und verständlich:
 #pagebreak(weak: true)
 = Literaturverzeichnis & das Zitieren
 
-In wissenschaftlichen Arbeiten ist es unerlässlich, aus anderen Quellen – korrekt – zu zitieren. Dazu hat es sich als Vorgehensweise durchgesetzt, in einer Datei alle seine Quellen strukturiert aufzulisten. Dazu bietet sich vor allem das von LaTeX her bekannte _bibtex_ Format an. Hier im Repository liegt die beispielhafte Datei `literatur.bib` in diesem Format. 
+In wissenschaftlichen Arbeiten ist es unerlässlich, aus anderen Quellen – korrekt – zu zitieren. Dazu hat es sich als Vorgehensweise durchgesetzt, in einer Datei alle seine Quellen strukturiert aufzulisten. Dazu bietet sich vor allem das von LaTeX her bekannte _bibtex_ Format an. Hier im Repository liegt die beispielhafte Datei `literatur.bib` in diesem Format.
 
 Diese Datei wird dann dem Satzsystem – in unserem Falle also Typst – bekannt gemacht und es wird der *Zitierstil* festgelegt. Davon gibt es in Typst eine große Anzahl zur Auswahl. Aufgelistet sind sie alle #link("https://typst.app/docs/reference/model/bibliography/#parameters-style")[hier] (ggfs. auf "View options" klicken).
 
-Dann kann man in seinem Dokument sehr leicht eine Quelle, wie z.B. diese #text(fill:purple)[@vaswani2017attention] angeben. Was im vorherigen Satz zwischen "diese" und "angeben" erzeugt wird – ich habe es farblich hervorgehoben –, hängt vom gewählten Zitierstil ab. Sollte keiner der aktuell 89 in Typst vorhandenen Zitierstile passen (z.B. weil die Uni ihren ganz eigenen definiert hat), so kann man auch selbst #link("https://citationstyles.org/")[neue Zitierstile definieren] und nutzen. Dazu gibt es sogar einen #link("https://editor.citationstyles.org/visualEditor/")[visuellen CSL Editor].
+Dann kann man in seinem Dokument sehr leicht eine Quelle, wie z.B. diese #text(fill: purple)[@vaswani2017attention] angeben. Was im vorherigen Satz zwischen "diese" und "angeben" erzeugt wird – ich habe es farblich hervorgehoben –, hängt vom gewählten Zitierstil ab. Sollte keiner der aktuell 89 in Typst vorhandenen Zitierstile passen (z.B. weil die Uni ihren ganz eigenen definiert hat), so kann man auch selbst #link("https://citationstyles.org/")[neue Zitierstile definieren] und nutzen. Dazu gibt es sogar einen #link("https://editor.citationstyles.org/visualEditor/")[visuellen CSL Editor].
 
 Es gibt aber im Internet große Menge von CSL Dateien, so dass man dort ggfs. fündig wird oder eine zu 95% passende Variante findet und noch anpassen kann. Zwei guten Quellen sind:
 

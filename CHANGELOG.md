@@ -2,6 +2,16 @@
 
 Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ stattfinden.
 
+## [v0.6.2] – 2026-09-21
+
+### Changed
+- Physikalische Einheiten typografisch korrigiert (schmales Leerzeichen `thin` vor µm, nm, K)
+- Typst-Versionsanzeige im Dokumenten-Footer von `_lib.typ` bereinigt
+- Allgemeine Formatierung im Hauptdokument überarbeitet
+
+### Fixed
+- Tippfehler korrigiert ("Interessant")
+
 ## [v0.6.1] – 2026-01-11
 ### Added
 - Weitere dynamisch erzeugte Tabelle (i/Spalte/Zeile)
@@ -95,3 +105,4 @@ Releases sind momentan sehr willkürlich und können immer mal _zwischendurch_ s
 [v0.5.0]: https://github.com/metawops/typst/compare/v0.4.0...v0.5.0
 [v0.6.0]: https://github.com/metawops/typst/compare/v0.5.0...v0.6.0
 [v0.6.1]: https://github.com/metawops/typst/compare/v0.6.0...v0.6.1
+[v0.6.2]: https://github.com/metawops/typst/compare/v0.6.1...v0.6.2

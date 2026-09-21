@@ -717,7 +717,8 @@
             dir: ttb,
             spacing: 8pt,
             line(length: 100%, stroke: 0.5pt + config.colors.footer.line),
-            [Erste Schritte in Typst #sym.dot Stefan Wolfrum #sym.dot Version #version #sym.dot #date.display() #sym.dot Typst-Version #sys.version #sym.dot License: #config.document.license #h(1fr) #counter(page).display()]
+            // [#theTitle #sym.dot #authors #sym.dot Version #version #sym.dot #date.display() #sym.dot Typst-Version #sys.version #sym.dot License: #config.document.license #h(1fr) #counter(page).display()]
+            [#theTitle #sym.dot #authors #sym.dot Version #version #sym.dot #date.display() #sym.dot License: #config.document.license #h(1fr) #counter(page).display()]
          )
       }
    )
